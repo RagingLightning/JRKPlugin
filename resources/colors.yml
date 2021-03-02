@@ -1,0 +1,5 @@
+default: players
+teams:
+  players: WHITE
+  admins: YELLOW
+players: {}

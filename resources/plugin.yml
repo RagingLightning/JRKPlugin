@@ -5,14 +5,17 @@ author: RagingLightning
 main: de.r13g.jrkniedersachsen.plugin.Plugin
 api-version: 1.16
 commands:
-  jrkAdmin:
-    usage: /jrkAdmin
+  jrkadmin:
+    usage: /jrkadmin
     description: TBD
     permission: jrk.admin
+  jrk:
+    usage: /jrk
+    description: TBD
   morpheus:
     usage: /morpheus <option> <value>
     description: Einstellungen des Morpheus-Moduls verändern
-    permission: jrk.morpheus.mod
+    permission: jrk.morpheus.admin
 permissions:
   jrk.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen am JRK-Plugin vorzunehmen.
@@ -22,10 +25,6 @@ permissions:
   jrk.morpheus.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen am Morpheus-Modul vorzunehmen.
     default: op
-    children:
-      jrk.morpheus.mod: true
-  jrk.morpheus.mod:
-    description: Gibt dem Spieler die Rechte, oberflächliche Einstellungen am Morpheus-Modul vorzunehmen.
   jrk.morpheus.bypass:
     description: Der Spieler wird bei der Schlaf-Vote-Funktion ignoriert.
     default: op

@@ -1,7 +1,6 @@
-package de.r13g.jrkniedersachsen.plugin.morpheus;
+package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
-import de.r13g.jrkniedersachsen.plugin.permissions.PermissionsModule;
 import de.r13g.jrkniedersachsen.plugin.util.Log;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -10,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.TabCompleteEvent;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class MorpheusModule implements Listener {
+public class MorpheusModule implements Module, Listener {
 
   public static final String NAME = "Morpheus";
 
@@ -33,7 +33,6 @@ public class MorpheusModule implements Listener {
 
   public static final String PERM_MorpheusAdmin = "jrk.morpheus.admin";
   public static final String PERM_MorpheusBypass = "jrk.morpheus.bypass";
-  public static final String PERM_MorpheusMod = "jrk.morpheus.mod";
 
   Instant leaveBedSuppression;
   BukkitTask wakeUpTask = null;
@@ -41,11 +40,29 @@ public class MorpheusModule implements Listener {
   FileConfiguration moduleConfig;
   File moduleDataFolder;
 
-  public MorpheusModule() {
-    leaveBedSuppression = Instant.now().minusSeconds(60);
+  private boolean ready = false;
 
+  public MorpheusModule() { }
+
+  @Override
+  public boolean load(Plugin plugin, File moduleDataFolder) {
+    leaveBedSuppression = Instant.now().minusSeconds(60);
+    plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    ready = true;
+    return true;
   }
 
+  @Override
+  public boolean unload() {
+    ready = false;
+    HandlerList.unregisterAll(this);
+    return true;
+  }
+
+  @Override
+  public boolean isReady() {
+    return ready;
+  }
 
   @EventHandler
   public void onPlayerBedEnter(PlayerBedEnterEvent ev) {
@@ -56,7 +73,7 @@ public class MorpheusModule implements Listener {
             ev.getPlayer().getDisplayName(), ""+Math.floor(percentage)+"%");
     Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
     if (percentage >= Plugin.INSTANCE.getConfig().getDouble(CFGKEY_Percentage)) {
-      wakeUpTask = Plugin.INSTANCE.getServer().getScheduler().runTaskLater(Plugin.INSTANCE, (Runnable) () -> {
+      wakeUpTask = Plugin.INSTANCE.getServer().getScheduler().runTaskLater(Plugin.INSTANCE, () -> {
         leaveBedSuppression = Instant.now().plusSeconds(10);
         Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage));
         ev.getPlayer().getWorld().setTime(0);
@@ -88,6 +105,7 @@ public class MorpheusModule implements Listener {
     return 100.0 * sleeping / total;
   }
 
+  @Override
   public List<String> onTabComplete(TabCompleteEvent ev) {
       List<String> commands = new ArrayList<>();
       if (!(ev.getSender() instanceof Player) || ev.getSender().hasPermission(PERM_MorpheusAdmin)) {
@@ -97,20 +115,19 @@ public class MorpheusModule implements Listener {
         commands.add("/morpheus leaveBedMessage <$1:name,$2:pct>");
         commands.add("/morpheus percentage 50.0");
         commands.add("/morpheus sleepSuccessMessage <$1:name,$2:pct>");
-      } else if (ev.getSender().hasPermission(PERM_MorpheusMod)) {
-        commands.add("/morpheus bypass true <player>");
-        commands.add("/morpheus bypass false <player>");
       }
 
       return commands;
   }
 
+  @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
       switch (args[0]) {
-        case "bypass": //TODO: restructure, bypass <player> [true|false] or [true|false]
-          if (Plugin.INSTANCE.isModuleLoaded(PermissionsModule.NAME)) {
-            if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusMod)) {
-              Player p = null;
+        case "bypass":
+          if (Plugin.INSTANCE.moduleStatus(PermissionsModule.NAME)==1) {
+            PermissionsModule pm = (PermissionsModule) Plugin.INSTANCE.getModule(PermissionsModule.NAME);
+            if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
+              Player p;
               if (args.length == 2 && sender instanceof Player) {
                 p = (Player) sender;
               } else if (args.length == 3) {
@@ -121,10 +138,12 @@ public class MorpheusModule implements Listener {
                 return true;
               }
               if (!(args[1].equals("true") || args[1].equals("false"))) return false;
-                Plugin.permissionsModule.playerAttachment(p.getUniqueId()).setPermission(PERM_MorpheusBypass, args[1].equals("true"));
+                pm.playerAttachment(p.getUniqueId()).setPermission(PERM_MorpheusBypass, args[1].equals("true"));
                 if (p.hasPermission(PERM_MorpheusBypass)) {
+                  p.sendMessage(Log.logLine(NAME, "Du wirst ignoriert, " + sender.getName() + " wollte es so"));
                   sender.sendMessage(Log.logLine(NAME, p.getDisplayName() + " wird ignoriert."));
                 } else {
+                  p.sendMessage(Log.logLine(NAME, "Du wirst berücksichtigt, " + sender.getName() + " wollte es so"));
                   sender.sendMessage(Log.logLine(NAME, p.getDisplayName() + " wird berücksichtigt"));
                 }
             }

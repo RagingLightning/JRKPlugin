@@ -1,27 +1,29 @@
-package de.r13g.jrkniedersachsen.plugin.permissions;
+package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
+import de.r13g.jrkniedersachsen.plugin.modules.Module;
 import de.r13g.jrkniedersachsen.plugin.util.Log;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.permissions.PermissionAttachment;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class PermissionsModule implements Listener {
+public class PermissionsModule implements Module, Listener {
 
   public static final String NAME = "Permissions";
 
@@ -33,30 +35,68 @@ public class PermissionsModule implements Listener {
 
   private HashMap<UUID, PermissionAttachment> attachments = new HashMap<>();
 
-  public PermissionsModule(File baseFolder) {
-    playerFile = new File(baseFolder, "players.yml");
+  boolean ready = false;
+
+  public PermissionsModule() {}
+
+  @Override
+  public boolean load(Plugin plugin, File moduleDataFolder) {
+    plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    playerFile = new File(moduleDataFolder, "players.yml");
     playerCfg = YamlConfiguration.loadConfiguration(playerFile);
     if (!playerFile.exists()) {
-      InputStream s = Plugin.INSTANCE.getResource("playerPermissions.yml");
+      InputStream s = plugin.getResource("playerPermissions.yml");
       playerCfg.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(s)));
       try {
         playerCfg.save(playerFile);
       } catch (IOException e) {
-        Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> unable to save player permissions", ChatColor.YELLOW));
+        plugin.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> unable to save player permissions", ChatColor.YELLOW));
       }
     }
 
-    groupFile = new File(baseFolder, "groups.yml");
+    groupFile = new File(moduleDataFolder, "groups.yml");
     groupCfg = YamlConfiguration.loadConfiguration(groupFile);
     if (!groupFile.exists()) {
-      InputStream s = Plugin.INSTANCE.getResource("groupPermissions.yml");
+      InputStream s = plugin.getResource("groupPermissions.yml");
       groupCfg.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(s)));
       try {
         groupCfg.save(groupFile);
       } catch (IOException e) {
-        Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> unable to save group permissions", ChatColor.YELLOW));
+        plugin.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> unable to save group permissions", ChatColor.YELLOW));
       }
     }
+    ready = true;
+    return true;
+  }
+
+  @Override
+  public boolean isReady() {
+    return ready;
+  }
+
+  @Override
+  public boolean unload() {
+    saveAllPermissions();
+
+    ready = false;
+
+    HandlerList.unregisterAll(this);
+    attachments = new HashMap<>();
+    playerFile = null;
+    groupFile = null;
+    playerCfg = null;
+    groupCfg = null;
+    return true;
+  }
+
+  @Override
+  public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    return false;
+  }
+
+  @Override
+  public List<String> onTabComplete(TabCompleteEvent ev) {
+    return null;
   }
 
   public void loadPlayerPermissions(UUID u) {
@@ -72,11 +112,9 @@ public class PermissionsModule implements Listener {
     List<String> list = new ArrayList<>();
     for (String s : a.getPermissions().keySet()) {
       if (s.equals("")) continue;
-      list.add(a.getPermissions().get(s)?"+":"-" + s);
+      list.add((a.getPermissions().get(s)?"+":"-") + s);
     }
     playerCfg.set(u.toString(), list);
-    Plugin.INSTANCE.getServer().getPlayer(u).removeAttachment(attachments.get(u));
-    attachments.remove(u);
   }
 
   public void saveAllPermissions() {
@@ -91,7 +129,26 @@ public class PermissionsModule implements Listener {
   }
 
   public List<Player> listPlayersWithPermission(String permission) {
-    return null; //TODO
+    List<Player> players = new ArrayList<>();
+    boolean value = true;
+    if (permission.startsWith("-")){
+      permission = permission.substring(1);
+      value = false;
+    } else if (permission.startsWith("+"))
+      permission = permission.substring(1);
+    for (Player p : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
+      if (p.hasPermission(permission) == value)
+        players.add(p);
+    }
+    return players;
+  }
+
+  public List<String> listPermissionsOfPlayer(Player p) {
+    List<String> perms = new ArrayList<>();
+    for (Map.Entry<String, Boolean> e: attachments.get(p.getUniqueId()).getPermissions().entrySet()) {
+      perms.add(e.getKey() + ": " + (e.getValue()?"+":"-"));
+    }
+    return perms;
   }
 
   public PermissionAttachment playerAttachment(UUID u) {
@@ -106,6 +163,8 @@ public class PermissionsModule implements Listener {
   @EventHandler
   public void onPlayerQuit(PlayerQuitEvent ev) {
     savePlayerPermissions(ev.getPlayer().getUniqueId());
+    Plugin.INSTANCE.getServer().getPlayer(ev.getPlayer().getUniqueId()).removeAttachment(attachments.get(ev.getPlayer().getUniqueId()));
+    attachments.remove(ev.getPlayer().getUniqueId());
   }
 
 }
