@@ -1,0 +1,31 @@
+name: JRKPlugin
+description: Multifunktionsplugin des JRK-Servers
+version: 1.0.0
+author: RagingLightning
+main: de.r13g.jrkniedersachsen.plugin.Plugin
+api-version: 1.16
+commands:
+  jrkAdmin:
+    usage: /jrkAdmin
+    description: TBD
+    permission: jrk.admin
+  morpheus:
+    usage: /morpheus <option> <value>
+    description: Einstellungen des Morpheus-Moduls verändern
+    permission: jrk.morpheus.mod
+permissions:
+  jrk.admin:
+    description: Gibt dem Spieler die Rechte, Einstellungen am JRK-Plugin vorzunehmen.
+    default: op
+    children:
+      jrk.morpheus.admin: true
+  jrk.morpheus.admin:
+    description: Gibt dem Spieler die Rechte, Einstellungen am Morpheus-Modul vorzunehmen.
+    default: op
+    children:
+      jrk.morpheus.mod: true
+  jrk.morpheus.mod:
+    description: Gibt dem Spieler die Rechte, oberflächliche Einstellungen am Morpheus-Modul vorzunehmen.
+  jrk.morpheus.bypass:
+    description: Der Spieler wird bei der Schlaf-Vote-Funktion ignoriert.
+    default: op
