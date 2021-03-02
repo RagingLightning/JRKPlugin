@@ -1,6 +1,11 @@
 modules:
+  permissions:
+    enabled: true
+    dependencies: []
   morpheus:
     enabled: true
+    dependencies:
+      - permissions
     percentage: 50.0
     enterBedMessage: $1 hat sich ins Bett gelegt $2
     leaveBedMessage: $1 ist aufgestanden $2
