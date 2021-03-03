@@ -6,6 +6,7 @@ import de.r13g.jrkniedersachsen.plugin.modules.MorpheusModule;
 import de.r13g.jrkniedersachsen.plugin.modules.PermissionsModule;
 import de.r13g.jrkniedersachsen.plugin.util.Log;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.TabCompleteEvent;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -25,10 +27,18 @@ public class Plugin extends JavaPlugin implements Listener {
 
   public static final String PERM_JrkAdminCommand = "jrk.admin";
 
+  public static final String PERM_GPCommand = "jrk.gp";
+  public static final String PERM_GP_TPSCommand = "jrk.gp.tps";
+
   public static Plugin INSTANCE;
 
+  private final List<String> gpModules = new ArrayList<String>(){{
+
+  }};
+
   private final List<String> modules = new ArrayList<String>(){{
-    add(PermissionsModule.NAME);add(MorpheusModule.NAME);add(ColorsModule.NAME);}};
+    add(PermissionsModule.NAME);add(MorpheusModule.NAME);add(ColorsModule.NAME);
+  }};
 
   private HashMap<String, Module> loadedModules = new HashMap<>();
 
@@ -122,6 +132,10 @@ public class Plugin extends JavaPlugin implements Listener {
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (command.getName().equalsIgnoreCase("jrk")) {
+      if (args.length == 0) return false;
+      switch (args[0]){
+        case "tps": if (sender instanceof ConsoleCommandSender || sender.hasPermission(PERM_GP_TPSCommand)) return gpTpsCommand(sender); //TODO: test
+      }
       //TODO: GP-Command
     } else if (command.getName().equalsIgnoreCase("jrkadmin")) {
       if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission(PERM_JrkAdminCommand)) {
@@ -164,7 +178,7 @@ public class Plugin extends JavaPlugin implements Listener {
           sender.sendMessage(Log.logLine("Main", "Modul " + args[1] + " existiert nicht."));
         }
         return true;
-      } else if (args[0].equals("permissions")){
+      } else if (args[0].equals("permissions")) {
         if (moduleStatus(PermissionsModule.NAME) != 1) {
           sender.sendMessage(Log.logLine("Main", "Für diesen Command muss das 'Permissions' Modul aktiv sein.", ChatColor.RED));
           return true;
@@ -190,8 +204,96 @@ public class Plugin extends JavaPlugin implements Listener {
           for (Player p : players) {
             sender.sendMessage(" - " + p.getDisplayName());
           }
-          return true;//TODO: GIVE/TAKE
+          return true;
         }
+      } else if (args[0].equals("admin")) { //TODO: test
+        if (args.length == 1) return false;
+        if (moduleStatus(PermissionsModule.NAME) != 1) {
+          sender.sendMessage(Log.logLine("Main", "Für diesen Command muss das 'Permissions' Modul aktiv sein.", ChatColor.RED));
+          return true;
+        }
+        PermissionsModule pm = (PermissionsModule) getModule(PermissionsModule.NAME);
+        if (args.length == 2) { //jrkadmin admin <module>
+          if (!modules.contains(args[1])) {
+            sender.sendMessage(Log.logLine("Main",args[1] + " ist kein Modul")); return true;
+          }
+          sender.sendMessage(Log.logLine("Main","Spieler mit Adminrechten für Modul " + args[1]));
+          for (Player p : pm.listPlayersWithPermission("jrk." + args[1].toLowerCase() + ".admin")) {
+            sender.sendMessage(Log.logLine("Main"," - " + p.getDisplayName()));
+          }
+        } else if (args.length == 3) { //jrkadmin admin <module> <player>
+          if (!modules.contains(args[1])) {
+            sender.sendMessage(Log.logLine("Main",args[1] + " ist kein Modul")); return true;
+          }
+          Player p = getServer().getPlayerExact(args[2]);
+          if (p == null) {
+            sender.sendMessage(Log.logLine("Main",args[2] + " ist nicht online")); return true;
+          }
+          if (p.hasPermission("jrk." + args[1].toLowerCase() + ".admin")) {
+            sender.sendMessage(Log.logLine("Main", p.getDisplayName() + " hat Adminrechte für das Modul " + args[1]));
+          } else {
+            sender.sendMessage(Log.logLine("Main", p.getDisplayName() + " hat keine Adminrechte für das Modul " + args[1]));
+          }
+        } else if (args.length == 4) { //jrkadmin admin <module> <player> <true/false>
+          if (!modules.contains(args[1])) {
+            sender.sendMessage(Log.logLine("Main",args[1] + " ist kein Modul")); return true;
+          }
+          Player p = getServer().getPlayerExact(args[2]);
+          if (p == null) {
+            sender.sendMessage(Log.logLine("Main",args[2] + " ist nicht online")); return true;
+          }
+          pm.playerAttachment(p.getUniqueId()).setPermission("jrk." + args[1].toLowerCase() + ".admin", args[3].equals("true"));
+          if (args[3].equals("true")) {
+            sender.sendMessage(Log.logLine("Main",p.getDisplayName() + " ist jetzt ein Admin des Moduls " + args[1]));
+          } else {
+            sender.sendMessage(Log.logLine("Main",p.getDisplayName() + " ist jetzt kein Admin des Moduls " + args[1]));
+          }
+        } else return false;
+        return true;
+      } else if (args[0].equals("gp")) { //TODO: test
+        if (args.length == 1) return false;
+        if (moduleStatus(PermissionsModule.NAME) != 1) {
+          sender.sendMessage(Log.logLine("Main", "Für diesen Command muss das 'Permissions' Modul aktiv sein.", ChatColor.RED));
+          return true;
+        }
+        PermissionsModule pm = (PermissionsModule) getModule(PermissionsModule.NAME);
+        if (args.length == 2) { //jrkadmin gp <gpmodule>
+          if (!gpModules.contains(args[1])) {
+            sender.sendMessage(Log.logLine("Main",args[1] + " ist kein GP-Modul")); return true;
+          }
+          sender.sendMessage(Log.logLine("Main","Spieler mit Rechten für GP-Modul " + args[1]));
+          for (Player p : pm.listPlayersWithPermission("jrk.gp." + args[1].toLowerCase())) {
+            sender.sendMessage(Log.logLine("Main"," - " + p.getDisplayName()));
+          }
+        } else if (args.length == 3) { //jrkadmion gp <gpmodule> <player>
+          if (!gpModules.contains(args[1])) {
+            sender.sendMessage(Log.logLine("Main",args[1] + " ist kein GP-Modul")); return true;
+          }
+          Player p = getServer().getPlayerExact(args[2]);
+          if (p == null) {
+            sender.sendMessage(Log.logLine("Main",args[2] + " ist nicht online")); return true;
+          }
+          if (p.hasPermission("jrk.gp." + args[1].toLowerCase())) {
+            sender.sendMessage(Log.logLine("Main", p.getDisplayName() + " hat Rechte für das GP-Modul " + args[1]));
+          } else {
+            sender.sendMessage(Log.logLine("Main", p.getDisplayName() + " hat keine Rechte für das GP-Modul " + args[1]));
+          }
+        } else if (args.length == 4) { //jrkadmin gp <gpmodule> <player> <true/false>
+          if (!gpModules.contains(args[1])) {
+            sender.sendMessage(Log.logLine("Main",args[1] + " ist kein GP-Modul")); return true;
+          }
+          Player p = getServer().getPlayerExact(args[2]);
+          if (p == null) {
+            sender.sendMessage(Log.logLine("Main",args[2] + " ist nicht online")); return true;
+          }
+          pm.playerAttachment(p.getUniqueId()).setPermission("jrk.gp." + args[1].toLowerCase(), args[3].equals("true"));
+          if (args[3].equals("true")) {
+            sender.sendMessage(Log.logLine("Main",p.getDisplayName() + " hat jetzt Rechte für GP-Modul " + args[1]));
+          } else {
+            sender.sendMessage(Log.logLine("Main",p.getDisplayName() + " hat jetzt keine Rechte für GP-Modul " + args[1]));
+          }
+        } else return false;
+        return true;
       }
     } else {
       for (String module : modules) {
@@ -200,6 +302,10 @@ public class Plugin extends JavaPlugin implements Listener {
       }
     }
     return false;
+  }
+
+  private boolean gpTpsCommand(CommandSender sender) {
+    return getServer().dispatchCommand(sender, "tps");
   }
 
   @EventHandler
@@ -213,6 +319,14 @@ public class Plugin extends JavaPlugin implements Listener {
         commands.add(new String[]{"/jrkadmin","disable","<module>"});
         commands.add(new String[]{"/jrkadmin","permissions","list","<player>"});
         commands.add(new String[]{"/jrkadmin","permissions","having","<permission>"});
+        commands.add(new String[]{"/jrkadmin","admin","<module>","<player","true"});
+        commands.add(new String[]{"/jrkadmin","admin","<module>","<player","false"});
+        commands.add(new String[]{"/jrkadmin","gp","<gpmodule>","<player","true"});
+        commands.add(new String[]{"/jrkadmin","gp","<gpmodule>","<player","false"});
+      }
+    } else if (ev.getBuffer().startsWith("/jrk")) {
+      if (ev.getSender() instanceof ConsoleCommandSender || ev.getSender().hasPermission(PERM_GPCommand)) {
+        if(ev.getSender() instanceof ConsoleCommandSender || ev.getSender().hasPermission(PERM_GP_TPSCommand)) commands.add(new String[]{"/jrk","tps"});
       }
     }
 
@@ -241,6 +355,7 @@ public class Plugin extends JavaPlugin implements Listener {
     switch (command[i]){
       case "<player>": getServer().getWorlds().get(0).getPlayers().forEach(p -> completions.add(p.getName())); break;
       case "<module>": completions.addAll(modules); break;
+      case "<gpmodule>": completions.addAll(gpModules); break;
       case "<team>": if (moduleStatus(ColorsModule.NAME)==1) completions.addAll(((ColorsModule) getModule(ColorsModule.NAME)).getTeamNames()); else completions.add("<team>"); break;
       case "<color>": Arrays.asList(ChatColor.values()).forEach(c -> {if (c != ChatColor.MAGIC && c != ChatColor.RESET) completions.add(c.name());}); break;
       default: completions.add(command[i]);

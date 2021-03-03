@@ -12,6 +12,7 @@ commands:
   jrk:
     usage: /jrk
     description: TBD
+    permission: jrk.gp
   morpheus:
     usage: /morpheus <option> <value>
     description: Einstellungen des Morpheus-Moduls verändern
@@ -21,6 +22,18 @@ commands:
     description: Einstellungen des Colors-Moduls verändern
     permission: jrk.colors.admin
 permissions:
+  jrk.gp:
+    description: Gibt dem Spieler die Rechte, GP Commands zu nutzen
+    default: true
+  jrk.gp.*:
+    description: Gibt dem Spieler die Rechte, alle GP Commands zu nutzen
+    default: true
+    children:
+      jrk.gp: true
+      jrk.gp.tps: true
+  jrk.gp.tps:
+    description: Gibt dem Spieler die Rechte, den GP Command tps zu nutzen
+    default: true
   jrk.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen am JRK-Plugin vorzunehmen.
     default: op
