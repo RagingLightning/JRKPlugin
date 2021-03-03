@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class Plugin extends JavaPlugin implements Listener {
     getServer().getPluginManager().registerEvents(this, this);
 
     for (String module : modules) {
-      if (getConfig().getBoolean("modules." + module.toLowerCase() + ".enabled")) {
+      if (getConfig().getBoolean("modules." + module + ".enabled")) {
         getServer().getConsoleSender().sendMessage(Log.logLine("Main", "Modul '" + module + "' wird geladen..."));
         if (tryStartModule(module))
           getServer().getConsoleSender().sendMessage(Log.logLine("Main", "Modul '" + module + "' erfolgreich geladen"));
@@ -73,11 +74,22 @@ public class Plugin extends JavaPlugin implements Listener {
         case PermissionsModule.NAME:
           loadedModules.put(module, new PermissionsModule());
           break;
-        /*case ColorsModule.NAME:
+        case ColorsModule.NAME:
           loadedModules.put(module, new ColorsModule());
-          break;*/
+          break;
         default:
           return false;
+      }
+    }
+    for (String m : getConfig().getStringList("modules." + module + ".dependencies")) {
+      if (moduleStatus(m) != 1) {
+        getServer().getConsoleSender().sendMessage(Log.logLine("Main", "Dependency '" + m + "': wird geladen..."));
+        if (tryStartModule(m))
+          getServer().getConsoleSender().sendMessage(Log.logLine("Main", "Dependency '" + m + "' erfolgreich geladen"));
+        else {
+          getServer().getConsoleSender().sendMessage(Log.logLine("Main", "<WARN> Dependency '" + m + "' konnte nicht geladen werden", ChatColor.YELLOW));
+          return false;
+        }
       }
     }
     return loadedModules.get(module).load(this, new File(getDataFolder(), module.toLowerCase()));
@@ -178,7 +190,7 @@ public class Plugin extends JavaPlugin implements Listener {
           for (Player p : players) {
             sender.sendMessage(" - " + p.getDisplayName());
           }
-          return true;
+          return true;//TODO: GIVE/TAKE
         }
       }
     } else {
@@ -192,35 +204,47 @@ public class Plugin extends JavaPlugin implements Listener {
 
   @EventHandler
   public void onTabComplete(TabCompleteEvent ev) {
-    List<String> commands = new ArrayList<>();
+    List<String[]> commands = new ArrayList<>();
     List<String> completions = new ArrayList<>();
 
     if (ev.getBuffer().startsWith("/jrkadmin")) {
       if (ev.getSender() instanceof ConsoleCommandSender || ev.getSender().hasPermission(PERM_JrkAdminCommand)) {
-        commands.add("/jrkadmin enable <module>");
-        commands.add("/jrkadmin disable <module>");
-        commands.add("/jrkadmin permissions list <player>");
-        commands.add("/jrkadmin permissions having <permission>");
+        commands.add(new String[]{"/jrkadmin","enable","<module>"});
+        commands.add(new String[]{"/jrkadmin","disable","<module>"});
+        commands.add(new String[]{"/jrkadmin","permissions","list","<player>"});
+        commands.add(new String[]{"/jrkadmin","permissions","having","<permission>"});
       }
     }
 
     for (String module : modules) {
       if (moduleStatus(module)!=1 || !ev.getBuffer().startsWith("/" + module.toLowerCase())) continue;
-      commands.addAll(getModule(module).onTabComplete(ev));
+      commands.addAll(getModule(module).getCommands());
     }
 
-    commands.forEach(i -> {
-      if (i.contains(ev.getBuffer())) {
-        String b = ev.getBuffer().replaceAll("\\s\\w+$", "");
-        String val = i.replaceFirst(b, "").trim().split(" ")[0];
-        if (val.equals("<player>"))
-          Plugin.INSTANCE.getServer().getWorlds().get(0).getPlayers().forEach(p -> completions.add(p.getDisplayName()));
-        else if (val.equals("<module>"))
-          completions.addAll(modules);
-        else
-          completions.add(val);
-      }
-    });
+    String[] bufferSegments = ev.getBuffer().split(" ");
+
+    commands.forEach(cmd -> {List<String> c = getCompletionForCommand(bufferSegments, ev.getBuffer().endsWith(" "), cmd); if (c != null) completions.addAll(c);});
+
     ev.setCompletions(completions);
+  }
+
+  private List<String> getCompletionForCommand(String[] buffer, boolean emptyEnd, String[] command) {
+    if (command.length < buffer.length) return null;
+    int i;
+    for (i = 0; i < buffer.length - (emptyEnd?0:1); i++) {
+      if (command[i].matches("<\\w+?>")) continue;
+      if (command[i].equals(buffer[i])) continue;
+      return null;
+    }
+    if (command.length <= i) return null;
+    List<String> completions = new ArrayList<>();
+    switch (command[i]){
+      case "<player>": getServer().getWorlds().get(0).getPlayers().forEach(p -> completions.add(p.getName())); break;
+      case "<module>": completions.addAll(modules); break;
+      case "<team>": if (moduleStatus(ColorsModule.NAME)==1) completions.addAll(((ColorsModule) getModule(ColorsModule.NAME)).getTeamNames()); else completions.add("<team>"); break;
+      case "<color>": Arrays.asList(ChatColor.values()).forEach(c -> {if (c != ChatColor.MAGIC && c != ChatColor.RESET) completions.add(c.name());}); break;
+      default: completions.add(command[i]);
+    }
+    return completions;
   }
 }

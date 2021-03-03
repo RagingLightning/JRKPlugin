@@ -1,7 +1,6 @@
 package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
-import de.r13g.jrkniedersachsen.plugin.modules.Module;
 import de.r13g.jrkniedersachsen.plugin.util.Log;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -14,7 +13,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.permissions.PermissionAttachment;
 
 import java.io.File;
@@ -45,10 +43,8 @@ public class PermissionsModule implements Module, Listener {
     playerFile = new File(moduleDataFolder, "players.yml");
     playerCfg = YamlConfiguration.loadConfiguration(playerFile);
     if (!playerFile.exists()) {
-      InputStream s = plugin.getResource("playerPermissions.yml");
-      playerCfg.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(s)));
       try {
-        playerCfg.save(playerFile);
+        YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("playerPermissions.yml"))).save(playerFile);
       } catch (IOException e) {
         plugin.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> unable to save player permissions", ChatColor.YELLOW));
       }
@@ -57,10 +53,8 @@ public class PermissionsModule implements Module, Listener {
     groupFile = new File(moduleDataFolder, "groups.yml");
     groupCfg = YamlConfiguration.loadConfiguration(groupFile);
     if (!groupFile.exists()) {
-      InputStream s = plugin.getResource("groupPermissions.yml");
-      groupCfg.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(s)));
       try {
-        groupCfg.save(groupFile);
+        YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("groupPermissions.yml"))).save(groupFile);
       } catch (IOException e) {
         plugin.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> unable to save group permissions", ChatColor.YELLOW));
       }
@@ -95,8 +89,8 @@ public class PermissionsModule implements Module, Listener {
   }
 
   @Override
-  public List<String> onTabComplete(TabCompleteEvent ev) {
-    return null;
+  public List<String[]> getCommands() {
+    return new ArrayList<>();
   }
 
   public void loadPlayerPermissions(UUID u) {

@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.*;
-import org.bukkit.event.server.TabCompleteEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
@@ -26,10 +26,10 @@ public class MorpheusModule implements Module, Listener {
 
   public static final String NAME = "Morpheus";
 
-  public static final String CFGKEY_Percentage = "modules.morpheus.percentage";
-  public static final String CFGKEY_EnterBedMessage = "modules.morpheus.enterBedMessage";
-  public static final String CFGKEY_LeaveBedMessage = "modules.morpheus.leaveBedMessage";
-  public static final String CFGKEY_SleepSuccessMessage = "modules.morpheus.sleepSuccessMessage";
+  public static final String CFGKEY_Percentage = "modules.Morpheus.percentage";
+  public static final String CFGKEY_EnterBedMessage = "modules.Morpheus.enterBedMessage";
+  public static final String CFGKEY_LeaveBedMessage = "modules.Morpheus.leaveBedMessage";
+  public static final String CFGKEY_SleepSuccessMessage = "modules.Morpheus.sleepSuccessMessage";
 
   public static final String PERM_MorpheusAdmin = "jrk.morpheus.admin";
   public static final String PERM_MorpheusBypass = "jrk.morpheus.bypass";
@@ -48,6 +48,7 @@ public class MorpheusModule implements Module, Listener {
   public boolean load(Plugin plugin, File moduleDataFolder) {
     leaveBedSuppression = Instant.now().minusSeconds(60);
     plugin.getServer().getPluginManager().registerEvents(this, plugin);
+
     ready = true;
     return true;
   }
@@ -70,7 +71,7 @@ public class MorpheusModule implements Module, Listener {
     if (ev.getBedEnterResult() != PlayerBedEnterEvent.BedEnterResult.OK) return;
     double percentage = sleepingPercentage(ev.getPlayer().getWorld(), true);
     String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
-            ev.getPlayer().getDisplayName(), ""+Math.floor(percentage)+"%");
+            ev.getPlayer().getName(), ""+Math.floor(percentage)+"%");
     Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
     if (percentage >= Plugin.INSTANCE.getConfig().getDouble(CFGKEY_Percentage)) {
       wakeUpTask = Plugin.INSTANCE.getServer().getScheduler().runTaskLater(Plugin.INSTANCE, () -> {
@@ -88,7 +89,7 @@ public class MorpheusModule implements Module, Listener {
     if (wakeUpTask != null && percentage < Plugin.INSTANCE.getConfig().getDouble(CFGKEY_Percentage)) wakeUpTask.cancel();
     if (Duration.between(Instant.now(), leaveBedSuppression).isNegative()) {
       String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_LeaveBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
-              ev.getPlayer().getDisplayName(), ""+Math.floor(percentage)+"%");
+              ev.getPlayer().getName(), ""+Math.floor(percentage)+"%");
       Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
     }
   }
@@ -106,17 +107,14 @@ public class MorpheusModule implements Module, Listener {
   }
 
   @Override
-  public List<String> onTabComplete(TabCompleteEvent ev) {
-      List<String> commands = new ArrayList<>();
-      if (!(ev.getSender() instanceof Player) || ev.getSender().hasPermission(PERM_MorpheusAdmin)) {
-        commands.add("/morpheus bypass true <player>");
-        commands.add("/morpheus bypass false <player>");
-        commands.add("/morpheus enterBedMessage <$1:name,$2:pct>");
-        commands.add("/morpheus leaveBedMessage <$1:name,$2:pct>");
-        commands.add("/morpheus percentage 50.0");
-        commands.add("/morpheus sleepSuccessMessage <$1:name,$2:pct>");
-      }
-
+  public List<String[]> getCommands() {
+      List<String[]> commands = new ArrayList<>();
+      commands.add(new String[]{"/morpheus","bypass","true","<player>"});
+      commands.add(new String[]{"/morpheus","bypass","false","<player>"});
+      commands.add(new String[]{"/morpheus","enterBedMessage","<$1:name,$2:pct>"});
+      commands.add(new String[]{"/morpheus","leaveBedMessage","<$1:name,$2:pct>"});
+      commands.add(new String[]{"/morpheus","percentage","50.0"});
+      commands.add(new String[]{"/morpheus","sleepSuccessMessage","<$1:name,$2:pct>"});
       return commands;
   }
 

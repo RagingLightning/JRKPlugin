@@ -1,15 +1,15 @@
 modules:
-  permissions:
+  Permissions:
     enabled: true
     dependencies: []
-  morpheus:
+  Morpheus:
     enabled: true
     dependencies:
-      - permissions
+      - Permissions
     percentage: 50.0
     enterBedMessage: $1 hat sich ins Bett gelegt ($2)
     leaveBedMessage: $1 ist aufgestanden ($2)
     sleepSuccessMessage: Der Schlaf tat gut, auf ein neues!
-  colors:
+  Colors:
     enabled: true
     dependencies: []

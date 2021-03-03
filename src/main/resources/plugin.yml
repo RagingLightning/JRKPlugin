@@ -16,15 +16,23 @@ commands:
     usage: /morpheus <option> <value>
     description: Einstellungen des Morpheus-Moduls verändern
     permission: jrk.morpheus.admin
+  colors:
+    usage: /colors <option> <value>
+    description: Einstellungen des Colors-Moduls verändern
+    permission: jrk.colors.admin
 permissions:
   jrk.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen am JRK-Plugin vorzunehmen.
     default: op
     children:
       jrk.morpheus.admin: true
+      jrk.colors.admin: true
   jrk.morpheus.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen am Morpheus-Modul vorzunehmen.
     default: op
   jrk.morpheus.bypass:
     description: Der Spieler wird bei der Schlaf-Vote-Funktion ignoriert.
+    default: op
+  jrk.colors.admin:
+    description: Gibt dem Spieler die Rechte, Einstellungen am Morpheus-Modul vorzunehmen.
     default: op
