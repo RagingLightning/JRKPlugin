@@ -24,7 +24,6 @@ commands:
 permissions:
   jrk.gp:
     description: Gibt dem Spieler die Rechte, GP Commands zu nutzen
-    default: true
   jrk.gp.*:
     description: Gibt dem Spieler die Rechte, alle GP Commands zu nutzen
     default: true
@@ -34,18 +33,17 @@ permissions:
   jrk.gp.tps:
     description: Gibt dem Spieler die Rechte, den GP Command tps zu nutzen
     default: true
+    children:
+      bukkit.command.tps: true
   jrk.admin:
-    description: Gibt dem Spieler die Rechte, Einstellungen am JRK-Plugin vorzunehmen.
+    description: Gibt dem Spieler die Rechte, Einstellungen an allen Modulen des JRK-Plugins vorzunehmen.
     default: op
     children:
       jrk.morpheus.admin: true
       jrk.colors.admin: true
   jrk.morpheus.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen am Morpheus-Modul vorzunehmen.
-    default: op
   jrk.morpheus.bypass:
     description: Der Spieler wird bei der Schlaf-Vote-Funktion ignoriert.
-    default: op
   jrk.colors.admin:
-    description: Gibt dem Spieler die Rechte, Einstellungen am Morpheus-Modul vorzunehmen.
-    default: op
+    description: Gibt dem Spieler die Rechte, Einstellungen am Colors-Modul vorzunehmen.

@@ -33,7 +33,7 @@ public class Plugin extends JavaPlugin implements Listener {
   public static Plugin INSTANCE;
 
   private final List<String> gpModules = new ArrayList<String>(){{
-
+    add("TPS");
   }};
 
   private final List<String> modules = new ArrayList<String>(){{
@@ -319,20 +319,20 @@ public class Plugin extends JavaPlugin implements Listener {
         commands.add(new String[]{"/jrkadmin","disable","<module>"});
         commands.add(new String[]{"/jrkadmin","permissions","list","<player>"});
         commands.add(new String[]{"/jrkadmin","permissions","having","<permission>"});
-        commands.add(new String[]{"/jrkadmin","admin","<module>","<player","true"});
-        commands.add(new String[]{"/jrkadmin","admin","<module>","<player","false"});
-        commands.add(new String[]{"/jrkadmin","gp","<gpmodule>","<player","true"});
-        commands.add(new String[]{"/jrkadmin","gp","<gpmodule>","<player","false"});
+        commands.add(new String[]{"/jrkadmin","admin","<module>","<player>","true"});
+        commands.add(new String[]{"/jrkadmin","admin","<module>","<player>","false"});
+        commands.add(new String[]{"/jrkadmin","gp","<gpmodule>","<player>","true"});
+        commands.add(new String[]{"/jrkadmin","gp","<gpmodule>","<player>","false"});
       }
     } else if (ev.getBuffer().startsWith("/jrk")) {
       if (ev.getSender() instanceof ConsoleCommandSender || ev.getSender().hasPermission(PERM_GPCommand)) {
         if(ev.getSender() instanceof ConsoleCommandSender || ev.getSender().hasPermission(PERM_GP_TPSCommand)) commands.add(new String[]{"/jrk","tps"});
       }
-    }
-
-    for (String module : modules) {
-      if (moduleStatus(module)!=1 || !ev.getBuffer().startsWith("/" + module.toLowerCase())) continue;
-      commands.addAll(getModule(module).getCommands());
+    } else {
+      for (String module : modules) {
+        if (moduleStatus(module) != 1 || !ev.getBuffer().startsWith("/" + module.toLowerCase())) continue;
+        commands.addAll(getModule(module).getCommands());
+      }
     }
 
     String[] bufferSegments = ev.getBuffer().split(" ");
