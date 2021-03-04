@@ -3,6 +3,7 @@ package de.r13g.jrkniedersachsen.plugin.modules;
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.util.Log;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -98,7 +99,7 @@ public class MorpheusModule implements Module, Listener {
     int total = 0;
     int sleeping = enter?1:-1;
     for (Player p : w.getPlayers()) {
-      if (!p.hasPermission(PERM_MorpheusBypass)) {
+      if (!p.hasPermission(PERM_MorpheusBypass) && p.getGameMode() != GameMode.SPECTATOR) {
         total++;
         if (p.isSleeping()) sleeping++;
       }
