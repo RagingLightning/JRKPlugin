@@ -14,6 +14,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
@@ -70,7 +71,14 @@ public class MorpheusModule implements Module, Listener {
   public void onPlayerBedEnter(PlayerBedEnterEvent ev) {
     if (ev.getPlayer().hasPermission(PERM_MorpheusBypass)) return;
     if (ev.getBedEnterResult() != PlayerBedEnterEvent.BedEnterResult.OK) return;
-    double percentage = sleepingPercentage(ev.getPlayer().getWorld(), true);
+    Plugin.INSTANCE.getServer().getScheduler().runTaskLater(Plugin.INSTANCE, () -> {
+      double percentage = sleepingPercentage(ev.getPlayer().getWorld());
+      checkAndDoNightSkip(percentage, ev.getPlayer().getWorld());
+      String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
+              ev.getPlayer().getName(), ""+(int)Math.floor(percentage)+"%");
+      Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
+    }, 10);
+    /*double percentage = sleepingPercentage(ev.getPlayer().getWorld(), true);
     String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
             ev.getPlayer().getName(), ""+Math.floor(percentage)+"%");
     Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
@@ -80,31 +88,58 @@ public class MorpheusModule implements Module, Listener {
         Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage));
         ev.getPlayer().getWorld().setTime(0);
       },6*20);
-    }
+    }*/
   }
 
   @EventHandler
   public void onPlayerBedLeave(PlayerBedLeaveEvent ev) {
     if (ev.getPlayer().hasPermission(PERM_MorpheusBypass)) return;
-    double percentage = sleepingPercentage(ev.getPlayer().getWorld(), false);
+    if (Duration.between(Instant.now(), leaveBedSuppression).isNegative()) {
+      Plugin.INSTANCE.getServer().getScheduler().runTaskLater(Plugin.INSTANCE, () -> {
+        double percentage = sleepingPercentage(ev.getPlayer().getWorld());
+        checkAndDoNightSkip(percentage, ev.getPlayer().getWorld());
+        String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_LeaveBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
+                ev.getPlayer().getName(), ""+(int)Math.floor(percentage)+"%");
+        Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
+      }, 10);
+    }
+    /*double percentage = sleepingPercentage(ev.getPlayer().getWorld(), false);
     if (wakeUpTask != null && percentage < Plugin.INSTANCE.getConfig().getDouble(CFGKEY_Percentage)) wakeUpTask.cancel();
     if (Duration.between(Instant.now(), leaveBedSuppression).isNegative()) {
       String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_LeaveBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
               ev.getPlayer().getName(), ""+Math.floor(percentage)+"%");
       Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
+    }*/
+  }
+
+  @EventHandler
+  public void onPlayerQuit(PlayerQuitEvent ev) {
+    checkAndDoNightSkip(sleepingPercentage(ev.getPlayer().getWorld()),ev.getPlayer().getWorld());
+  }
+
+  private void checkAndDoNightSkip(double pct, World w) {
+    if (pct >= Plugin.INSTANCE.getConfig().getDouble(CFGKEY_Percentage)) {
+      wakeUpTask = Plugin.INSTANCE.getServer().getScheduler().runTaskLater(Plugin.INSTANCE, () -> {
+        leaveBedSuppression = Instant.now().plusSeconds(60);
+        Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage));
+        w.setTime(0);
+        wakeUpTask = null;
+      },4*20);
+    } else if (wakeUpTask != null) {
+      wakeUpTask.cancel();
+      wakeUpTask = null;
     }
   }
 
-  private double sleepingPercentage(World w, boolean enter) {
-    int total = 0;
-    int sleeping = enter?1:-1;
+  private double sleepingPercentage(World w) {
+    double total = 0, sleeping = 0;
     for (Player p : w.getPlayers()) {
       if (!p.hasPermission(PERM_MorpheusBypass) && p.getGameMode() != GameMode.SPECTATOR) {
-        total++;
-        if (p.isSleeping()) sleeping++;
+        total += 1;
+        if (p.isSleeping()) sleeping += 1;
       }
     }
-    return 100.0 * sleeping / total;
+    return (sleeping/total) * 100;
   }
 
   @Override
