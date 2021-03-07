@@ -1,7 +1,7 @@
 package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
-import de.r13g.jrkniedersachsen.plugin.util.Log;
+import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -76,7 +76,8 @@ public class MorpheusModule implements Module, Listener {
       checkAndDoNightSkip(percentage, ev.getPlayer().getWorld());
       String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
               ev.getPlayer().getName(), ""+(int)Math.floor(percentage)+"%");
-      Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
+      ev.getPlayer().getWorld().getPlayers().forEach(p -> p.sendMessage(ChatColor.GOLD + message));
+      //Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
     }, 10);
     /*double percentage = sleepingPercentage(ev.getPlayer().getWorld(), true);
     String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
@@ -100,7 +101,8 @@ public class MorpheusModule implements Module, Listener {
         checkAndDoNightSkip(percentage, ev.getPlayer().getWorld());
         String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_LeaveBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
                 ev.getPlayer().getName(), ""+(int)Math.floor(percentage)+"%");
-        Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
+        ev.getPlayer().getWorld().getPlayers().forEach(p -> p.sendMessage(ChatColor.GOLD + message));
+        //Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
       }, 10);
     }
     /*double percentage = sleepingPercentage(ev.getPlayer().getWorld(), false);
@@ -121,8 +123,10 @@ public class MorpheusModule implements Module, Listener {
     if (pct >= Plugin.INSTANCE.getConfig().getDouble(CFGKEY_Percentage)) {
       wakeUpTask = Plugin.INSTANCE.getServer().getScheduler().runTaskLater(Plugin.INSTANCE, () -> {
         leaveBedSuppression = Instant.now().plusSeconds(60);
-        Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage));
+        w.getPlayers().forEach(p -> p.sendMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage)));
+        //Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage));
         w.setTime(0);
+        w.setClearWeatherDuration(5*60);
         wakeUpTask = null;
       },4*20);
     } else if (wakeUpTask != null) {
@@ -168,21 +172,21 @@ public class MorpheusModule implements Module, Listener {
                 p = Plugin.INSTANCE.getServer().getPlayerExact(args[2]);
               } else return false;
               if (p == null) {
-                sender.sendMessage(Log.logLine(NAME, "Der Spieler konnte nicht gefunden werden", ChatColor.YELLOW));
+                sender.sendMessage(Util.logLine(NAME, "Der Spieler konnte nicht gefunden werden", ChatColor.YELLOW));
                 return true;
               }
               if (!(args[1].equals("true") || args[1].equals("false"))) return false;
                 pm.playerAttachment(p.getUniqueId()).setPermission(PERM_MorpheusBypass, args[1].equals("true"));
                 if (p.hasPermission(PERM_MorpheusBypass)) {
-                  p.sendMessage(Log.logLine(NAME, "Du wirst ignoriert, " + sender.getName() + " wollte es so"));
-                  sender.sendMessage(Log.logLine(NAME, p.getDisplayName() + " wird ignoriert."));
+                  p.sendMessage(Util.logLine(NAME, "Du wirst ignoriert, " + sender.getName() + " wollte es so"));
+                  sender.sendMessage(Util.logLine(NAME, p.getDisplayName() + " wird ignoriert."));
                 } else {
-                  p.sendMessage(Log.logLine(NAME, "Du wirst berücksichtigt, " + sender.getName() + " wollte es so"));
-                  sender.sendMessage(Log.logLine(NAME, p.getDisplayName() + " wird berücksichtigt"));
+                  p.sendMessage(Util.logLine(NAME, "Du wirst berücksichtigt, " + sender.getName() + " wollte es so"));
+                  sender.sendMessage(Util.logLine(NAME, p.getDisplayName() + " wird berücksichtigt"));
                 }
             }
           } else {
-            sender.sendMessage(Log.logLine(NAME, "Für diesen Command wird das '" + PermissionsModule.NAME + "' Modul benötigt, welches aktuell nicht aktiviert ist."));
+            sender.sendMessage(Util.logLine(NAME, "Für diesen Command wird das '" + PermissionsModule.NAME + "' Modul benötigt, welches aktuell nicht aktiviert ist."));
           }
           return true;
         case "percentage":
@@ -192,7 +196,7 @@ public class MorpheusModule implements Module, Listener {
               try {
                 d = Double.parseDouble(args[1]);
               } catch (NumberFormatException e) {
-                sender.sendMessage(Log.logLine(NAME, "Keine valide Prozantangebe (0-100)", ChatColor.YELLOW));
+                sender.sendMessage(Util.logLine(NAME, "Keine valide Prozantangebe (0-100)", ChatColor.YELLOW));
                 return true;
               }
               Plugin.INSTANCE.getConfig().set(CFGKEY_Percentage,d);
@@ -211,12 +215,12 @@ public class MorpheusModule implements Module, Listener {
                 s.append(args[i]).append(" ");
               }
               Plugin.INSTANCE.getConfig().set(CFGKEY_EnterBedMessage, s.toString().trim());
-              sender.sendMessage(Log.logLine(NAME, "Neue Nachricht übernommen, Vorschau:"));
+              sender.sendMessage(Util.logLine(NAME, "Neue Nachricht übernommen, Vorschau:"));
               sender.sendMessage(ChatColor.GOLD + String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
                       sender.getName(), "33.0%"));
             }
           } else {
-            sender.sendMessage(Log.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
+            sender.sendMessage(Util.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
           }
           return true;
         case "leaveBedMessage":
@@ -235,7 +239,7 @@ public class MorpheusModule implements Module, Listener {
                       sender.getName(), "33.0%"));
             }
           } else {
-            sender.sendMessage(Log.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
+            sender.sendMessage(Util.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
           }
           return true;
         case "sleepSuccessMessage":
@@ -253,7 +257,7 @@ public class MorpheusModule implements Module, Listener {
               sender.sendMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage));
             }
           } else {
-            sender.sendMessage(Log.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
+            sender.sendMessage(Util.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
           }
           return true;
     }

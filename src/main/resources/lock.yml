@@ -1,0 +1,27 @@
+ownerNoPw: true
+passwordTimeout: 200
+maxLockCount: 5
+messages:
+  blockHasLock: Dieser Block ist verschlossen
+  blockHasNoLock: Dieder Block ist nicht verschlossen
+  wrongPassword: Falsches Passwort
+  passwordExpired: Passwort abgelaufen, bei Bedarf mit /lock pw neu eingeben
+  notLockOwner: Du bist nicht der Besitzer des Schlosses
+  lockAdded: Schloss angebracht
+  lockRemoved: Schloss entfernt
+  invalidType: An diesen Block kann kein Schloss angebracht werden
+  lockData: Schloss von $1 mit Passwort $2
+  tooManyLocks: Du hast die maximale Anzahl an Locks verbaut
+  noCreatePermission: Du hast nicht die Berechtigung, Locks anzubringen
+tiles:
+ - OAK_DOOR
+ - SPRUCE_DOOR
+ - BIRCH_DOOR
+ - WARPED_DOOR
+ - CRIMSON_DOOR
+ - DARK_OAK_DOOR
+ - JUNGLE_DOOR
+ - ACACIA_DOOR
+ - CHEST
+ - TRAPPED_CHEST
+players: {}

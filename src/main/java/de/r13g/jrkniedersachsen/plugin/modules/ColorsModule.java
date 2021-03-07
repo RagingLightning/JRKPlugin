@@ -1,7 +1,7 @@
 package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
-import de.r13g.jrkniedersachsen.plugin.util.Log;
+import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -44,7 +44,7 @@ public class ColorsModule implements Module, Listener {
       try {
         YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("colors.yml"))).save(configFile);
       } catch (IOException e) {
-        plugin.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> unable to save config", ChatColor.YELLOW));
+        plugin.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> unable to save config", ChatColor.YELLOW));
       }
     }
     config = YamlConfiguration.loadConfiguration(configFile);
@@ -71,7 +71,7 @@ public class ColorsModule implements Module, Listener {
     try {
       config.save(configFile);
     } catch (IOException e) {
-      Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> unable to save config", ChatColor.YELLOW));
+      Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> unable to save config", ChatColor.YELLOW));
     }
     HandlerList.unregisterAll(this);
     for (String k : teams.keySet()){
@@ -100,34 +100,34 @@ public class ColorsModule implements Module, Listener {
     if (args.length > 0){
       if (args[0].equals("teams")) {
         if (args.length == 1) { //colors teams -- List all teams with color
-          sender.sendMessage(Log.logLine(NAME, "Liste der verfügbaren Teams: "));
+          sender.sendMessage(Util.logLine(NAME, "Liste der verfügbaren Teams: "));
           for (String s : getTeamOverwiew()) {
-            sender.sendMessage(Log.logLine(NAME, " - " + s));
+            sender.sendMessage(Util.logLine(NAME, " - " + s));
           }
         } else if (args.length == 2) { //colors teams <team> -- List all players in team Team
           if (!teams.containsKey(args[1])) {
-            sender.sendMessage(Log.logLine(NAME, "Das Team " + args[1] + " existiert nicht!",ChatColor.YELLOW)); return true;
+            sender.sendMessage(Util.logLine(NAME, "Das Team " + args[1] + " existiert nicht!",ChatColor.YELLOW)); return true;
           }
-          sender.sendMessage(Log.logLine(NAME, "Spieler in Team " + teams.get(args[1]).getColor() + args[1] + ChatColor.RESET + ":"));
+          sender.sendMessage(Util.logLine(NAME, "Spieler in Team " + teams.get(args[1]).getColor() + args[1] + ChatColor.RESET + ":"));
           for (String s : getPlayerOverwiew(args[1])) {
-            sender.sendMessage(Log.logLine(NAME, " - " + s));
+            sender.sendMessage(Util.logLine(NAME, " - " + s));
           }
         } else if (args.length == 3) { //colors teams <team> <color> -- Set team color
           if (colors.contains(args[2])) {
-            sender.sendMessage(Log.logLine(NAME, args[2] + " ist keine valide Farbe!",ChatColor.YELLOW)); return true;
+            sender.sendMessage(Util.logLine(NAME, args[2] + " ist keine valide Farbe!",ChatColor.YELLOW)); return true;
           }
           if (!teams.containsKey(args[1])) {
             Team t = Plugin.INSTANCE.getServer().getScoreboardManager().getMainScoreboard().registerNewTeam(args[1]);
             teams.put(args[1], t);
             config.set("teams." + args[1], args[2]);
-            sender.sendMessage(Log.logLine(NAME, "Neues Team " + ChatColor.valueOf(args[2]) + args[1] + ChatColor.RESET + " erstellt"));
+            sender.sendMessage(Util.logLine(NAME, "Neues Team " + ChatColor.valueOf(args[2]) + args[1] + ChatColor.RESET + " erstellt"));
           }
           teams.get(args[1]).setColor(ChatColor.valueOf(args[2]));
           for (String name : teams.get(args[1]).getEntries()){
             Player p = Plugin.INSTANCE.getServer().getPlayerExact(name);
             if (p != null) applyPlayerColors(p);
           }
-          sender.sendMessage(Log.logLine(NAME, "Team " + args[1] + " ist jetzt " + ChatColor.valueOf(args[2]) + args[2]));
+          sender.sendMessage(Util.logLine(NAME, "Team " + args[1] + " ist jetzt " + ChatColor.valueOf(args[2]) + args[2]));
         } else return false;
         return true;
       } else if (args[0].equals("players")) {
@@ -139,10 +139,10 @@ public class ColorsModule implements Module, Listener {
           String id = p.getUniqueId().toString();
           if (config.contains("players." + id)) {
             String team = config.getString("players." + id);
-            sender.sendMessage(Log.logLine(NAME, "Spieler " + args[1] + " ist im Team " + teams.get(team).getColor() + team));
+            sender.sendMessage(Util.logLine(NAME, "Spieler " + args[1] + " ist im Team " + teams.get(team).getColor() + team));
           } else {
             String team = config.getString("default");
-            sender.sendMessage(Log.logLine(NAME, "Spieler " + args[1] + " ist keinem Team zugewiesen, er ist im Standardteam " + teams.get(team).getColor() + team));
+            sender.sendMessage(Util.logLine(NAME, "Spieler " + args[1] + " ist keinem Team zugewiesen, er ist im Standardteam " + teams.get(team).getColor() + team));
           }
         } else if (args.length == 3) { //colors players <player> <team> -- assign player to team
           if (args[2].equals("default")) {
@@ -153,39 +153,39 @@ public class ColorsModule implements Module, Listener {
             ConfigurationSection cOld = config.getConfigurationSection("players");
             ConfigurationSection cNew = config.createSection("players");
             cOld.getValues(false).forEach((k,v) -> {if (!k.equals(id)) cNew.set(k, v);});
-            sender.sendMessage(Log.logLine(NAME, args[1] + " ist jetzt keinem Team mehr zugewiesen"));
+            sender.sendMessage(Util.logLine(NAME, args[1] + " ist jetzt keinem Team mehr zugewiesen"));
             if (p instanceof Player) {
               applyPlayerColors((Player) p);
               if (p != sender)
-                ((Player) p).sendMessage(Log.logLine(NAME, "Du bist jetzt keinem Team mehr zugewiesen"));
+                ((Player) p).sendMessage(Util.logLine(NAME, "Du bist jetzt keinem Team mehr zugewiesen"));
             }
           }
           if (!teams.containsKey(args[2])) {
-            sender.sendMessage(Log.logLine(NAME, "Das Team " + args[2] + " existiert nicht!", ChatColor.YELLOW)); return true;
+            sender.sendMessage(Util.logLine(NAME, "Das Team " + args[2] + " existiert nicht!", ChatColor.YELLOW)); return true;
           }
           OfflinePlayer p = Plugin.INSTANCE.getServer().getPlayerExact(args[1]);
           if (p == null)
             p = Plugin.INSTANCE.getServer().getOfflinePlayer(args[1]);
           String id = p.getUniqueId().toString();
           config.set("players." + id, args[2]);
-          sender.sendMessage(Log.logLine(NAME, args[1] + " ist jetzt im Team " + teams.get(args[2]).getColor() + args[2]));
+          sender.sendMessage(Util.logLine(NAME, args[1] + " ist jetzt im Team " + teams.get(args[2]).getColor() + args[2]));
           if (p instanceof Player) {
             applyPlayerColors((Player) p);
             if (p != sender)
-              ((Player) p).sendMessage(Log.logLine(NAME, "Du bist jetzt im Team " + teams.get(args[2]).getColor() + args[2]));
+              ((Player) p).sendMessage(Util.logLine(NAME, "Du bist jetzt im Team " + teams.get(args[2]).getColor() + args[2]));
           }
         } else return false;
         return true;
       } else if (args[0].equals("default")) {
         if (args.length == 1) { //colors default
           String team = config.getString("default");
-          sender.sendMessage(Log.logLine(NAME, "Das Standardteam ist " + teams.get(team).getColor() + team));
+          sender.sendMessage(Util.logLine(NAME, "Das Standardteam ist " + teams.get(team).getColor() + team));
         } else if (args.length == 2) { //colors default <team>
           if (!teams.containsKey(args[1])) {
-            sender.sendMessage(Log.logLine(NAME, "Das Team " + args[1] + " existiert nicht!", ChatColor.YELLOW)); return true;
+            sender.sendMessage(Util.logLine(NAME, "Das Team " + args[1] + " existiert nicht!", ChatColor.YELLOW)); return true;
           }
           config.set("default", args[1]);
-          sender.sendMessage(Log.logLine(NAME, "Das Team " + teams.get(args[1]).getColor() + args[1] + ChatColor.RESET + " ist jetzt das Standardteam"));
+          sender.sendMessage(Util.logLine(NAME, "Das Team " + teams.get(args[1]).getColor() + args[1] + ChatColor.RESET + " ist jetzt das Standardteam"));
           for (Player p : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
             if (!config.contains("players." + p.getUniqueId()))
               applyPlayerColors(p);
@@ -201,7 +201,7 @@ public class ColorsModule implements Module, Listener {
     if (teams.isEmpty()) {
       for (String key : config.getConfigurationSection("teams").getKeys(false)) {
         String color = config.getString("teams." + key);
-        Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "Creating Team " + key + " with color " + color));
+        Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "Creating Team " + key + " with color " + color));
         Team team = Plugin.INSTANCE.getServer().getScoreboardManager().getMainScoreboard().registerNewTeam(key);
         team.setColor(ChatColor.valueOf(color));
         teams.put(key, team);

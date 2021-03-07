@@ -21,6 +21,8 @@ commands:
     usage: /colors <option> <value>
     description: Einstellungen des Colors-Moduls verändern
     permission: jrk.colors.admin
+  lock:
+    usage: /lock <option> <password>
 permissions:
   jrk.gp:
     description: Gibt dem Spieler die Rechte, GP Commands zu nutzen
@@ -41,9 +43,17 @@ permissions:
     children:
       jrk.morpheus.admin: true
       jrk.colors.admin: true
+      jrk.lock.admin: true
   jrk.morpheus.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen am Morpheus-Modul vorzunehmen.
   jrk.morpheus.bypass:
     description: Der Spieler wird bei der Schlaf-Vote-Funktion ignoriert.
   jrk.colors.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen am Colors-Modul vorzunehmen.
+  jrk.lock.create:
+    description: Gibt dem Spieler die Rechte, Locks zu erstellen.
+    default: true
+  jrk.lock.bypass:
+    description: Der Spieler kann alle Locks umgehen
+  jrk.lock.admin:
+    description: Gibt dem Spieler die Rechte, alle Locks aufzulisten

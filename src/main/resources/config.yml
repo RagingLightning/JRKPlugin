@@ -13,3 +13,6 @@ modules:
   Colors:
     enabled: true
     dependencies: []
+  Lock:
+    enabled: true
+    dependencies: []

@@ -1,7 +1,7 @@
 package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
-import de.r13g.jrkniedersachsen.plugin.util.Log;
+import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,6 @@ import org.bukkit.permissions.PermissionAttachment;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
@@ -46,7 +45,7 @@ public class PermissionsModule implements Module, Listener {
       try {
         YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("playerPermissions.yml"))).save(playerFile);
       } catch (IOException e) {
-        plugin.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> unable to save player permissions", ChatColor.YELLOW));
+        plugin.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> unable to save player permissions", ChatColor.YELLOW));
       }
     }
 
@@ -56,7 +55,7 @@ public class PermissionsModule implements Module, Listener {
       try {
         YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("groupPermissions.yml"))).save(groupFile);
       } catch (IOException e) {
-        plugin.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> unable to save group permissions", ChatColor.YELLOW));
+        plugin.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> unable to save group permissions", ChatColor.YELLOW));
       }
     }
     ready = true;
@@ -118,7 +117,7 @@ public class PermissionsModule implements Module, Listener {
     try {
       playerCfg.save(playerFile);
     } catch (IOException e) {
-      Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Log.logLine(NAME, "<WARN> Unable to save player permissions", ChatColor.YELLOW));
+      Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> Unable to save player permissions", ChatColor.YELLOW));
     }
   }
 
