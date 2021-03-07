@@ -203,6 +203,14 @@ public class Plugin extends JavaPlugin implements Listener {
             sender.sendMessage(" - " + p.getDisplayName());
           }
           return true;
+        } else if (args[1].equals("give") && args.length==4) {
+          PermissionsModule pm = (PermissionsModule) getModule(PermissionsModule.NAME);
+          pm.playerAttachment(getServer().getPlayerExact(args[2]).getUniqueId()).setPermission(args[3], true);
+          return true;
+        } else if (args[1].equals("take") && args.length==4) {
+          PermissionsModule pm = (PermissionsModule) getModule(PermissionsModule.NAME);
+          pm.playerAttachment(getServer().getPlayerExact(args[2]).getUniqueId()).setPermission(args[3], false);
+          return true;
         }
       } else if (args[0].equals("admin")) {
         if (args.length == 1) return false;

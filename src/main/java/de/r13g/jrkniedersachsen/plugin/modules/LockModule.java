@@ -126,6 +126,7 @@ public class LockModule implements Module, Listener {
     commands.add(new String[]{"/"+NAME.toLowerCase(),"add","<password>"});
     commands.add(new String[]{"/"+NAME.toLowerCase(),"remove"});
     commands.add(new String[]{"/"+NAME.toLowerCase(),"get"});
+    commands.add(new String[]{"/"+NAME.toLowerCase(),"list"});
     return commands;
   }
 
@@ -151,7 +152,7 @@ public class LockModule implements Module, Listener {
         sender.sendMessage(ChatColor.ITALIC + config.getString(CFGKEY_InvalidTypeMessage));
         return true;
       }
-      if (config.getStringList(CFGKEY_PlayerLocks + "." + ((Player) sender).getUniqueId()).size() >= config.getInt(CFGKEY_MaxLockCount)) {
+      if (config.getConfigurationSection(CFGKEY_PlayerLocks + "." + ((Player) sender).getUniqueId()).getKeys(false).size() >= config.getInt(CFGKEY_MaxLockCount)) {
         sender.sendMessage(ChatColor.ITALIC + config.getString(CFGKEY_TooManyLocksMessage));
         return true;
       }
@@ -192,7 +193,8 @@ public class LockModule implements Module, Listener {
       OfflinePlayer p = (OfflinePlayer) sender;
       if (sender.hasPermission(PERM_LockAdmin) && args.length == 2) p = Plugin.INSTANCE.getServer().getOfflinePlayer(args[1]);
       if (config.isSet(CFGKEY_PlayerLocks + "." + p.getUniqueId()))
-        config.getStringList(CFGKEY_PlayerLocks + "." + p.getUniqueId()).forEach(i -> sender.sendMessage(ChatColor.ITALIC + " - " + i));
+        for (String k : config.getConfigurationSection(CFGKEY_PlayerLocks + "." + p.getUniqueId()).getKeys(false))
+        sender.sendMessage(ChatColor.ITALIC + " - " + k + " / " + config.getString(CFGKEY_PlayerLocks + "." + p.getUniqueId() + "." + k));
       return true;
     }
     return false;
@@ -252,6 +254,12 @@ public class LockModule implements Module, Listener {
 
     String lock = "[W]" + loc.getWorld().getName() + "[X]" + loc.getBlockX() + "[Y]" + loc.getBlockY() + "[Z]" + loc.getBlockZ();
     config.set(CFGKEY_PlayerLocks + "." + ownerUid + "." + lock, password);
+
+    try {
+      config.save(configFile);
+    } catch (IOException e) {
+      Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> unable to save new lock"));
+    }
   }
 
   private void removeLock(Block b) {
@@ -277,5 +285,11 @@ public class LockModule implements Module, Listener {
 
     String lock = "[W]" + loc.getWorld().getName() + "[X]" + loc.getBlockX() + "[Y]" + loc.getBlockY() + "[Z]" + loc.getBlockZ();
     config.set(CFGKEY_PlayerLocks + "." + ownerUid + "." + lock, null);
+
+    try {
+      config.save(configFile);
+    } catch (IOException e) {
+      Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> unable to deletion of lock"));
+    }
   }
 }
