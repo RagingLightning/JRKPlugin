@@ -281,6 +281,8 @@ public class Plugin extends JavaPlugin implements Listener {
         commands.add(new String[]{"/jrkadmin","disable","<module>"});
         commands.add(new String[]{"/jrkadmin","permissions","list","<player>"});
         commands.add(new String[]{"/jrkadmin","permissions","having","<permission>"});
+        commands.add(new String[]{"/jrkadmin","permissions","give","<player>","<permission>"});
+        commands.add(new String[]{"/jrkadmin","permissions","take","<player>","<permission>"});
         commands.add(new String[]{"/jrkadmin","admin","<module>","<player>","true"});
         commands.add(new String[]{"/jrkadmin","admin","<module>","<player>","false"});
         commands.add(new String[]{"/jrkadmin","gp","<gpmodule>","<player>","true"});
