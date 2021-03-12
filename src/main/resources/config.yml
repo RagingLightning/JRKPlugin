@@ -16,3 +16,6 @@ modules:
   Lock:
     enabled: true
     dependencies: []
+  Vanish:
+    enabled: true
+    dependencies: []

@@ -32,7 +32,7 @@ public class Plugin extends JavaPlugin implements Listener {
   }};
 
   private final List<String> modules = new ArrayList<String>(){{
-    add(PermissionsModule.NAME);add(MorpheusModule.NAME);add(ColorsModule.NAME);add(LockModule.NAME);
+    add(PermissionsModule.NAME);add(MorpheusModule.NAME);add(ColorsModule.NAME);add(LockModule.NAME);add(VanishModule.NAME);
   }};
 
   private HashMap<String, Module> loadedModules = new HashMap<>();
@@ -84,6 +84,9 @@ public class Plugin extends JavaPlugin implements Listener {
           break;
         case LockModule.NAME:
           loadedModules.put(module, new LockModule());
+          break;
+        case VanishModule.NAME:
+          loadedModules.put(module, new VanishModule());
           break;
         default:
           return false;

@@ -23,6 +23,9 @@ commands:
     permission: jrk.colors.admin
   lock:
     usage: /lock <option> <password>
+  vanish:
+    usage: /vanish
+    permission: jrk.vanish
 permissions:
   jrk.gp:
     description: Gibt dem Spieler die Rechte, GP Commands zu nutzen
@@ -57,3 +60,5 @@ permissions:
     description: Der Spieler kann alle Locks umgehen
   jrk.lock.admin:
     description: Gibt dem Spieler die Rechte, alle Locks aufzulisten
+  jrk.vanish:
+    description: Gibt dem Spieler die Rechte, unsichtbar zu werden
