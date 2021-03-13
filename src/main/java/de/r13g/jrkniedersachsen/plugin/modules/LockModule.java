@@ -2,10 +2,7 @@ package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Bisected;
@@ -64,6 +61,8 @@ public class LockModule implements Module, Listener {
   private static final String PERM_BypassLock = "jrk.lock.bypass";
   private static final String PERM_CreateLock = "jrk.lock.create";
   private static final String PERM_LockAdmin = "jrk.lock.admin";
+
+  //TODO: Bypass tied to creative
 
   private File configFile;
   private FileConfiguration config;
@@ -180,6 +179,7 @@ public class LockModule implements Module, Listener {
       }
       removeLock(b);
       sender.sendMessage(ChatColor.ITALIC + config.getString(CFGKEY_LockRemovedMessage));
+      return true;
     }
     if (args[0].equals("get")) {
       if (!b.hasMetadata(MDAT_LockPassword) && !b.hasMetadata(MDAT_LockOwner)) {
@@ -221,8 +221,8 @@ public class LockModule implements Module, Listener {
     if (ev.hasItem() && ev.getItem().getItemMeta().hasDisplayName() && ev.getClickedBlock().getMetadata(MDAT_LockPassword).get(0).asString().equals(ev.getItem().getItemMeta().getDisplayName())) return;
     // Player has correct password in Buffer
     if (passwordCache.containsKey(ev.getPlayer().getUniqueId()) && ev.getClickedBlock().getMetadata(MDAT_LockPassword).get(0).asString().equals(passwordCache.get(ev.getPlayer().getUniqueId()))) return;
-    // Player can bypass all locks
-    if (ev.getPlayer().hasPermission(PERM_BypassLock)) return;
+    // Player can bypass all locks and is in creative mode
+    if (ev.getPlayer().hasPermission(PERM_BypassLock) && ev.getPlayer().getGameMode() == GameMode.CREATIVE) return;
     ev.getPlayer().sendMessage(ChatColor.ITALIC + config.getString(CFGKEY_BlockHasLockMessage));
     ev.setCancelled(true);
   }
