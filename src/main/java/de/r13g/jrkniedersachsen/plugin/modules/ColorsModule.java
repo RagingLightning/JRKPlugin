@@ -202,7 +202,14 @@ public class ColorsModule implements Module, Listener {
       for (String key : config.getConfigurationSection("teams").getKeys(false)) {
         String color = config.getString("teams." + key);
         Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "Creating Team " + key + " with color " + color));
-        Team team = Plugin.INSTANCE.getServer().getScoreboardManager().getMainScoreboard().registerNewTeam(key);
+        Team team;
+        try {
+          team = Plugin.INSTANCE.getServer().getScoreboardManager().getMainScoreboard().registerNewTeam(key);
+        } catch (IllegalArgumentException e) {
+          Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> Could not register Team, was it not unregistered last time?", ChatColor.YELLOW));
+          Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> Using already registred one", ChatColor.YELLOW));
+          team = Plugin.INSTANCE.getServer().getScoreboardManager().getMainScoreboard().getTeam(key);
+        }
         team.setColor(ChatColor.valueOf(color));
         teams.put(key, team);
       }

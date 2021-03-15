@@ -35,11 +35,15 @@ permissions:
     children:
       jrk.gp: true
       jrk.gp.tps: true
+      jrk.gp.afk: true
   jrk.gp.tps:
     description: Gibt dem Spieler die Rechte, den GP Command tps zu nutzen
     default: true
     children:
       bukkit.command.tps: true
+  jrk.gp.afk:
+    description: Gibt dem Spieler die Rechte, den GP Command afk zu nutzen
+    default: true
   jrk.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen an allen Modulen des JRK-Plugins vorzunehmen.
     default: op

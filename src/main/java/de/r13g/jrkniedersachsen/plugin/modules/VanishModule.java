@@ -59,9 +59,9 @@ public class VanishModule implements Module, Listener {
     }
     HandlerList.unregisterAll(this);
 
-    for (String u : config.getStringList("players")) {
+    /*for (String u : config.getStringList("players")) {
       unvanish(Plugin.INSTANCE.getServer().getPlayer(UUID.fromString(u)));
-    }
+    }*/
 
     return false;
   }
@@ -74,7 +74,7 @@ public class VanishModule implements Module, Listener {
   @Override
   public List<String[]> getCommands() {
     List<String[]> commands = new ArrayList<>();
-    commands.add(new String[]{"/" + NAME.toLowerCase(),"<palyer>"});
+    commands.add(new String[]{"/" + NAME.toLowerCase(),"<player>"});
     return null;
   }
 
@@ -82,10 +82,18 @@ public class VanishModule implements Module, Listener {
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (!(sender instanceof Player)) return true;
     if (args.length == 0) {
-      if (config.getStringList("players").contains(((Player) sender).getUniqueId().toString()))
-        unvanish((Player) sender);
+      if (config.getConfigurationSection("players").getKeys(false).contains(((Player) sender).getUniqueId().toString()))
+        unvanish((Player) sender, config.getBoolean("players." + ((Player) sender).getUniqueId().toString()));
       else
         vanish((Player) sender);
+      return true;
+    } else if (args.length == 1) {
+      Player p = Plugin.INSTANCE.getServer().getPlayerExact(args[0]);
+      if (p != null)
+        if (config.getConfigurationSection("players").getKeys(false).contains(p.getUniqueId().toString()))
+          unvanish(p, config.getBoolean("players." + p.getUniqueId().toString()));
+        else
+          vanish(p);
       return true;
     }
     return false;
@@ -114,16 +122,18 @@ public class VanishModule implements Module, Listener {
       ev.setQuitMessage(null);
   }
 
-  private void unvanish(Player p) {
-    List<String> vanished = config.getStringList("players");
-    vanished.remove(p.getUniqueId().toString());
-    config.set("players", vanished);
+  private void unvanish(Player p, boolean bypassMorpheus) {
+    config.set("players." + p.getUniqueId().toString(), null);
     for (Player o : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
       o.showPlayer(Plugin.INSTANCE, p);
       if (config.getStringList("players").contains(o.getUniqueId().toString()))
         p.hidePlayer(Plugin.INSTANCE, o);
       else
         p.showPlayer(Plugin.INSTANCE, o);
+    }
+    PermissionsModule pm = (PermissionsModule) Plugin.INSTANCE.getModule(PermissionsModule.NAME);
+    if (!bypassMorpheus && pm != null) {
+      pm.playerAttachment(p.getUniqueId()).setPermission(MorpheusModule.PERM_MorpheusBypass, false);
     }
     sendFakeJoin(p);
   }
@@ -137,10 +147,7 @@ public class VanishModule implements Module, Listener {
   }
 
   private void vanish(Player p) {
-    List<String> vanished = config.getStringList("players");
-    if (!vanished.contains(p.getUniqueId().toString()))
-      vanished.add(p.getUniqueId().toString());
-    config.set("players", vanished);
+    config.set("players." + p.getUniqueId().toString(), p.hasPermission(MorpheusModule.PERM_MorpheusBypass));
     for (Player o : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
       p.showPlayer(Plugin.INSTANCE, o);
       if (!config.getStringList("players").contains(o.getUniqueId().toString()))

@@ -19,3 +19,7 @@ modules:
   Vanish:
     enabled: true
     dependencies: []
+  gp:
+    Afk:
+      enabled: true
+      dependencies: []

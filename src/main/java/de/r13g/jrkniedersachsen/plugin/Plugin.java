@@ -1,6 +1,7 @@
 package de.r13g.jrkniedersachsen.plugin;
 
 import de.r13g.jrkniedersachsen.plugin.modules.*;
+import de.r13g.jrkniedersachsen.plugin.modules.gp.AfkModule;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -23,13 +24,14 @@ public class Plugin extends JavaPlugin implements Listener {
   public static final String PERM_JrkAdminCommand = "jrk.admin";
 
   public static final String PERM_GPCommand = "jrk.gp";
-  public static final String PERM_GP_TPSCommand = "jrk.gp.tps";
 
   public static Plugin INSTANCE;
 
   private final List<String> gpModules = new ArrayList<String>(){{
-    add("TPS");
+    add("TPS");add(AfkModule.NAME);
   }};
+
+  private HashMap<String, Module> loadedGpModules = new HashMap<>();
 
   private final List<String> modules = new ArrayList<String>(){{
     add(PermissionsModule.NAME);add(MorpheusModule.NAME);add(ColorsModule.NAME);add(LockModule.NAME);add(VanishModule.NAME);
@@ -56,6 +58,16 @@ public class Plugin extends JavaPlugin implements Listener {
       }
     }
 
+    for (String module : gpModules) {
+      if (getConfig().getBoolean("modules.gp." + module + ".enabled")) {
+        getServer().getConsoleSender().sendMessage(Util.logLine("Main", "GP-Modul '" + module + "' wird geladen..."));
+        if (tryStartModule(module))
+          getServer().getConsoleSender().sendMessage(Util.logLine("Main", "GP-Modul '" + module + "' erfolgreich geladen"));
+        else
+          getServer().getConsoleSender().sendMessage(Util.logLine("Main", "<WARN> GP-Modul '" + module + "' konnte nicht geladen werden", ChatColor.YELLOW));
+      }
+    }
+
     getServer().getConsoleSender().sendMessage(Util.logLine("Main", "Plugin erfolgreich geladen"));
   }
 
@@ -65,8 +77,10 @@ public class Plugin extends JavaPlugin implements Listener {
   }
 
   public int moduleStatus(String module) {
-    if (!loadedModules.containsKey(module)) return -1;
-    return loadedModules.get(module).isReady()?1:0;
+    if (!loadedModules.containsKey(module) && !loadedGpModules.containsKey(module)) return -1;
+    if (loadedModules.containsKey(module))
+      return loadedModules.get(module).isReady()?1:0;
+    return loadedGpModules.get(module).isReady()?1:0;
   }
 
   public boolean tryStartModule(String module) {
@@ -88,6 +102,9 @@ public class Plugin extends JavaPlugin implements Listener {
         case VanishModule.NAME:
           loadedModules.put(module, new VanishModule());
           break;
+        case AfkModule.NAME:
+          loadedGpModules.put(module, new AfkModule());
+          break;
         default:
           return false;
       }
@@ -103,7 +120,15 @@ public class Plugin extends JavaPlugin implements Listener {
         }
       }
     }
-    return loadedModules.get(module).load(this, new File(getDataFolder(), module.toLowerCase()));
+    try {
+      if (loadedModules.containsKey(module))
+        return loadedModules.get(module).load(this, new File(getDataFolder(), module.toLowerCase()));
+      return loadedGpModules.get(module).load(this, new File(getDataFolder(), module.toLowerCase()));
+    } catch (Exception e) {
+      getServer().getConsoleSender().sendMessage(Util.logLine("Main","<ERR> Error while loading module " + module + ": "));
+      e.printStackTrace();
+      return false;
+    }
   }
 
   public boolean tryStopModule(String module) {
@@ -111,6 +136,11 @@ public class Plugin extends JavaPlugin implements Listener {
     if (loadedModules.containsKey(module)) {
       if (loadedModules.get(module).unload()) {
         loadedModules.remove(module);
+        return true;
+      }
+    } else if(loadedGpModules.containsKey(module)) {
+      if(loadedGpModules.get(module).unload()) {
+        loadedGpModules.remove(module);
         return true;
       }
     }
@@ -134,8 +164,9 @@ public class Plugin extends JavaPlugin implements Listener {
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (command.getName().equalsIgnoreCase("jrk")) {
       if (args.length == 0) return false;
-      switch (args[0]){
-        case "tps": if (sender instanceof ConsoleCommandSender || sender.hasPermission(PERM_GP_TPSCommand)) return gpTpsCommand(sender); //TODO: test
+      if (args[0].equals("tps") &&(sender instanceof ConsoleCommandSender || sender.hasPermission(PERM_GPCommand + ".tps"))) return gpTpsCommand(sender); //TODO: test
+      for (String module : loadedGpModules.keySet()) {
+        if (args[0].equals(module.toLowerCase())) return loadedGpModules.get(module).onCommand(sender, command, label, args);
       }
       //TODO: GP-Command
     } else if (command.getName().equalsIgnoreCase("jrkadmin")) {
@@ -146,6 +177,12 @@ public class Plugin extends JavaPlugin implements Listener {
       if (args.length == 0) {
         sender.sendMessage(Util.logLine("Main","Liste der Module (" + ChatColor.GREEN + "enabled " + ChatColor.YELLOW + "disabled " + ChatColor.RED + "errored" + ChatColor.RESET + "):"));
         for (String module : modules) {
+          ChatColor c = ChatColor.GREEN;
+          if (moduleStatus(module)==-1) c = ChatColor.YELLOW;
+          if (moduleStatus(module)==0) c = ChatColor.RED;
+          sender.sendMessage(Util.logLine("Main"," - " + module, c));
+        }
+        for (String module : gpModules) {
           ChatColor c = ChatColor.GREEN;
           if (moduleStatus(module)==-1) c = ChatColor.YELLOW;
           if (moduleStatus(module)==0) c = ChatColor.RED;
@@ -293,10 +330,13 @@ public class Plugin extends JavaPlugin implements Listener {
       }
     } else if (ev.getBuffer().startsWith("/jrk")) {
       if (ev.getSender() instanceof ConsoleCommandSender || ev.getSender().hasPermission(PERM_GPCommand)) {
-        if(ev.getSender() instanceof ConsoleCommandSender || ev.getSender().hasPermission(PERM_GP_TPSCommand)) commands.add(new String[]{"/jrk","tps"});
+        if(ev.getSender() instanceof ConsoleCommandSender || ev.getSender().hasPermission(PERM_GPCommand + ".tps")) commands.add(new String[]{"/jrk","tps"});
+        for (String module : loadedGpModules.keySet()) {
+          if(ev.getSender() instanceof ConsoleCommandSender || ev.getSender().hasPermission(PERM_GPCommand + "." + module.toLowerCase())) commands.addAll(loadedGpModules.get(module).getCommands());
+        }
       }
     } else {
-      for (String module : modules) {
+      for (String module : loadedModules.keySet()) {
         if (moduleStatus(module) != 1 || !ev.getBuffer().startsWith("/" + module.toLowerCase())) continue;
         commands.addAll(getModule(module).getCommands());
       }
