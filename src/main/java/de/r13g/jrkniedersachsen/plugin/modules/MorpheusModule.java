@@ -126,7 +126,11 @@ public class MorpheusModule implements Module, Listener {
         w.getPlayers().forEach(p -> p.sendMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage)));
         //Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage));
         w.setTime(0);
-        w.setClearWeatherDuration((int)(Math.random()*(168000-12000)+12000));
+        if (!w.isClearWeather()) {
+          int weatherTicks = (int) (Math.random() * (168000 - 12000) + 12000);
+          //Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<DEBG> Clear Weather Ticks: " + weatherTicks));
+          w.setClearWeatherDuration(weatherTicks);
+        }
         wakeUpTask = null;
       },4*20);
     } else if (wakeUpTask != null) {

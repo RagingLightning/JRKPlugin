@@ -26,6 +26,9 @@ commands:
   vanish:
     usage: /vanish
     permission: jrk.vanish
+  invsee:
+    usage: /invsee <"player"|"chest"> <player>
+    permission: jrk.invsee
 permissions:
   jrk.gp:
     description: Gibt dem Spieler die Rechte, GP Commands zu nutzen
@@ -66,3 +69,5 @@ permissions:
     description: Gibt dem Spieler die Rechte, alle Locks aufzulisten
   jrk.vanish:
     description: Gibt dem Spieler die Rechte, unsichtbar zu werden
+  jrk.invsee:
+    description: Gibd dem Spieler die Rechte, Inventare anderer Spieler zu sehen

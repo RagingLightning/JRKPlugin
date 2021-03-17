@@ -2,6 +2,7 @@ package de.r13g.jrkniedersachsen.plugin.modules.gp;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.modules.Module;
+import de.r13g.jrkniedersachsen.plugin.modules.MorpheusModule;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -36,7 +37,8 @@ public class AfkModule implements Module, Listener { //TODO: Test
       for (Player p : plugin.getServer().getOnlinePlayers()) {
         if (toBeAfk.contains(p.getUniqueId()) && !isAfk.contains(p.getUniqueId())) {
           isAfk.add(p.getUniqueId());
-          plugin.getServer().broadcastMessage(ChatColor.YELLOW + p.getName() + " ist AFK.");
+          if (!p.hasPermission(MorpheusModule.PERM_MorpheusBypass))
+            plugin.getServer().broadcastMessage(ChatColor.YELLOW + p.getName() + " ist AFK.");
           p.setDisplayName(ChatColor.ITALIC + "[A]" + ChatColor.RESET + p.getDisplayName());
           p.setPlayerListName(p.getDisplayName());
         }
@@ -72,7 +74,8 @@ public class AfkModule implements Module, Listener { //TODO: Test
     if (args.length != 1 || !(sender instanceof Player)) return false;
     toBeAfk.add(((Player) sender).getUniqueId());
     isAfk.add(((Player) sender).getUniqueId());
-    Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.YELLOW + sender.getName() + " ist AFK.");
+    if (!sender.hasPermission(MorpheusModule.PERM_MorpheusBypass))
+      Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.YELLOW + sender.getName() + " ist AFK.");
     ((Player) sender).setDisplayName(ChatColor.ITALIC + "[A]" + ChatColor.RESET + ((Player) sender).getDisplayName());
     ((Player) sender).setPlayerListName(((Player) sender).getDisplayName());
     return true;
@@ -83,8 +86,10 @@ public class AfkModule implements Module, Listener { //TODO: Test
     if (toBeAfk.contains(ev.getPlayer().getUniqueId())) toBeAfk.remove(ev.getPlayer().getUniqueId());
     if (isAfk.contains(ev.getPlayer().getUniqueId())) {
       isAfk.remove(ev.getPlayer().getUniqueId());
-      Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.YELLOW + ev.getPlayer().getName() + " ist nicht mehr AFK.");
+      if (!ev.getPlayer().hasPermission(MorpheusModule.PERM_MorpheusBypass))
+        Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.YELLOW + ev.getPlayer().getName() + " ist nicht mehr AFK.");
       ev.getPlayer().setDisplayName(ev.getPlayer().getDisplayName().replaceAll(ChatColor.ITALIC + "\\[A]" + ChatColor.RESET,""));
+      ev.getPlayer().setPlayerListName(ev.getPlayer().getDisplayName());
     }
   }
 
@@ -93,8 +98,10 @@ public class AfkModule implements Module, Listener { //TODO: Test
     if (toBeAfk.contains(ev.getPlayer().getUniqueId())) toBeAfk.remove(ev.getPlayer().getUniqueId());
     if (isAfk.contains(ev.getPlayer().getUniqueId())) {
       isAfk.remove(ev.getPlayer().getUniqueId());
-      Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.YELLOW + ev.getPlayer().getName() + " ist nicht mehr AFK.");
+      if (!ev.getPlayer().hasPermission(MorpheusModule.PERM_MorpheusBypass))
+        Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.YELLOW + ev.getPlayer().getName() + " ist nicht mehr AFK.");
       ev.getPlayer().setDisplayName(ev.getPlayer().getDisplayName().replaceAll(ChatColor.ITALIC + "\\[A]" + ChatColor.RESET,""));
+      ev.getPlayer().setPlayerListName(ev.getPlayer().getDisplayName());
     }
   }
 }
