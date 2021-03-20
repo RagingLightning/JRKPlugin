@@ -187,7 +187,7 @@ public class ColorsModule implements Module, Listener {
           config.set("default", args[1]);
           sender.sendMessage(Util.logLine(NAME, "Das Team " + teams.get(args[1]).getColor() + args[1] + ChatColor.RESET + " ist jetzt das Standardteam"));
           for (Player p : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
-            if (!config.contains("players." + p.getUniqueId()))
+            if (!config.contains("players." + p.getUniqueId().toString()))
               applyPlayerColors(p);
           }
         } else return false;
@@ -247,7 +247,7 @@ public class ColorsModule implements Module, Listener {
   }
 
   private void applyPlayerColors(Player p) {
-    String team = config.contains("players." + p.getUniqueId()) ? config.getString("players." + p.getUniqueId()) : config.getString("default");
+    String team = config.contains("players." + p.getUniqueId().toString()) ? config.getString("players." + p.getUniqueId().toString()) : config.getString("default");
     teams.get(team).addEntry(p.getName());
     p.setDisplayName(teams.get(team).getColor() + p.getName() + ChatColor.RESET);
   }

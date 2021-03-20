@@ -1,6 +1,6 @@
 name: JRKPlugin
 description: Multifunktionsplugin des JRK-Servers
-version: 1.0.0
+version: 1.5.0
 author: RagingLightning
 main: de.r13g.jrkniedersachsen.plugin.Plugin
 api-version: 1.16
@@ -39,6 +39,7 @@ permissions:
       jrk.gp: true
       jrk.gp.tps: true
       jrk.gp.afk: true
+      jrk.gp.pigseat: true
   jrk.gp.tps:
     description: Gibt dem Spieler die Rechte, den GP Command tps zu nutzen
     default: true
@@ -46,6 +47,9 @@ permissions:
       bukkit.command.tps: true
   jrk.gp.afk:
     description: Gibt dem Spieler die Rechte, den GP Command afk zu nutzen
+    default: true
+  jrk.gp.pigseat:
+    description: Gibt dem Spieler die Rechte, den GP Command pigseat zu nutzen
     default: true
   jrk.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen an allen Modulen des JRK-Plugins vorzunehmen.

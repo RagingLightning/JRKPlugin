@@ -13,12 +13,14 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class VanishModule implements Module, Listener {
 
@@ -61,7 +63,7 @@ public class VanishModule implements Module, Listener {
       unvanish(Plugin.INSTANCE.getServer().getPlayer(UUID.fromString(u)));
     }*/
 
-    return false;
+    return true;
   }
 
   @Override
@@ -99,12 +101,15 @@ public class VanishModule implements Module, Listener {
 
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent ev) {
-    List<String> vanished = config.getStringList("players");
+    Set<String> vanished = config.getConfigurationSection("players").getKeys(false);
     if (vanished.contains(ev.getPlayer().getUniqueId().toString())) {
       ev.setJoinMessage(null);
+      ev.getPlayer().sendMessage(Util.logLine(NAME, "Du bist unsichtbar"));
       for (Player p : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
         if (!vanished.contains(p.getUniqueId().toString()))
           p.hidePlayer(Plugin.INSTANCE,ev.getPlayer());
+        if (p.isOp())
+          p.sendMessage(Util.logLine(NAME, ev.getPlayer().getDisplayName() + " ist dem Spiel beigetreten, ist aber vanished."));
       }
     } else {
       for (Player p : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
@@ -116,15 +121,29 @@ public class VanishModule implements Module, Listener {
 
   @EventHandler
   public void onPlayerQuit(PlayerQuitEvent ev) {
-    if (config.getStringList("players").contains(ev.getPlayer().getUniqueId()))
+    if (config.getConfigurationSection("players").getKeys(false).contains(ev.getPlayer().getUniqueId().toString())) {
       ev.setQuitMessage(null);
+      for (Player p : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
+        if (p.isOp())
+          p.sendMessage(Util.logLine(NAME, ev.getPlayer().getDisplayName() + " hat das Spiel verlassen, ist aber vanished."));
+      }
+    }
   }
+
+  /*@EventHandler
+  public void onServerListPing(ServerListPingEvent ev) {
+    while (ev.iterator().hasNext()) {
+      Player p = ev.iterator().next();
+      if (config.getConfigurationSection("players").getKeys(false).contains(p.getUniqueId().toString()))
+        ev.iterator().remove();
+    }
+  }*/
 
   private void unvanish(Player p, boolean bypassMorpheus) {
     config.set("players." + p.getUniqueId().toString(), null);
     for (Player o : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
       o.showPlayer(Plugin.INSTANCE, p);
-      if (config.getStringList("players").contains(o.getUniqueId().toString()))
+      if (config.getConfigurationSection("players").getKeys(false).contains(o.getUniqueId().toString()))
         p.hidePlayer(Plugin.INSTANCE, o);
       else
         p.showPlayer(Plugin.INSTANCE, o);
@@ -133,6 +152,7 @@ public class VanishModule implements Module, Listener {
     if (!bypassMorpheus && pm != null) {
       pm.playerAttachment(p.getUniqueId()).setPermission(MorpheusModule.PERM_MorpheusBypass, false);
     }
+    p.sendMessage(Util.logLine(NAME, "Du bist nicht mehr unsichtbar"));
     sendFakeJoin(p);
   }
 
@@ -148,11 +168,16 @@ public class VanishModule implements Module, Listener {
     config.set("players." + p.getUniqueId().toString(), p.hasPermission(MorpheusModule.PERM_MorpheusBypass));
     for (Player o : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
       p.showPlayer(Plugin.INSTANCE, o);
-      if (!config.getStringList("players").contains(o.getUniqueId().toString()))
+      if (!config.getConfigurationSection("players").getKeys(false).contains(o.getUniqueId().toString()))
         o.hidePlayer(Plugin.INSTANCE, p);
       else
         o.showPlayer(Plugin.INSTANCE, p);
     }
+    PermissionsModule pm = (PermissionsModule) Plugin.INSTANCE.getModule(PermissionsModule.NAME);
+    if (pm != null) {
+      pm.playerAttachment(p.getUniqueId()).setPermission(MorpheusModule.PERM_MorpheusBypass, true);
+    }
+    p.sendMessage(Util.logLine(NAME, "Du bist jetzt unsichtbar"));
     sendFakeQuit(p);
   }
 

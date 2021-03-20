@@ -19,7 +19,13 @@ modules:
   Vanish:
     enabled: true
     dependencies: []
+  InvSee:
+    enabled: true
+    dependencies: []
   gp:
     Afk:
+      enabled: true
+      dependencies: []
+    PigSeat:
       enabled: true
       dependencies: []

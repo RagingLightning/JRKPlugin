@@ -2,6 +2,7 @@ package de.r13g.jrkniedersachsen.plugin;
 
 import de.r13g.jrkniedersachsen.plugin.modules.*;
 import de.r13g.jrkniedersachsen.plugin.modules.gp.AfkModule;
+import de.r13g.jrkniedersachsen.plugin.modules.gp.PigSeatModule;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -28,13 +29,14 @@ public class Plugin extends JavaPlugin implements Listener {
   public static Plugin INSTANCE;
 
   private final List<String> gpModules = new ArrayList<String>(){{
-    add("TPS");add(AfkModule.NAME);
+    add("TPS");add(AfkModule.NAME);add(PigSeatModule.NAME);
   }};
 
   private HashMap<String, Module> loadedGpModules = new HashMap<>();
 
   private final List<String> modules = new ArrayList<String>(){{
     add(PermissionsModule.NAME);add(MorpheusModule.NAME);add(ColorsModule.NAME);add(LockModule.NAME);add(VanishModule.NAME);
+    add(InvSeeModule.NAME);
   }};
 
   private HashMap<String, Module> loadedModules = new HashMap<>();
@@ -102,8 +104,14 @@ public class Plugin extends JavaPlugin implements Listener {
         case VanishModule.NAME:
           loadedModules.put(module, new VanishModule());
           break;
+        case InvSeeModule.NAME:
+          loadedModules.put(module, new InvSeeModule());
+          break;
         case AfkModule.NAME:
           loadedGpModules.put(module, new AfkModule());
+          break;
+        case PigSeatModule.NAME:
+          loadedGpModules.put(module, new PigSeatModule());
           break;
         default:
           return false;

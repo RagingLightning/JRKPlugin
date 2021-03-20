@@ -1,12 +1,10 @@
 package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
-import org.bukkit.OfflinePlayer;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,18 +39,15 @@ public class InvSeeModule implements Module {
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-    if (args.length == 1 && sender instanceof Player) {
-      Player p = Plugin.INSTANCE.getServer().getPlayerExact(args[0]);
-      if (p != null) {
-        ((Player) sender).openInventory(p.getInventory());
-      }
-    } else if (args.length == 2 && sender instanceof Player) {
-      Player p = Plugin.INSTANCE.getServer().getPlayerExact(args[0]);
+    if (args.length == 2 && sender instanceof Player) {
+      Player p = Plugin.INSTANCE.getServer().getPlayerExact(args[1]);
       if (p != null) {
         if (args[0].equals("player")) {
           ((Player) sender).openInventory(p.getInventory());
+          return true;
         } else if (args[0].equals("chest")) {
           ((Player) sender).openInventory(p.getEnderChest());
+          return true;
         }
       }
     }

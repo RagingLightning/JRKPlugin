@@ -156,7 +156,7 @@ public class LockModule implements Module, Listener {
         sender.sendMessage(ChatColor.ITALIC + config.getString(CFGKEY_InvalidTypeMessage));
         return true;
       }
-      if (config.getConfigurationSection(CFGKEY_PlayerLocks + "." + ((Player) sender).getUniqueId()).getKeys(false).size() >= config.getInt(CFGKEY_MaxLockCount)) {
+      if (config.getConfigurationSection(CFGKEY_PlayerLocks + "." + ((Player) sender).getUniqueId().toString()).getKeys(false).size() >= config.getInt(CFGKEY_MaxLockCount)) {
         sender.sendMessage(ChatColor.ITALIC + config.getString(CFGKEY_TooManyLocksMessage));
         return true;
       }
