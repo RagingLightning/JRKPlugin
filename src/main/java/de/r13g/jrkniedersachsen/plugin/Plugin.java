@@ -174,7 +174,11 @@ public class Plugin extends JavaPlugin implements Listener {
       if (args.length == 0) return false;
       if (args[0].equals("tps") &&(sender instanceof ConsoleCommandSender || sender.hasPermission(PERM_GPCommand + ".tps"))) return gpTpsCommand(sender); //TODO: test
       for (String module : loadedGpModules.keySet()) {
-        if (args[0].equals(module.toLowerCase())) return loadedGpModules.get(module).onCommand(sender, command, label, args);
+        if (args[0].equals(module.toLowerCase())) {
+          if(!loadedGpModules.get(module).onCommand(sender, command, label, args))
+            loadedGpModules.get(module).getHelpText(sender).forEach(sender::sendMessage);
+          return true;
+        }
       }
       //TODO: GP-Command
     } else if (command.getName().equalsIgnoreCase("jrkadmin")) {
@@ -308,7 +312,9 @@ public class Plugin extends JavaPlugin implements Listener {
     } else {
       for (String module : modules) {
         if (moduleStatus(module)!=1 || !command.getName().equalsIgnoreCase(module)) continue;
-        return getModule(module).onCommand(sender, command, label, args);
+        if (!getModule(module).onCommand(sender, command, label, args))
+          loadedModules.get(module).getHelpText(sender).forEach(sender::sendMessage);
+        return true;
       }
     }
     return false;

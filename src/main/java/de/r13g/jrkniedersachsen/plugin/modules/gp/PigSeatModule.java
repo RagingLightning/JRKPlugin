@@ -16,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
@@ -88,6 +89,15 @@ public class PigSeatModule implements Module {
     List<String[]> commands = new ArrayList<>();
     commands.add(new String[]{"/jrk",NAME.toLowerCase()});
     return commands;
+  }
+
+  @Override
+  public List<String> getHelpText(Permissible p) {
+    List<String> text = new ArrayList<>();
+    text.add("--- " + NAME + "-Modul: Hilfe ---");
+    text.add("");
+    text.add("/jrk pigseat - Fügt der aktuell fokussierten Treppe einen Sitz hinzu, oder entfernt einen bestehenden");
+    return text;
   }
 
   @Override

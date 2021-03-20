@@ -13,6 +13,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachment;
 
 import java.io.File;
@@ -89,6 +90,11 @@ public class PermissionsModule implements Module, Listener {
 
   @Override
   public List<String[]> getCommands() {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public List<String> getHelpText(Permissible p) {
     return new ArrayList<>();
   }
 

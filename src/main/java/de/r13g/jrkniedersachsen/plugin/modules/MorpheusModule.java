@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
@@ -160,6 +161,16 @@ public class MorpheusModule implements Module, Listener {
       commands.add(new String[]{"/morpheus","percentage","50.0"});
       commands.add(new String[]{"/morpheus","sleepSuccessMessage","<$1:name,$2:pct>"});
       return commands;
+  }
+
+  @Override
+  public List<String> getHelpText(Permissible p) {
+    List<String> text = new ArrayList<>();
+    text.add("--- " + NAME + "-Modul: Hilfe ---");
+    text.add("");
+    text.add("/morpheus bypass <true|false> - Ändert, ob der Ausführende vom System ignoriert wird");
+    text.add("/morpheus bypass <true|false> <player> - Ändert, ob der Spieler vom System ignoriert wird");
+    return text;
   }
 
   @Override

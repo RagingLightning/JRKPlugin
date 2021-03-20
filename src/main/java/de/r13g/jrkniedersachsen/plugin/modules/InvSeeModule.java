@@ -5,6 +5,7 @@ import de.r13g.jrkniedersachsen.plugin.Plugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,6 +36,16 @@ public class InvSeeModule implements Module {
     commands.add(new String[]{"/invsee","chest","<player>"});
     commands.add(new String[]{"/invsee","player","<player>"});
     return commands;
+  }
+
+  @Override
+  public List<String> getHelpText(Permissible p) {
+    List<String> text = new ArrayList<>();
+    text.add("--- " + NAME + "-Modul: Hilfe ---");
+    text.add("");
+    text.add("/invsee chest <player> - Öffnet die Enderkiste des Spielers");
+    text.add("/invsee player <player> - Öffnet das Spielerinventar des Spielers");
+    return text;
   }
 
   @Override

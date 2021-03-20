@@ -12,6 +12,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
@@ -67,6 +68,15 @@ public class AfkModule implements Module, Listener { //TODO: Test
   @Override
   public List<String[]> getCommands() {
     return new ArrayList<String[]>(){{add(new String[]{"/jrk","afk"});}};
+  }
+
+  @Override
+  public List<String> getHelpText(Permissible p) {
+    List<String> text = new ArrayList<>();
+    text.add("--- " + NAME + "-Modul: Hilfe ---");
+    text.add("");
+    text.add("/jrk afk - Wechselt den AFK-Status");
+    return text;
   }
 
   @Override

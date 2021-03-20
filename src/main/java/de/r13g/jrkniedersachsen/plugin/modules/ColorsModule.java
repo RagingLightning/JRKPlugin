@@ -14,6 +14,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.scoreboard.Team;
 
 import java.io.File;
@@ -93,6 +95,21 @@ public class ColorsModule implements Module, Listener {
     commands.add(new String[]{"/colors","players","<player>","default"});
     commands.add(new String[]{"/colors","default","<team>"});
     return commands;
+  }
+
+  @Override
+  public List<String> getHelpText(Permissible p) {
+    List<String> text = new ArrayList<>();
+    text.add("--- " + NAME + "-Modul: Hilfe ---");
+    text.add("");
+    text.add("/colors teams - Listet alle Teams auf");
+    text.add("/colors teams <team> - Listet alle Spieler im Team auf");
+    text.add("/colors teams <team> <color> - Erstellt ein neues Team oder ändert die Farbe");
+    text.add("/colors players <player> - Zeigt die Teamzuweisung eines Spielers an");
+    text.add("/colors players <player> <team|\"default\"> - Ändert die Teamzuweisung eines Spielers");
+    text.add("/colors default - Zeigt das Standardteam an");
+    text.add("/colors default <team> - Ändert das Standardteam");
+    return text;
   }
 
   @Override

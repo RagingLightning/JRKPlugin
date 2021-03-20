@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.bukkit.permissions.Permissible;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,6 +77,16 @@ public class VanishModule implements Module, Listener {
     List<String[]> commands = new ArrayList<>();
     commands.add(new String[]{"/" + NAME.toLowerCase(),"<player>"});
     return null;
+  }
+
+  @Override
+  public List<String> getHelpText(Permissible p) {
+    List<String> text = new ArrayList<>();
+    text.add("--- " + NAME + "-Modul: Hilfe ---");
+    text.add("");
+    text.add("/vanish - Ändert den eigenen Status");
+    text.add("/vanish <player> - Ändert den Status des Spielers");
+    return text;
   }
 
   @Override

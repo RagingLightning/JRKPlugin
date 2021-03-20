@@ -1,6 +1,7 @@
 package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
+import de.r13g.jrkniedersachsen.plugin.modules.gp.AfkModule;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -23,6 +24,7 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.permissions.Permissible;
 
 import java.io.File;
 import java.io.IOException;
@@ -132,6 +134,27 @@ public class LockModule implements Module, Listener {
     commands.add(new String[]{"/"+NAME.toLowerCase(),"get"});
     commands.add(new String[]{"/"+NAME.toLowerCase(),"list"});
     return commands;
+  }
+
+  @Override
+  public List<String> getHelpText(Permissible p) {
+    List<String> text = new ArrayList<>();
+    text.add("--- " + NAME + "-Modul: Hilfe ---");
+    text.add("");
+    text.add("/lock pw <password> - Setzt ein temporäres Passwort mit dem Schlösser geöffnet werden sollen");
+    text.add("[Ein Item, das das Passwort als Namen trägt, funktioniert auch als Schlüssel]");
+    if (p.hasPermission(PERM_BypassLock))
+      text.add("  - Du hast die Berechtigung, alle Schlösser ohne Passwort zu öffnen");
+    if (p.hasPermission(PERM_CreateLock))
+      text.add("/lock add <password> - Bringt ein Schloss am aktuell fokussierten Block an");
+    text.add("/lock remove - Entfernt das Schloss am aktuell fokussierten Block");
+    text.add("/lock get - Gibt Informationen über ein eigenes Schloss am aktuell fokussierten Block aus");
+    if (p.hasPermission(PERM_LockAdmin))
+      text.add("  - als Admin können auch die Daten von Schlössern anderer Spieler angezeigt werden");
+    text.add("/lock list - Listet alle eigenen Schlösser auf");
+    if (p.hasPermission(PERM_LockAdmin))
+      text.add("  - als Admin können auch die Schlösser anderer Spieler aufgelistet werden");
+    return text;
   }
 
   @Override
