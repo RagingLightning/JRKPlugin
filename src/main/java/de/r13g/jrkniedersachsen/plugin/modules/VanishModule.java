@@ -154,6 +154,8 @@ public class VanishModule implements Module, Listener {
     config.set("players." + p.getUniqueId().toString(), null);
     for (Player o : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
       o.showPlayer(Plugin.INSTANCE, p);
+      if (o.isOp())
+        o.sendMessage(Util.logLine(NAME, p.getDisplayName() + " ist sichtbar geworden"));
       if (config.getConfigurationSection("players").getKeys(false).contains(o.getUniqueId().toString()))
         p.hidePlayer(Plugin.INSTANCE, o);
       else
@@ -179,6 +181,8 @@ public class VanishModule implements Module, Listener {
     config.set("players." + p.getUniqueId().toString(), p.hasPermission(MorpheusModule.PERM_MorpheusBypass));
     for (Player o : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
       p.showPlayer(Plugin.INSTANCE, o);
+      if (o.isOp())
+        o.sendMessage(Util.logLine(NAME, p.getDisplayName() + " ist unsichtbar geworden"));
       if (!config.getConfigurationSection("players").getKeys(false).contains(o.getUniqueId().toString()))
         o.hidePlayer(Plugin.INSTANCE, p);
       else
