@@ -1,6 +1,6 @@
 name: JRKPlugin
 description: Multifunktionsplugin des JRK-Servers
-version: 1.5.0
+version: 1.6.0
 author: RagingLightning
 main: de.r13g.jrkniedersachsen.plugin.Plugin
 api-version: 1.16
@@ -29,12 +29,15 @@ commands:
   invsee:
     usage: /invsee <"player"|"chest"> <player>
     permission: jrk.invsee
+  tempban:
+    usage: /tempban [<options>]
+    permission: jrk.tempban
 permissions:
   jrk.gp:
     description: Gibt dem Spieler die Rechte, GP Commands zu nutzen
   jrk.gp.*:
     description: Gibt dem Spieler die Rechte, alle GP Commands zu nutzen
-    default: true
+    default: false
     children:
       jrk.gp: true
       jrk.gp.tps: true
@@ -50,7 +53,7 @@ permissions:
     default: true
   jrk.gp.pigseat:
     description: Gibt dem Spieler die Rechte, den GP Command pigseat zu nutzen
-    default: true
+    default: op
   jrk.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen an allen Modulen des JRK-Plugins vorzunehmen.
     default: op
@@ -74,4 +77,6 @@ permissions:
   jrk.vanish:
     description: Gibt dem Spieler die Rechte, unsichtbar zu werden
   jrk.invsee:
-    description: Gibd dem Spieler die Rechte, Inventare anderer Spieler zu sehen
+    description: Gibt dem Spieler die Rechte, Inventare anderer Spieler zu sehen
+  jrk.tempban:
+    description: Gibt dem Spieler die Rechte, Spieler zu Temp-Bannen

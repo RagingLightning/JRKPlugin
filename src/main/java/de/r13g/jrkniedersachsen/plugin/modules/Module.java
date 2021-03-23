@@ -21,8 +21,8 @@ public interface Module {
 
   List<String[]> getCommands();
 
-  boolean onCommand(CommandSender sender, Command command, String label, String[] args);
-
   List<String> getHelpText(Permissible p);
+
+  boolean onCommand(CommandSender sender, Command command, String label, String[] args);
 
 }

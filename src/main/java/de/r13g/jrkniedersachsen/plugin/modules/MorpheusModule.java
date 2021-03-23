@@ -29,10 +29,10 @@ public class MorpheusModule implements Module, Listener {
 
   public static final String NAME = "Morpheus";
 
-  public static final String CFGKEY_Percentage = "modules.Morpheus.percentage";
-  public static final String CFGKEY_EnterBedMessage = "modules.Morpheus.enterBedMessage";
-  public static final String CFGKEY_LeaveBedMessage = "modules.Morpheus.leaveBedMessage";
-  public static final String CFGKEY_SleepSuccessMessage = "modules.Morpheus.sleepSuccessMessage";
+  private static final String CFGKEY_Percentage = "modules.Morpheus.percentage";
+  private static final String CFGKEY_EnterBedMessage = "modules.Morpheus.enterBedMessage";
+  private static final String CFGKEY_LeaveBedMessage = "modules.Morpheus.leaveBedMessage";
+  private static final String CFGKEY_SleepSuccessMessage = "modules.Morpheus.sleepSuccessMessage";
 
   public static final String PERM_MorpheusAdmin = "jrk.morpheus.admin";
   public static final String PERM_MorpheusBypass = "jrk.morpheus.bypass";

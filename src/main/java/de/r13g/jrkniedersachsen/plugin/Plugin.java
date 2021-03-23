@@ -174,7 +174,7 @@ public class Plugin extends JavaPlugin implements Listener {
       if (args.length == 0) return false;
       if (args[0].equals("tps") &&(sender instanceof ConsoleCommandSender || sender.hasPermission(PERM_GPCommand + ".tps"))) return gpTpsCommand(sender); //TODO: test
       for (String module : loadedGpModules.keySet()) {
-        if (args[0].equals(module.toLowerCase())) {
+        if (args[0].equals(module.toLowerCase()) && sender.hasPermission(PERM_GPCommand + "." + args[0])) {
           if(!loadedGpModules.get(module).onCommand(sender, command, label, args))
             loadedGpModules.get(module).getHelpText(sender).forEach(sender::sendMessage);
           return true;
@@ -211,6 +211,13 @@ public class Plugin extends JavaPlugin implements Listener {
             sender.sendMessage(Util.logLine("Main", "Modul " + args[1] + " erfolgreich aktiviert."));
           else
             sender.sendMessage(Util.logLine("Main", "Modul " + args[1] + " konnte nicht aktiviert werden."));
+        } else if (gpModules.contains(args[1])) {
+          getConfig().set("modules.gp." + args[1] + ".enabled", true);
+          saveConfig();
+          if(tryStartModule(args[1]))
+            sender.sendMessage(Util.logLine("Main", "Modul GP-" + args[1] + " erfolgreich deaktiviert."));
+          else
+            sender.sendMessage(Util.logLine("Main", "Modul GP-" + args[1] + " konnte nicht deaktiviert werden."));
         } else {
           sender.sendMessage(Util.logLine("Main", "Modul " + args[1] + " existiert nicht."));
         }
@@ -224,6 +231,13 @@ public class Plugin extends JavaPlugin implements Listener {
             sender.sendMessage(Util.logLine("Main", "Modul " + args[1] + " erfolgreich deaktiviert."));
           else
             sender.sendMessage(Util.logLine("Main", "Modul " + args[1] + " konnte nicht deaktiviert werden."));
+        } else if (gpModules.contains(args[1])) {
+          getConfig().set("modules.gp." + args[1] + ".enabled", false);
+          saveConfig();
+          if(tryStopModule(args[1]))
+            sender.sendMessage(Util.logLine("Main", "Modul GP-" + args[1] + " erfolgreich deaktiviert."));
+          else
+            sender.sendMessage(Util.logLine("Main", "Modul GP-" + args[1] + " konnte nicht deaktiviert werden."));
         } else {
           sender.sendMessage(Util.logLine("Main", "Modul " + args[1] + " existiert nicht."));
         }
