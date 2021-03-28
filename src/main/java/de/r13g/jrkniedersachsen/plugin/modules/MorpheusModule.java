@@ -153,14 +153,14 @@ public class MorpheusModule implements Module, Listener {
 
   @Override
   public List<String[]> getCommands() {
-      List<String[]> commands = new ArrayList<>();
-      commands.add(new String[]{"/morpheus","bypass","true","<player>"});
-      commands.add(new String[]{"/morpheus","bypass","false","<player>"});
-      commands.add(new String[]{"/morpheus","enterBedMessage","<$1:name,$2:pct>"});
-      commands.add(new String[]{"/morpheus","leaveBedMessage","<$1:name,$2:pct>"});
-      commands.add(new String[]{"/morpheus","percentage","50.0"});
-      commands.add(new String[]{"/morpheus","sleepSuccessMessage","<$1:name,$2:pct>"});
-      return commands;
+    List<String[]> commands = new ArrayList<>();
+    commands.add(new String[]{"/morpheus","bypass","true","<player>"});
+    commands.add(new String[]{"/morpheus","bypass","false","<player>"});
+    commands.add(new String[]{"/morpheus","enterBedMessage","<$1:name,$2:pct>"});
+    commands.add(new String[]{"/morpheus","leaveBedMessage","<$1:name,$2:pct>"});
+    commands.add(new String[]{"/morpheus","percentage","50.0"});
+    commands.add(new String[]{"/morpheus","sleepSuccessMessage","<$1:name,$2:pct>"});
+    return commands;
   }
 
   @Override
@@ -175,106 +175,107 @@ public class MorpheusModule implements Module, Listener {
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-      switch (args[0]) {
-        case "bypass":
-          if (Plugin.INSTANCE.moduleStatus(PermissionsModule.NAME)==1) {
-            PermissionsModule pm = (PermissionsModule) Plugin.INSTANCE.getModule(PermissionsModule.NAME);
-            if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
-              Player p;
-              if (args.length == 2 && sender instanceof Player) {
-                p = (Player) sender;
-              } else if (args.length == 3) {
-                p = Plugin.INSTANCE.getServer().getPlayerExact(args[2]);
-              } else return false;
-              if (p == null) {
-                sender.sendMessage(Util.logLine(NAME, "Der Spieler konnte nicht gefunden werden", ChatColor.YELLOW));
-                return true;
-              }
-              if (!(args[1].equals("true") || args[1].equals("false"))) return false;
-                pm.playerAttachment(p.getUniqueId()).setPermission(PERM_MorpheusBypass, args[1].equals("true"));
-                if (p.hasPermission(PERM_MorpheusBypass)) {
-                  p.sendMessage(Util.logLine(NAME, "Du wirst ignoriert, " + sender.getName() + " wollte es so"));
-                  sender.sendMessage(Util.logLine(NAME, p.getDisplayName() + " wird ignoriert."));
-                } else {
-                  p.sendMessage(Util.logLine(NAME, "Du wirst berücksichtigt, " + sender.getName() + " wollte es so"));
-                  sender.sendMessage(Util.logLine(NAME, p.getDisplayName() + " wird berücksichtigt"));
-                }
-            }
-          } else {
-            sender.sendMessage(Util.logLine(NAME, "Für diesen Command wird das '" + PermissionsModule.NAME + "' Modul benötigt, welches aktuell nicht aktiviert ist."));
-          }
-          return true;
-        case "percentage":
+    if (args.length==0) return false;
+    switch (args[0]) {
+      case "bypass":
+        if (Plugin.INSTANCE.moduleStatus(PermissionsModule.NAME)==1) {
+          PermissionsModule pm = (PermissionsModule) Plugin.INSTANCE.getModule(PermissionsModule.NAME);
           if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
-            if (args.length == 2) {
-              double d = 50;
-              try {
-                d = Double.parseDouble(args[1]);
-              } catch (NumberFormatException e) {
-                sender.sendMessage(Util.logLine(NAME, "Keine valide Prozantangebe (0-100)", ChatColor.YELLOW));
-                return true;
-              }
-              Plugin.INSTANCE.getConfig().set(CFGKEY_Percentage,d);
+            Player p;
+            if (args.length == 2 && sender instanceof Player) {
+              p = (Player) sender;
+            } else if (args.length == 3) {
+              p = Plugin.INSTANCE.getServer().getPlayerExact(args[2]);
+            } else return false;
+            if (p == null) {
+              sender.sendMessage(Util.logLine(NAME, "Der Spieler konnte nicht gefunden werden", ChatColor.YELLOW));
               return true;
             }
-          }
-          return false;
-        case "enterBedMessage":
-          if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
-            if (args.length == 1) {
-              sender.sendMessage("Fehlende Nachricht");
-              //Plugin.INSTANCE.getConfig().set(CFGKEY_EnterBedMessage,"");
+            if (!(args[1].equals("true") || args[1].equals("false"))) return false;
+            pm.playerAttachment(p.getUniqueId()).setPermission(PERM_MorpheusBypass, args[1].equals("true"));
+            if (p.hasPermission(PERM_MorpheusBypass)) {
+              p.sendMessage(Util.logLine(NAME, "Du wirst ignoriert, " + sender.getName() + " wollte es so"));
+              sender.sendMessage(Util.logLine(NAME, p.getDisplayName() + " wird ignoriert."));
             } else {
-              StringBuilder s = new StringBuilder();
-              for (int i = 1; i < args.length; i++) {
-                s.append(args[i]).append(" ");
-              }
-              Plugin.INSTANCE.getConfig().set(CFGKEY_EnterBedMessage, s.toString().trim());
-              sender.sendMessage(Util.logLine(NAME, "Neue Nachricht übernommen, Vorschau:"));
-              sender.sendMessage(ChatColor.GOLD + String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
-                      sender.getName(), "33.0%"));
+              p.sendMessage(Util.logLine(NAME, "Du wirst berücksichtigt, " + sender.getName() + " wollte es so"));
+              sender.sendMessage(Util.logLine(NAME, p.getDisplayName() + " wird berücksichtigt"));
             }
-          } else {
-            sender.sendMessage(Util.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
           }
-          return true;
-        case "leaveBedMessage":
-          if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
-            if (args.length == 1) {
-              sender.sendMessage("Fehlende Nachricht");
-              //Plugin.INSTANCE.getConfig().set(CFGKEY_LeaveBedMessage,"");
-            } else {
-              StringBuilder s = new StringBuilder();
-              for (int i = 1; i < args.length; i++) {
-                s.append(args[i]).append(" ");
-              }
-              Plugin.INSTANCE.getConfig().set(CFGKEY_LeaveBedMessage, s.toString().trim());
-              sender.sendMessage("Neue Nachricht übernommen, Vorschau:");
-              sender.sendMessage(ChatColor.GOLD + String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_LeaveBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
-                      sender.getName(), "33.0%"));
+        } else {
+          sender.sendMessage(Util.logLine(NAME, "Für diesen Command wird das '" + PermissionsModule.NAME + "' Modul benötigt, welches aktuell nicht aktiviert ist."));
+        }
+        return true;
+      case "percentage":
+        if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
+          if (args.length == 2) {
+            double d = 50;
+            try {
+              d = Double.parseDouble(args[1]);
+            } catch (NumberFormatException e) {
+              sender.sendMessage(Util.logLine(NAME, "Keine valide Prozantangebe (0-100)", ChatColor.YELLOW));
+              return true;
             }
-          } else {
-            sender.sendMessage(Util.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
+            Plugin.INSTANCE.getConfig().set(CFGKEY_Percentage,d);
+            return true;
           }
-          return true;
-        case "sleepSuccessMessage":
-          if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
-            if (args.length == 1) {
-              sender.sendMessage("Fehlende Nachricht");
-              //Plugin.INSTANCE.getConfig().set(CFGKEY_SleepSuccessMessage,"");
-            } else {
-              StringBuilder s = new StringBuilder();
-              for (int i = 1; i < args.length; i++) {
-                s.append(args[i]).append(" ");
-              }
-              Plugin.INSTANCE.getConfig().set(CFGKEY_SleepSuccessMessage, s.toString().trim());
-              sender.sendMessage("Neue Nachricht übernommen, Vorschau:");
-              sender.sendMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage));
+        }
+        return false;
+      case "enterBedMessage":
+        if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
+          if (args.length == 1) {
+            sender.sendMessage("Fehlende Nachricht");
+            //Plugin.INSTANCE.getConfig().set(CFGKEY_EnterBedMessage,"");
+          } else {
+            StringBuilder s = new StringBuilder();
+            for (int i = 1; i < args.length; i++) {
+              s.append(args[i]).append(" ");
             }
-          } else {
-            sender.sendMessage(Util.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
+            Plugin.INSTANCE.getConfig().set(CFGKEY_EnterBedMessage, s.toString().trim());
+            sender.sendMessage(Util.logLine(NAME, "Neue Nachricht übernommen, Vorschau:"));
+            sender.sendMessage(ChatColor.GOLD + String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
+                    sender.getName(), "33.0%"));
           }
-          return true;
+        } else {
+          sender.sendMessage(Util.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
+        }
+        return true;
+      case "leaveBedMessage":
+        if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
+          if (args.length == 1) {
+            sender.sendMessage("Fehlende Nachricht");
+            //Plugin.INSTANCE.getConfig().set(CFGKEY_LeaveBedMessage,"");
+          } else {
+            StringBuilder s = new StringBuilder();
+            for (int i = 1; i < args.length; i++) {
+              s.append(args[i]).append(" ");
+            }
+            Plugin.INSTANCE.getConfig().set(CFGKEY_LeaveBedMessage, s.toString().trim());
+            sender.sendMessage("Neue Nachricht übernommen, Vorschau:");
+            sender.sendMessage(ChatColor.GOLD + String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_LeaveBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
+                    sender.getName(), "33.0%"));
+          }
+        } else {
+          sender.sendMessage(Util.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
+        }
+        return true;
+      case "sleepSuccessMessage":
+        if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
+          if (args.length == 1) {
+            sender.sendMessage("Fehlende Nachricht");
+            //Plugin.INSTANCE.getConfig().set(CFGKEY_SleepSuccessMessage,"");
+          } else {
+            StringBuilder s = new StringBuilder();
+            for (int i = 1; i < args.length; i++) {
+              s.append(args[i]).append(" ");
+            }
+            Plugin.INSTANCE.getConfig().set(CFGKEY_SleepSuccessMessage, s.toString().trim());
+            sender.sendMessage("Neue Nachricht übernommen, Vorschau:");
+            sender.sendMessage(ChatColor.GOLD + Plugin.INSTANCE.getConfig().getString(CFGKEY_SleepSuccessMessage));
+          }
+        } else {
+          sender.sendMessage(Util.logLine(NAME, "DU HAST NICHT DIE BENÖTIGTEN BERECHTIGUNGEN", ChatColor.RED));
+        }
+        return true;
     }
     return false;
   }
