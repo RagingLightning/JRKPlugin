@@ -51,7 +51,7 @@ public class PigSeatModule implements Module {
       }
     }*/
 
-    effectTask = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+    effectTask = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
       for (World w : plugin.getServer().getWorlds()) {
         for (Pig p : w.getEntitiesByClass(Pig.class)) {
           if (!p.getScoreboardTags().contains("seat")) continue;
