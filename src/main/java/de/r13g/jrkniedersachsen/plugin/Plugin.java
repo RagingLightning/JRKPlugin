@@ -36,7 +36,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
   private final List<String> modules = new ArrayList<String>(){{
     add(PermissionsModule.NAME);add(MorpheusModule.NAME);add(ColorsModule.NAME);add(LockModule.NAME);add(VanishModule.NAME);
-    add(InvSeeModule.NAME);
+    add(InvSeeModule.NAME);add(TempBanModule.NAME);
   }};
 
   private HashMap<String, Module> loadedModules = new HashMap<>();
@@ -106,6 +106,9 @@ public class Plugin extends JavaPlugin implements Listener {
           break;
         case InvSeeModule.NAME:
           loadedModules.put(module, new InvSeeModule());
+          break;
+        case TempBanModule.NAME:
+          loadedModules.put(module, new TempBanModule());
           break;
         case AfkModule.NAME:
           loadedGpModules.put(module, new AfkModule());
@@ -215,9 +218,9 @@ public class Plugin extends JavaPlugin implements Listener {
           getConfig().set("modules.gp." + args[1] + ".enabled", true);
           saveConfig();
           if(tryStartModule(args[1]))
-            sender.sendMessage(Util.logLine("Main", "Modul GP-" + args[1] + " erfolgreich deaktiviert."));
+            sender.sendMessage(Util.logLine("Main", "Modul GP-" + args[1] + " erfolgreich aktiviert."));
           else
-            sender.sendMessage(Util.logLine("Main", "Modul GP-" + args[1] + " konnte nicht deaktiviert werden."));
+            sender.sendMessage(Util.logLine("Main", "Modul GP-" + args[1] + " konnte nicht aktiviert werden."));
         } else {
           sender.sendMessage(Util.logLine("Main", "Modul " + args[1] + " existiert nicht."));
         }

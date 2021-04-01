@@ -22,6 +22,9 @@ modules:
   InvSee:
     enabled: true
     dependencies: []
+  TempBan:
+    enabled: true
+    dependencies: []
   gp:
     Afk:
       enabled: true
