@@ -24,6 +24,8 @@ public class AfkModule implements Module, Listener { //TODO: Test
 
   public static final String NAME = "Afk";
 
+  public long timeout = 5;
+
   List<UUID> toBeAfk, isAfk;
 
   BukkitTask checkTask;
@@ -45,7 +47,7 @@ public class AfkModule implements Module, Listener { //TODO: Test
         }
         if (!toBeAfk.contains(p.getUniqueId())) toBeAfk.add(p.getUniqueId());
       }
-    },0L,5*60*20);
+    },0L,timeout*60*20);
 
     plugin.getServer().getPluginManager().registerEvents(this, plugin);
 

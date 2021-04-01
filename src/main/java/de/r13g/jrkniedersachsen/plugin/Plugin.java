@@ -383,4 +383,23 @@ public class Plugin extends JavaPlugin implements Listener {
     }
     return completions;
   }
+
+  private List<String> getHelpTextForJrkCommand() {
+    List<String> text = new ArrayList<>();
+    text.add("--- Serverbefehle: Hilfe ---");
+    text.add("");
+    text.add("/jrk tps - zeigt die aktuellen Server-TPS an");
+    text.add("- alias: /tps");
+    if (moduleStatus(AfkModule.NAME) == 1) {
+      text.add("/jrk afk - setzt den Afk-Status");
+      text.add("- Nach " + ((AfkModule) getModule(AfkModule.NAME)).timeout + " Minuten Inaktivität wird ein Spieler automatisch Afk gesetzt");
+      text.add("- Bewegung oder Interaktion mit Blöcken beendet den Afk-Status");
+    }
+    return text;
+  }
+
+  private List<String> getHelpTextForAdminCommand() {
+    List<String> text = new ArrayList<>();
+    return text;
+  }
 }
