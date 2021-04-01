@@ -42,7 +42,7 @@ public class AfkModule implements Module, Listener { //TODO: Test
           isAfk.add(p.getUniqueId());
           if (!p.hasPermission(MorpheusModule.PERM_MorpheusBypass))
             plugin.getServer().broadcastMessage(ChatColor.YELLOW + p.getName() + " ist AFK.");
-          p.setDisplayName(ChatColor.ITALIC + "[A]" + ChatColor.RESET + p.getDisplayName());
+          p.setDisplayName("" + ChatColor.ITALIC + ChatColor.GRAY + "[A]" + ChatColor.RESET + p.getDisplayName());
           p.setPlayerListName(p.getDisplayName());
         }
         if (!toBeAfk.contains(p.getUniqueId())) toBeAfk.add(p.getUniqueId());
@@ -88,7 +88,7 @@ public class AfkModule implements Module, Listener { //TODO: Test
     isAfk.add(((Player) sender).getUniqueId());
     if (!sender.hasPermission(MorpheusModule.PERM_MorpheusBypass))
       Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.YELLOW + sender.getName() + " ist AFK.");
-    ((Player) sender).setDisplayName(ChatColor.ITALIC + "[A]" + ChatColor.RESET + ((Player) sender).getDisplayName());
+    ((Player) sender).setDisplayName("" + ChatColor.ITALIC + ChatColor.GRAY + "[A]" + ChatColor.RESET + ((Player) sender).getDisplayName());
     ((Player) sender).setPlayerListName(((Player) sender).getDisplayName());
     return true;
   }
@@ -100,7 +100,8 @@ public class AfkModule implements Module, Listener { //TODO: Test
       isAfk.remove(ev.getPlayer().getUniqueId());
       if (!ev.getPlayer().hasPermission(MorpheusModule.PERM_MorpheusBypass))
         Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.YELLOW + ev.getPlayer().getName() + " ist nicht mehr AFK.");
-      ev.getPlayer().setDisplayName(ev.getPlayer().getDisplayName().replaceAll(ChatColor.ITALIC + "\\[A]" + ChatColor.RESET,""));
+      ev.getPlayer().setDisplayName(ev.getPlayer().getDisplayName().replaceAll("" + ChatColor.ITALIC + ChatColor.GRAY + "\\[A]" + ChatColor.RESET,
+              ""));
       ev.getPlayer().setPlayerListName(ev.getPlayer().getDisplayName());
     }
   }
@@ -112,7 +113,7 @@ public class AfkModule implements Module, Listener { //TODO: Test
       isAfk.remove(ev.getPlayer().getUniqueId());
       if (!ev.getPlayer().hasPermission(MorpheusModule.PERM_MorpheusBypass))
         Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.YELLOW + ev.getPlayer().getName() + " ist nicht mehr AFK.");
-      ev.getPlayer().setDisplayName(ev.getPlayer().getDisplayName().replaceAll(ChatColor.ITALIC + "\\[A]" + ChatColor.RESET,""));
+      ev.getPlayer().setDisplayName(ev.getPlayer().getDisplayName().replaceAll("" + ChatColor.ITALIC + ChatColor.GRAY + "\\[A]" + ChatColor.RESET,""));
       ev.getPlayer().setPlayerListName(ev.getPlayer().getDisplayName());
     }
   }
