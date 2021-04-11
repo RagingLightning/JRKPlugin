@@ -72,18 +72,18 @@ permissions:
     description: Gibt dem Spieler die Rechte, Einstellungen am Colors-Modul vorzunehmen.
   jrk.adminchat.read:
     description: Gibt dem Spieler die Rechte, Admin-Only Nachrichen zu lesen, ohne selbst im Admin-Only Chat zu sein
-  jrk.adminchat.join:
+  jrk.adminchat:
     description: BACKEND PERM, DON'T ASSIGN
     default: false
   jrk.adminchat.join.self:
     description: Gibt dem Spieler die Rechte, dem Admin-Only Chat beizutreten
     children:
-      jrk.adminchat.join: true
+      jrk.adminchat: true
   jrk.adminchat.join.others:
     description: Gibt dem Spieler die Rechte, andere Spieler den Admin-Only Chat beitreten zu lassen
     default: false
     children:
-      jrk.adminchat.join: true
+      jrk.adminchat: true
   jrk.lock.create:
     description: Gibt dem Spieler die Rechte, Locks zu erstellen.
     default: true

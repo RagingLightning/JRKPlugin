@@ -3,6 +3,7 @@ package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,6 +48,11 @@ public class AdminChatModule implements Module, Listener {
     ready = false;
 
     HandlerList.unregisterAll(this);
+
+    inAdminChat.forEach(u -> {
+      Player p = Bukkit.getPlayer(u);
+      if (p != null) p.sendMessage(Util.logLine(NAME, "--Du bist nicht mehr im Admin-Only Chat--", ChatColor.BOLD));
+    });
 
     return true;
   }
@@ -97,7 +104,7 @@ public class AdminChatModule implements Module, Listener {
 
   @Override
   public List<String> getHelpText(Permissible p) {
-    return new ArrayList<>();
+    return new ArrayList<String>(){{add("Falsche Syntax, bitte ggf. an den Admin wenden");}};
   }
 
   @EventHandler
@@ -108,12 +115,12 @@ public class AdminChatModule implements Module, Listener {
       inAdminChat.forEach(u -> {
         Player r = Plugin.INSTANCE.getServer().getPlayer(u);
         if (r == null) inAdminChat.remove(u);
-        else r.sendMessage("[" + ChatColor.RED + "ADMIN" + ChatColor.RESET + "] " + ev.getMessage());
+        else r.sendMessage("<" + ChatColor.DARK_RED + "ADMIN" + ChatColor.GRAY + "/" + ChatColor.RESET + ev.getPlayer().getName() + "> " + ev.getMessage());
         received.add(u);
       });
       Plugin.INSTANCE.getServer().getOnlinePlayers().forEach(p -> {
         if (p.hasPermission(PERM_ReadAdminMessages) && !received.contains(p.getUniqueId()))
-          p.sendMessage("[" + ChatColor.RED + "ADMIN" + ChatColor.RESET + "] " + ev.getMessage());
+          p.sendMessage("<" + ChatColor.DARK_RED + "ADMIN" + ChatColor.GRAY + "/" + ChatColor.RESET + ev.getPlayer().getName() + "> " + ev.getMessage());
       });
     }
   }
