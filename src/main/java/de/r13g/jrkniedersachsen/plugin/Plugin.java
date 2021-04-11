@@ -36,7 +36,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
   private final List<String> modules = new ArrayList<String>(){{
     add(PermissionsModule.NAME);add(MorpheusModule.NAME);add(ColorsModule.NAME);add(LockModule.NAME);add(VanishModule.NAME);
-    add(InvSeeModule.NAME);add(TempBanModule.NAME);
+    add(InvSeeModule.NAME);add(TempBanModule.NAME);add(AdminChatModule.NAME);
   }};
 
   private HashMap<String, Module> loadedModules = new HashMap<>();
@@ -109,6 +109,9 @@ public class Plugin extends JavaPlugin implements Listener {
           break;
         case TempBanModule.NAME:
           loadedModules.put(module, new TempBanModule());
+          break;
+        case AdminChatModule.NAME:
+          loadedModules.put(module, new AdminChatModule());
           break;
         case AfkModule.NAME:
           loadedGpModules.put(module, new AfkModule());
