@@ -28,6 +28,9 @@ modules:
   TempBan:
     enabled: true
     dependencies: []
+  Story:
+    enabled: true
+    dependencies: []
   gp:
     Afk:
       enabled: true

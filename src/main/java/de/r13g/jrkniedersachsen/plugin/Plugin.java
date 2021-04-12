@@ -8,18 +8,17 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Plugin extends JavaPlugin implements Listener {
 
@@ -44,7 +43,8 @@ public class Plugin extends JavaPlugin implements Listener {
 
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent ev) {
-    ev.getPlayer().sendRawMessage("{\"text\":\"Willkommen!\", \"color\":\"yellow\",\"bold\":true}");
+    CustomVillager villager = new CustomVillager(ev.getPlayer().getLocation());
+    ((CraftWorld)ev.getPlayer().getWorld()).addEntity(villager, CreatureSpawnEvent.SpawnReason.CUSTOM);
   }
 
   @Override

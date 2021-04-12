@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Instant;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,14 +41,16 @@ public class TempBanModule implements Module {
   public boolean load(Plugin plugin, File moduleDataFolder) {
 
     configFile = new File(moduleDataFolder.getParentFile(), "tempban.yml");
-    if (!configFile.exists()) {
-      try {
-        YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("tempban.yml"))).save(configFile);
-      } catch (IOException e) {
-        plugin.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<ERR> Could not initialize config, aborting...", ChatColor.RED));
-        return false;
-      }
+
+    try {
+      config = YamlConfiguration.loadConfiguration(configFile);
+      config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("story.yml"))));
+      config.save(configFile);
+    } catch (IOException e) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Unable to load config, aborting loading process"));
+      return false;
     }
+
     config = YamlConfiguration.loadConfiguration(configFile);
 
     ready = true;

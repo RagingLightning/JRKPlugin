@@ -2,6 +2,7 @@ package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.logging.Level;
 
 @SuppressWarnings({"unused", "deprecation"})
 public class ColorsModule implements Module, Listener {
@@ -42,14 +44,16 @@ public class ColorsModule implements Module, Listener {
   @Override
   public boolean load(Plugin plugin, File moduleDataFolder) {
     configFile = new File(plugin.getDataFolder(), "colors.yml");
-    if (!configFile.exists()) {
-      try {
-        YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("colors.yml"))).save(configFile);
-      } catch (IOException e) {
-        plugin.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> unable to save config", ChatColor.YELLOW));
-      }
+
+    try {
+      config = YamlConfiguration.loadConfiguration(configFile);
+      config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("story.yml"))));
+      config.save(configFile);
+    } catch (IOException e) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Unable to load config, aborting loading process"));
+      return false;
     }
-    config = YamlConfiguration.loadConfiguration(configFile);
+
     plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
     createTeamsFromConfig();

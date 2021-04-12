@@ -24,6 +24,16 @@ public class StoryNpcOffer {
     return null;
   }
 
+  static boolean register(UUID id, StoryNpcOffer offer) {
+    if (registeredOffers.containsKey(id)) return false;
+    registeredOffers.put(id, offer);
+    return true;
+  }
+
+  void unregister() {
+    registeredOffers.remove(id);
+  }
+
   public ItemStack getItemStack(int index) {
     return items[index].getItemStack();
   }

@@ -14,22 +14,22 @@ public class NpcTradeEndListener implements Listener {
 
   private Story s;
   private Player p;
-  private Map<ItemStack, StoryNpcOffer> offerItems;
+  private Map<ItemStack, StoryNpcOffer> successItems;
 
-  public NpcTradeEndListener(Story s, Player p, Map<ItemStack, StoryNpcOffer> offerItems) {
+  public NpcTradeEndListener(Story s, Player p, Map<ItemStack, StoryNpcOffer> successItems) {
     this.s = s;
     this.p = p;
-    this.offerItems = offerItems;
+    this.successItems = successItems;
   }
 
   @EventHandler
   public void onInventoryClose(InventoryCloseEvent ev) {
     if (ev.getPlayer() == p) {
-      for (ItemStack i : offerItems.keySet()) {
+      for (ItemStack i : successItems.keySet()) {
         if (p.getInventory().contains(i)) {
-          StoryNpcOffer offer = offerItems.get(i);
+          StoryNpcOffer offer = successItems.get(i);
           if (offer.unlocks != null)
-            StoryProgress.get(s).getPlayer(p).unlock(StoryCheckpoint.get(offer.unlocks));
+            StoryProgress.get(p, s).unlock(StoryCheckpoint.get(offer.unlocks));
         }
       }
       HandlerList.unregisterAll(this);

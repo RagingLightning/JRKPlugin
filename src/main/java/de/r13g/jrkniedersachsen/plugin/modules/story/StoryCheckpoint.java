@@ -1,23 +1,21 @@
 package de.r13g.jrkniedersachsen.plugin.modules.story;
 
-import de.r13g.jrkniedersachsen.plugin.modules.story.util.SimpleItem;
-
 import java.util.*;
 
 public class StoryCheckpoint {
 
-  private static Map<UUID, StoryCheckpoint> registeredLines = new HashMap<>();
+  private static Map<UUID, StoryCheckpoint> registeredCheckpoints = new HashMap<>();
 
-  UUID id = null;
-  String name = null;
-  String desc = null;
-  UUID containingStory = null;
-  UUID parentCheckpoint = null;
-  SimpleItem itemDrop = null;
+  protected transient Story containingStory;
+
+  protected UUID id = null;
+  protected String name = null;
+  protected String desc = null;
+  protected UUID parentCheckpoint = null;
 
   public static StoryCheckpoint get(UUID id) {
-    if (registeredLines.containsKey(id))
-      return registeredLines.get(id);
+    if (registeredCheckpoints.containsKey(id))
+      return registeredCheckpoints.get(id);
     return null;
   }
 
@@ -27,4 +25,29 @@ public class StoryCheckpoint {
     return a;
   }
 
+  public static List<UUID> getDefaults(Story story) {
+    List<UUID> a = new ArrayList<>();
+    registeredCheckpoints.forEach((k,v) -> {
+      if (v.containingStory == story && v.parentCheckpoint == null) a.add(k);
+    });
+    return a;
+  }
+
+  public static boolean register(UUID id, StoryCheckpoint checkpoint) {
+    if (registeredCheckpoints.containsKey(id)) return false;
+    registeredCheckpoints.put(id, checkpoint);
+    return true;
+  }
+
+  void unregister() {
+    registeredCheckpoints.remove(id);
+  }
+
+  List<StoryCheckpoint> getChildren() {
+    List<StoryCheckpoint> a = new ArrayList<>();
+    registeredCheckpoints.forEach((k, v) -> {
+      if (v.parentCheckpoint == id) a.add(v);
+    });
+    return a;
+  }
 }

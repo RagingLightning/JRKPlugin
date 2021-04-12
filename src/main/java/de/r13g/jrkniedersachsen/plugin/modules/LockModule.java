@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.logging.Level;
 
 import static org.bukkit.block.BlockFace.*;
 
@@ -78,16 +79,15 @@ public class LockModule implements Module, Listener {
   public boolean load(Plugin plugin, File moduleDataFolder) {
     configFile = new File(moduleDataFolder, "config.yml");
 
-    if (!configFile.exists()) {
-      try {
-        YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("lock.yml"))).save(configFile);
-      } catch (IOException e) {
-        plugin.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> default config could not be loaded"));
-        return false;
-      }
+    try {
+      config = YamlConfiguration.loadConfiguration(configFile);
+      config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("story.yml"))));
+      config.save(configFile);
+    } catch (IOException e) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Unable to load config, aborting loading process"));
+      return false;
     }
 
-    config = YamlConfiguration.loadConfiguration(configFile);
     plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
     passwordCache = new HashMap<>();

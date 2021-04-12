@@ -1,0 +1,34 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "name": "Beispiel-Checkpoint",
+  "desc": "als Vorlage",
+  "containingStory": "00000000-0000-0000-0000-000000000000",
+  "parentCheckpoint": null,
+  "rewards": [
+    {
+      "type": "DIALOGUE",
+      "lineId": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "type": "ITEM",
+      "item":
+      {
+        "material": "DIAMOND",
+        "count": 2,
+        "displayName": "Blutdiamant",
+        "lore": [
+          "Dieser Diamant schimmert rötlich",
+          "vielleicht hat das was zu sagen?"
+        ]
+      }
+    },
+    {
+      "type": "EXPERIENCE",
+      "amount": 10
+    },
+    {
+      "type": "COMMAND",
+      "command": "execute at @s run summon minecraft:firework ~ ~ ~"
+    }
+  ]
+}

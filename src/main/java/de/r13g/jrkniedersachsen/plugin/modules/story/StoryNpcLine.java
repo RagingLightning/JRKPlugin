@@ -1,5 +1,6 @@
 package de.r13g.jrkniedersachsen.plugin.modules.story;
 
+import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.List;
@@ -10,10 +11,11 @@ public class StoryNpcLine {
 
   private static Map<UUID, StoryNpcLine> registeredLines = new HashMap<>();
 
-  transient StoryNpc parentNpc;
+  transient Story containingStory;
 
-  boolean isJson = false;
+  UUID id;
   String message = null;
+  boolean isJson = false;
   UUID nextLine = null;
   UUID dependsOn = null;
   List<UUID> unlocks = null;
@@ -24,9 +26,20 @@ public class StoryNpcLine {
     return null;
   }
 
-  public StoryNpcLine(String message, boolean isJson) {
+  StoryNpcLine(Story story, String message, boolean isJson) {
+    this.containingStory = story;
     this.message = message;
     this.isJson = isJson;
+  }
+
+  public static boolean register(UUID id, StoryNpcLine line) {
+    if (registeredLines.containsKey(id)) return false;
+    registeredLines.put(id, line);
+    return true;
+  }
+
+  void unregister() {
+    registeredLines.remove(id);
   }
 
   /**
@@ -35,13 +48,13 @@ public class StoryNpcLine {
    * @param p Player to tell message to
    * @return Last message in the chain
    */
-  public StoryNpcLine tell(Player p) {
+  public StoryNpcLine tell(StoryNpc npc, Player p) {
     if (isJson) {
-      p.sendRawMessage(message);
+      Util.tellRaw(p, message);
     } else {
-      p.sendMessage("<" + parentNpc.base.getCustomName() + "> " + message);
+      p.sendMessage("<" + npc.name + "> " + message);
     }
     if (nextLine == null) return this;
-    return StoryNpcLine.get(nextLine).tell(p);
+    return StoryNpcLine.get(nextLine).tell(npc, p);
   }
 }

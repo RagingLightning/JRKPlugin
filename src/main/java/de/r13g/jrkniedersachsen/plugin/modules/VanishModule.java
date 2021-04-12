@@ -2,6 +2,7 @@ package de.r13g.jrkniedersachsen.plugin.modules;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,6 +23,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 public class VanishModule implements Module, Listener {
 
@@ -35,15 +37,16 @@ public class VanishModule implements Module, Listener {
   @Override
   public boolean load(Plugin plugin, File moduleDataFolder) {
     configFile = new File(plugin.getDataFolder(), "vanish.yml");
-    if (!configFile.exists()) {
-      try {
-        YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("vanish.yml"))).save(configFile);
-      } catch (IOException e) {
-        plugin.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> unable to save config", ChatColor.YELLOW));
-        return false;
-      }
+
+    try {
+      config = YamlConfiguration.loadConfiguration(configFile);
+      config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("story.yml"))));
+      config.save(configFile);
+    } catch (IOException e) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Unable to load config, aborting loading process"));
+      return false;
     }
-    config = YamlConfiguration.loadConfiguration(configFile);
+
     plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
     ready = true;
