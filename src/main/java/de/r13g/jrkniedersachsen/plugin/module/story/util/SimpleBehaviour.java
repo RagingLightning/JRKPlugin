@@ -8,6 +8,8 @@ import java.lang.reflect.Type;
 
 public abstract class SimpleBehaviour {
 
+  public static final int maxNeededGoalSlots = 2;
+
   public Type type;
 
   public abstract void applyPathfinderGoals(EntityCreature entity, int startIndex);

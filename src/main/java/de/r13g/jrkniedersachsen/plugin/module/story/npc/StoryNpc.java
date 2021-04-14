@@ -1,29 +1,21 @@
 package de.r13g.jrkniedersachsen.plugin.module.story.npc;
 
 import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.module.StoryModule;
-import de.r13g.jrkniedersachsen.plugin.module.story.*;
+import de.r13g.jrkniedersachsen.plugin.module.story.Story;
+import de.r13g.jrkniedersachsen.plugin.module.story.StoryProgress;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleBehaviour;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleItem;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleLocation;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
-import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityCreature;
-import org.apache.logging.log4j.core.util.Assert;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftAbstractVillager;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -31,11 +23,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.*;
-
-import static de.r13g.jrkniedersachsen.plugin.module.story.npc.StoryNpc.Type.VILLAGER;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class StoryNpc {
 
@@ -59,43 +48,15 @@ public abstract class StoryNpc {
     throw new NotImplementedException();
   }
 
-  public abstract boolean load(); /*{
-    base = Bukkit.getEntity(baseId);
-    if (base == null) {
-      base = location.getLocation().getWorld().spawnEntity(location.getLocation(), type.entityType);
-    }
-    if (base.getType() != type.entityType) {
-      throw new AssertionError("Story NPC id:" + id + " has in world base with EntityType " + base.getType() + " expecting EntityType " + type.entityType);
-    }
-    base.setPersistent(true);
-    base.setCustomName(name);
-    base.setCustomNameVisible(true);
-    base.setMetadata(StoryModule.MDAT_StoryNpcMost, new FixedMetadataValue(Plugin.INSTANCE, id.getMostSignificantBits()));
-    base.setMetadata(StoryModule.MDAT_StoryNpcLeast, new FixedMetadataValue(Plugin.INSTANCE, id.getLeastSignificantBits()));
-    if (base instanceof LivingEntity) {
-      EntityEquipment e = ((LivingEntity) base).getEquipment();
-      if (head != null)
-        e.setHelmet(head.getItemStack());
-      if (chest != null)
-        e.setChestplate(chest.getItemStack());
-      if (legs != null)
-        e.setLeggings(legs.getItemStack());
-      if (feet != null)
-        e.setBoots(feet.getItemStack());
-      if (mainHand != null)
-        e.setItemInMainHand(mainHand.getItemStack());
-      if (offHand != null)
-        e.setItemInOffHand(offHand.getItemStack());
-    }
-  }*/
+  public abstract boolean load();
 
-  public abstract boolean unload(); /*{
-    base.remove();
-    base = null;
-  }*/
+  public abstract boolean unload();
 
   protected void setup() {
     CraftLivingEntity cle = (CraftLivingEntity) base.getBukkitEntity();
+
+    cle.setMetadata(StoryModule.MDAT_StoryNpcLeast, new FixedMetadataValue(Plugin.INSTANCE, id.getLeastSignificantBits()));
+    cle.setMetadata(StoryModule.MDAT_StoryNpcMost, new FixedMetadataValue(Plugin.INSTANCE, id.getMostSignificantBits()));
 
     cle.setCustomName(name);
     cle.setCustomNameVisible(true);
@@ -112,19 +73,9 @@ public abstract class StoryNpc {
   }
 
   public boolean spawn() {
-    try {
-      ((CraftWorld) location.getLocation().getWorld()).addEntity(base, CreatureSpawnEvent.SpawnReason.CUSTOM);
-      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME,
-              "spawned in " + location.world + " at x:" + location.x + " y:" + location.y + " z:" + location.z));
-      CraftEntity ce = CraftEntity.getEntity((CraftServer) Bukkit.getServer(), base);
-      ce.setMetadata(StoryModule.MDAT_StoryNpcMost, new FixedMetadataValue(Plugin.INSTANCE, id.getMostSignificantBits()));
-      ce.setMetadata(StoryModule.MDAT_StoryNpcLeast, new FixedMetadataValue(Plugin.INSTANCE, id.getLeastSignificantBits()));
-
-      return true;
-    } catch (Exception ignored) {
-      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "unable to spawn", ChatColor.YELLOW));
-      return false;
-    }
+    base.setLocation(location.x, location.y, location.z, 0, 0);
+    ((CraftWorld)location.getLocation().getWorld()).addEntity(base, CreatureSpawnEvent.SpawnReason.CUSTOM);
+    return Bukkit.getEntity(base.getUniqueID()) != null;
   }
 
   public boolean despawn() {
@@ -144,8 +95,6 @@ public abstract class StoryNpc {
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Processing EntityDamage as StoryNpc"));
     ev.setCancelled(invulnerable);
     if (ev instanceof EntityDamageByEntityEvent && ((EntityDamageByEntityEvent) ev).getDamager() instanceof Player) {
-      if (story.progress.get((OfflinePlayer) ((EntityDamageByEntityEvent) ev).getDamager()).currentQuests == null)
-        throw new AssertionError("currentQuests is null");
       Player p = (Player) ((EntityDamageByEntityEvent) ev).getDamager();
       tellLineSet(story.progress.get(p), p);
     }
@@ -153,8 +102,7 @@ public abstract class StoryNpc {
 
   public StoryNpcLineSet getLineSet(StoryProgress.PlayerEntry progress) {
     for (StoryNpcLineSet set : lineSets) {
-      //TODO: Fix NullPointer v
-      for (UUID cpId : progress.currentQuests.keySet()) {
+      for (UUID cpId : progress.finishedQuests) {
         if (set.dependsOn.equals(cpId))
           return set;
       }
@@ -187,6 +135,8 @@ public abstract class StoryNpc {
 
   public enum Type {
     VILLAGER(EntityType.VILLAGER),
+    WANDERING_TRADER(EntityType.WANDERING_TRADER),
+    PLAYER(EntityType.CREEPER),
     ZOMBIE(EntityType.ZOMBIE);
 
     public transient final EntityType entityType;
@@ -202,8 +152,9 @@ public abstract class StoryNpc {
       JsonObject o = e.getAsJsonObject();
       String t = o.get("type").getAsString();
       switch (Type.valueOf(t)) {
-        case VILLAGER:
-          return c.deserialize(e, StoryVillager.class);
+        case VILLAGER: return c.deserialize(e, StoryVillager.class);
+        case WANDERING_TRADER: return c.deserialize(e, StoryTrader.class);
+        case PLAYER: return c.deserialize(e, StoryPlayer.class);
       }
       throw new JsonParseException("StoryNpc has unknown type '" + t + "'");
     }

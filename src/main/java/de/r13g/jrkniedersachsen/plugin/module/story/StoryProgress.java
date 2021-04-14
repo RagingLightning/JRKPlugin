@@ -2,7 +2,6 @@ package de.r13g.jrkniedersachsen.plugin.module.story;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.module.StoryModule;
-import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestReward;
 import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestTask;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.QuestSave;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
@@ -11,9 +10,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class StoryProgress {
@@ -46,7 +45,7 @@ public class StoryProgress {
     try {
       PlayerEntry progress;
       if (file.exists())
-        progress = Story.gson.fromJson(new FileReader(file), PlayerEntry.class);
+        progress = Story.gson.fromJson(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8), PlayerEntry.class);
       else
         progress = new PlayerEntry(p, story.getDefaultQuests());
       if (register(p, progress)) {
@@ -67,17 +66,19 @@ public class StoryProgress {
   public class PlayerEntry {
     transient OfflinePlayer player;
 
+    public List<UUID> finishedQuests;
     public Map<UUID, QuestSave> currentQuests;
 
     public PlayerEntry(OfflinePlayer p, List<StoryQuest> defaults) {
+      this.finishedQuests = new ArrayList<>();
       this.currentQuests = new HashMap<>();
       this.player = p;
-      unlock(defaults, null);
+      finishQuests(defaults);
     }
 
     public void save(File file) {
       try {
-        BufferedWriter w = new BufferedWriter(new FileWriter(file));
+        BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
         String json = Story.gson.toJson(this);
         w.write(json);
         w.close();
@@ -89,41 +90,63 @@ public class StoryProgress {
       }
     }
 
+    public Map<String, Object> getTaskData(QuestTask task) {
+      return currentQuests.get(task.quest.id).tasks.get(task.id).data;
+    }
+
     public void finishTask(StoryQuest quest, int taskId) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Finishing task " + taskId + " from quest " + quest.name + " (id:" + quest.id + ")..."));
       QuestSave save = currentQuests.get(quest.id);
-      save.finishedTasks.add(taskId);
+      save.tasks.get(taskId).finished = true;
       boolean allTasks = true;
       for (int t : quest.tasks.keySet()) {
-        if (!save.finishedTasks.contains(t)) {
+        if (!save.tasks.get(t).finished) {
           allTasks = false;
           break;
         }
       }
-      if (allTasks)
-        unlock(quest.getChildren(), quest);
+      if (allTasks) {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "All Quest tasks for quest are finished"));
+        finishQuest(quest);
+      }
     }
 
-    public void unlock(StoryQuest quest, StoryQuest parent) {
-      currentQuests.put(quest.id, new QuestSave());
-      if (parent != null && currentQuests.keySet().contains(parent.id)) {
-        currentQuests.remove(parent.id);
-        parent.activePlayers.remove(player.getUniqueId());
-        if (parent instanceof Listener && parent.activePlayers.size() == 0) {
-          HandlerList.unregisterAll((Listener) parent);
+    public void finishQuest(StoryQuest quest) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Finishing quest " + quest.name + "..."));
+      quest.getChildren().forEach(c -> {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unlocking child quest " + c.name + "..."));
+        currentQuests.put(c.id, new QuestSave(c.tasks.keySet()));
+      });
+      currentQuests.remove(quest.id);
+      quest.activePlayers.remove(player.getUniqueId());
+      finishedQuests.add(quest.id);
+      if (quest.getParent() != null && finishedQuests.contains(quest.getParent().id)) {
+        finishedQuests.remove(quest.getParent().id);
+      }
+
+
+      if (quest instanceof Listener && quest.activePlayers.size() == 0) {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unregistering listener for quest..."));
+        HandlerList.unregisterAll((Listener) quest);
+      }
+      quest.getChildren().forEach(c -> {
+        if (c instanceof Listener) {
+          if (c.activePlayers.size() == 0) {
+            Bukkit.getPluginManager().registerEvents((Listener) c, Plugin.INSTANCE);
+            Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Registering listener for child quest " + c.name + "..."));
+          }
+          c.activePlayers.add(player.getUniqueId());
         }
-      }
-      if (quest instanceof Listener) {
-        if (quest.activePlayers.size() == 0)
-          Bukkit.getPluginManager().registerEvents((Listener) quest, Plugin.INSTANCE);
-        quest.activePlayers.add(player.getUniqueId());
-      }
+      });
+
       if (player instanceof Player && quest.rewards != null) {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Rewarding player..."));
         quest.rewards.forEach(r -> r.reward((Player) player));
       }
     }
 
-    public void unlock(List<StoryQuest> quests, StoryQuest parent) {
-      quests.forEach(q -> unlock(q, parent));
+    public void finishQuests(List<StoryQuest> quests) {
+      quests.forEach(this::finishQuest);
     }
   }
 

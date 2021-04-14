@@ -1,9 +1,14 @@
 package de.r13g.jrkniedersachsen.plugin.module.story.util;
 
-import java.util.List;
+import java.util.*;
 
 public class QuestSave {
 
-  public List<Integer> finishedTasks;
+  public Map<Integer, TaskSave> tasks;
+
+  public QuestSave(Set<Integer> taskKeySet) {
+    tasks = new HashMap<>();
+    taskKeySet.forEach( i -> tasks.put(i, new TaskSave()));
+  }
 
 }

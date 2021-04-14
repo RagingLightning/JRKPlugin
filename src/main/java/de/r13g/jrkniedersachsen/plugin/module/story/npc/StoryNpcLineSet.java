@@ -13,11 +13,12 @@ public class StoryNpcLineSet {
   public transient Story story;
 
   List<StoryNpcLine> lines;
-  UUID dependsOn = null;
-  Map<UUID, Integer> unlocks = null;
+  UUID dependsOn;
+  Map<UUID, Integer> unlocks;
 
   StoryNpcLineSet(StoryNpcLine line) {
     this.lines = new ArrayList<>();
+    this.unlocks = new HashMap<>();
     lines.add(line);
   }
 

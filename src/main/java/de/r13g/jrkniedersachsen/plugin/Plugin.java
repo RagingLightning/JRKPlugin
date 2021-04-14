@@ -1,5 +1,7 @@
 package de.r13g.jrkniedersachsen.plugin;
 
+import de.r13g.jrkniedersachsen.plugin.customnpc.CustomPlayer;
+import de.r13g.jrkniedersachsen.plugin.customnpc.CustomPlayerPather;
 import de.r13g.jrkniedersachsen.plugin.customnpc.CustomVillager;
 import de.r13g.jrkniedersachsen.plugin.module.*;
 import de.r13g.jrkniedersachsen.plugin.module.gp.AfkModule;
@@ -8,6 +10,7 @@ import de.r13g.jrkniedersachsen.plugin.module.story.npc.behaviour.SimpleWanderBe
 import de.r13g.jrkniedersachsen.plugin.util.Util;
 import net.minecraft.server.v1_16_R3.VillagerProfession;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -189,8 +192,18 @@ public class Plugin extends JavaPlugin implements Listener {
     saveConfig();
   }
 
+  @EventHandler
+  public void onPlayerJoin(PlayerJoinEvent ev) {
+    CustomPlayer.addJoinPacket(ev.getPlayer());
+  }
+
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    if (command.getName().equalsIgnoreCase("test")) {
+      Location l = ((Player) sender).getLocation();
+      CustomPlayerPather custom = CustomPlayer.create(l, "TEST");
+      return true;
+    }
     if (command.getName().equalsIgnoreCase("jrk")) {
       if (args.length == 0) return false;
       if (args[0].equals("tps") &&(sender instanceof ConsoleCommandSender || sender.hasPermission(PERM_GPCommand + ".tps"))) return gpTpsCommand(sender); //TODO: test

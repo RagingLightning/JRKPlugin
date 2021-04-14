@@ -6,6 +6,7 @@ import de.r13g.jrkniedersachsen.plugin.module.story.npc.StoryNpc;
 import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestReward;
 import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestTask;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleBehaviour;
+import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleItem;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,7 +14,11 @@ import org.bukkit.Location;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Story {
@@ -26,6 +31,7 @@ public class Story {
           .registerTypeAdapter(SimpleBehaviour.class, new SimpleBehaviour.Adapter())
           .registerTypeAdapter(QuestReward.class, new QuestReward.Adapter())
           .registerTypeAdapter(QuestTask.class, new QuestTask.Adapter())
+          .registerTypeAdapter(SimpleItem.class, new SimpleItem.Adapter())
           .create();
 
   public static Map<UUID, Story> registeredStories = new HashMap<>();
@@ -148,7 +154,7 @@ public class Story {
    * @return success
    */
   public boolean load() {
-    boolean willSurvive = true;
+    final boolean[] willSurvive = {true};
     if (!active) return false;
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Loading Story " + name + " (" + id + ")..."));
 
@@ -161,19 +167,11 @@ public class Story {
       for (File questConfig : questDir.listFiles()) {
         UUID questId = UUID.fromString(questConfig.getName().replaceAll("\\.json", ""));
         try {
-          StoryQuest quest = gson.fromJson(new FileReader(questConfig), StoryQuest.class);
+          StoryQuest quest = gson.fromJson(new InputStreamReader(new FileInputStream(questConfig), StandardCharsets.UTF_8), StoryQuest.class);
           quest.story = this;
           if (registerQuest(questId, quest)) {
             Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Quest " + quest.name + " (id:" + questId + ") registered " +
-                    "successfully, loading..."));
-            if (quest.load()) {
-              Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Quest " + quest.name + " (id:" + questId + ") successfully " +
-                      "registered and loaded"));
-            } else {
-              Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Quest " + quest.name + " (id:" + questId + ") failed to load, " +
-                      "disabling story...", ChatColor.YELLOW));
-              return false;
-            }
+                    "successfully"));
           } else {
             Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME,
                     "Quest " + getQuest(questId).name + " (id:" + questId + ") is already registered", ChatColor.YELLOW));
@@ -184,6 +182,18 @@ public class Story {
           return false;
         }
       }
+
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Loading Story Quests..."));
+      registeredQuests.forEach((k, v) -> {
+        if(willSurvive[0] && v.load()) {
+          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Quest " + v.name + " loaded successfully"));
+        } else {
+          willSurvive[0] = false;
+          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Quest " + v.name + " failed to load"));
+        }
+      });
+      if (!willSurvive[0]) return false;
+
     }
 
     File npcDir = new File(storyRoot, "npcs");
@@ -195,19 +205,11 @@ public class Story {
       for (File npcConfig : npcDir.listFiles()) {
         UUID npcId = UUID.fromString(npcConfig.getName().replaceAll("\\.json", ""));
         try {
-          StoryNpc npc = gson.fromJson(new FileReader(npcConfig), StoryNpc.class);
+          StoryNpc npc = gson.fromJson(new InputStreamReader(new FileInputStream(npcConfig), StandardCharsets.UTF_8), StoryNpc.class);
           npc.story = this;
           if (registerNpc(npcId, npc)) {
             Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + npc.name + " (id:" + npcId + ") registered " +
-                    "successfully, loading..."));
-            if (npc.load()) {
-              Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + npc.name + " (id:" + npcId + ") successfully " +
-                      "registered and loaded"));
-            } else {
-              Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + npc.name + " (id:" + npcId + ") failed to load, " +
-                      "disabling story...", ChatColor.YELLOW));
-              return false;
-            }
+                    "successfully"));
           } else {
             Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME,
                     "NPC " + getQuest(npcId).name + " (id:" + npcId + ") is already registered", ChatColor.YELLOW));
@@ -219,6 +221,17 @@ public class Story {
         }
       }
     }
+
+    Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Loading Story NPCs..."));
+    registeredNpcs.forEach((k, v) -> {
+      if (willSurvive[0] && v.load()) {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " loaded sucessfully..."));
+      } else {
+        willSurvive[0] = false;
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " failed to load..."));
+      }
+    });
+    if (!willSurvive[0]) return false;
 
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Story " + name + " (id:" + id + ") loaded successfully, reloading player saves..."));
 
@@ -241,12 +254,27 @@ public class Story {
    * @return success
    */
   public boolean unload() {
-    Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Saving player saves..."));
-    progress.unload();
-    Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading all NPCs..."));
-    registeredNpcs.forEach((k, v) -> v.unload());
-    Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading all Quests..."));
-    registeredQuests.forEach((k, v) -> v.unload());
+    try {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading player saves..."));
+      progress.unload();
+    } catch (NullPointerException e) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload player saves, were they not yet loaded?"));
+      e.printStackTrace();
+    }
+    try {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading all NPCs..."));
+      registeredNpcs.forEach((k, v) -> v.unload());
+    } catch (NullPointerException e) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload NPCs, were they not yet loaded?"));
+      e.printStackTrace();
+    }
+    try {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading all Quests..."));
+      registeredQuests.forEach((k, v) -> v.unload());
+    } catch (NullPointerException e) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload quests, were they not yet loaded?"));
+      e.printStackTrace();
+    }
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Successfully unloaded story " + name + " (id:" + id + ")"));
     return true;
   }

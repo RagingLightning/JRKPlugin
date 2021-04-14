@@ -5,6 +5,8 @@ author: RagingLightning
 main: de.r13g.jrkniedersachsen.plugin.Plugin
 api-version: 1.16
 commands:
+  test:
+    usage: /test
   jrkadmin:
     usage: /jrkadmin
     description: TBD

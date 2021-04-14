@@ -1,6 +1,6 @@
 package de.r13g.jrkniedersachsen.plugin.customnpc;
 
-import com.mojang.serialization.Dynamic;
+import de.r13g.jrkniedersachsen.plugin.module.story.npc.StoryNpcOffer;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleBehaviour;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
@@ -9,11 +9,10 @@ import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 
 import java.util.List;
 
-public class CustomVillager extends EntityVillager {
+public class CustomTrader extends EntityVillagerTrader {
 
-  public CustomVillager(Location location, VillagerProfession profession) {
-    super(EntityTypes.VILLAGER, ((CraftWorld) location.getWorld()).getHandle());
-    this.setVillagerData(this.getVillagerData().withProfession(profession));
+  public CustomTrader(Location location) {
+    super(EntityTypes.WANDERING_TRADER, ((CraftWorld) location.getWorld()).getHandle());
   }
 
   public void setTrades(List<org.bukkit.inventory.MerchantRecipe> trades) {
@@ -41,21 +40,4 @@ public class CustomVillager extends EntityVillager {
     this.goalSelector.a(SimpleBehaviour.maxNeededGoalSlots+2, new PathfinderGoalInteract(this, EntityHuman.class, 3.0F, 1.0F));
     this.goalSelector.a(SimpleBehaviour.maxNeededGoalSlots+3, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
   }
-
-  @Override
-  protected BehaviorController<?> a(Dynamic<?> dynamic) {
-    return this.cK().a(dynamic);
-  }
-
-  @Override
-  public void c(WorldServer worldserver) {
-  }
-
-  @Override
-  protected void b(MerchantRecipe merchantRecipe) {
-  }
-
-  @Override
-  protected void eW() {
-  } //called to initialize trades, not in use, replaced by setTrades(List)
 }

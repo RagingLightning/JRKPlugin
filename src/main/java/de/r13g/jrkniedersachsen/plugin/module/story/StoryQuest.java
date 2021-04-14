@@ -9,21 +9,25 @@ public class StoryQuest {
 
   public static final String NAME = "--Quest";
 
-  transient Story story;
+  public transient Story story;
 
-  protected transient UUID id = null;
+  public transient UUID id = null;
   protected String name = null;
   protected String desc = null;
   protected List<UUID> children = null;
+  protected transient UUID parent = null;
 
-  Map<Integer, QuestTask> tasks = new HashMap<>();
-  List<QuestReward> rewards = new ArrayList<>();
+  Map<Integer, QuestTask> tasks;
+  List<QuestReward> rewards;
 
-  transient List<UUID> activePlayers = new ArrayList<>();
+  transient List<UUID> activePlayers;
 
   StoryQuest(Story story, String name) {
     this.story = story;
     this.name = name;
+    this.tasks = new HashMap<>();
+    this.rewards = new ArrayList<>();
+    this.activePlayers = new ArrayList<>();
   }
 
   /* ---Quest Logic--- */
@@ -34,6 +38,16 @@ public class StoryQuest {
    * @return success
    */
   boolean load() {
+    if (tasks != null) {
+      tasks.forEach((k, v) -> v.quest = this);
+      tasks.forEach((k, v) -> v.id = k);
+    }
+    if (rewards != null) {
+      rewards.forEach(v -> v.quest = this);
+    }
+    activePlayers = new ArrayList<>();
+    if (children == null) return true;
+    children.forEach(id -> story.getQuest(id).parent = this.id);
     return true;
   }
 
@@ -47,6 +61,10 @@ public class StoryQuest {
 
   List<StoryQuest> getChildren() {
     return story.getAllQuests(children);
+  }
+
+  StoryQuest getParent() {
+    return story.getQuest(parent);
   }
 
   public QuestTask getTask(int id) {
