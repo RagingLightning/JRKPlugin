@@ -1,0 +1,17 @@
+{ //TODO: Implement
+  "NOTE": "Only in StoryQuest's rewards field",
+  "type": "ITEM",
+  "item": "<SimpleItem>"
+}
+{ //TODO: Implement
+  "type": "EXPERIENCE",
+  "amount": 10
+}
+{ //TODO: Implement
+  "type": "LEVELS",
+  "amount": 1
+}
+{ //TODO: Implement
+  "type": "COMMAND",
+  "command": "say Hallo @p"
+}

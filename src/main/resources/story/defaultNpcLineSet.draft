@@ -1,0 +1,24 @@
+{
+  "NOTE": "only in StoryNpc's lineSets tag",
+  "dependsOn": "<StoryQuest id>",
+  "unlocks": {
+    "<Map of n StoryQuest id - QuestTask id>"
+  },
+  "lines": [
+    {
+      "message": "hey du",
+      "isJson": false,
+      "msDelayAfter": 100
+    },
+    {
+      "message": "{\"text\":\"Wie geht's dir?\",\"color\":\"RED\"}",
+      "isJson": true,
+      "msDelayAfter": 100
+    },
+    {
+      "message": "Schön, dich kennenzulernen, @p",
+      "isJson": false,
+      "msDelayAfter": 100
+    }
+  ]
+}

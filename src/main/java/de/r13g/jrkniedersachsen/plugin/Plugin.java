@@ -1,15 +1,20 @@
 package de.r13g.jrkniedersachsen.plugin;
 
-import de.r13g.jrkniedersachsen.plugin.modules.*;
-import de.r13g.jrkniedersachsen.plugin.modules.gp.AfkModule;
-import de.r13g.jrkniedersachsen.plugin.modules.gp.PigSeatModule;
+import de.r13g.jrkniedersachsen.plugin.customnpc.CustomVillager;
+import de.r13g.jrkniedersachsen.plugin.module.*;
+import de.r13g.jrkniedersachsen.plugin.module.gp.AfkModule;
+import de.r13g.jrkniedersachsen.plugin.module.gp.PigSeatModule;
+import de.r13g.jrkniedersachsen.plugin.module.story.npc.behaviour.SimpleWanderBehaviour;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
+import net.minecraft.server.v1_16_R3.VillagerProfession;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftVillager;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -41,11 +46,12 @@ public class Plugin extends JavaPlugin implements Listener {
 
   private HashMap<String, Module> loadedModules = new HashMap<>();
 
-  @EventHandler
+  /*@EventHandler
   public void onPlayerJoin(PlayerJoinEvent ev) {
-    CustomVillager villager = new CustomVillager(ev.getPlayer().getLocation());
+    CustomVillager villager = new CustomVillager(ev.getPlayer().getLocation(), VillagerProfession.CARTOGRAPHER);
     ((CraftWorld)ev.getPlayer().getWorld()).addEntity(villager, CreatureSpawnEvent.SpawnReason.CUSTOM);
-  }
+    Villager bukkitVillager = (CraftVillager) villager.getBukkitEntity();
+  }*/
 
   @Override
   public void onEnable() {

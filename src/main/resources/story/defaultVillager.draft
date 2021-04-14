@@ -1,0 +1,28 @@
+{
+  "id": "xxxxxxxx-xxxx-xxxx-0000-000000000000",
+  "baseId": "<InGame Entity UUID>",
+  "name": "Beispiel-Villager",
+  "type": "VILLAGER",
+  "invulnerable": true,
+  "location":
+  {
+    "world": "world",
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "behaviour": "<SimpleBehaviour>",
+  "head": null,
+  "chest": null,
+  "legs": null,
+  "feet": null,
+  "mainHand": null,
+  "offHand": null,
+  "lineSets": [
+    "<Array of n NpcLineSet>"
+  ],
+  "profession": "cartographer",
+  "offers": [
+    "<Array of n NpcOffer>"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "NOTE": "only in StoryVillager's offers field",
+  "items": [
+    "<Array of 3 SimpleItems (in,in,out)>"
+  ],
+  "uses": 1,
+  "dependsOn": "<StoryQuest id>",
+  "unlocks": [
+    "<Array of n StoryQuest id>"
+  ]
+}
