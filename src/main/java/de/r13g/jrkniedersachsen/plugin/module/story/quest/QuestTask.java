@@ -44,6 +44,7 @@ public abstract class QuestTask {
         case CRAFT_ITEM: return c.deserialize(e, CraftItemTask.class);
         case LOCATION: return c.deserialize(e, LocationTask.class);
         case BREAK_BLOCK: return c.deserialize(e, BreakBlockTask.class);
+        case PLACE_BLOCK: return c.deserialize(e, PlaceBlockTask.class);
       }
       throw new JsonParseException("QuestTask has unknown type '" + t + "'");
     }
