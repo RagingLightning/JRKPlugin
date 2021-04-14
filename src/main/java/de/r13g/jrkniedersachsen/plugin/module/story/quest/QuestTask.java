@@ -2,10 +2,8 @@ package de.r13g.jrkniedersachsen.plugin.module.story.quest;
 
 import com.google.gson.*;
 import de.r13g.jrkniedersachsen.plugin.module.story.StoryQuest;
-import de.r13g.jrkniedersachsen.plugin.module.story.quest.task.CollectItemTask;
-import de.r13g.jrkniedersachsen.plugin.module.story.quest.task.CraftItemTask;
-import de.r13g.jrkniedersachsen.plugin.module.story.quest.task.DetectItemTask;
-import de.r13g.jrkniedersachsen.plugin.module.story.quest.task.ExternalTask;
+import de.r13g.jrkniedersachsen.plugin.module.story.quest.task.*;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Type;
@@ -43,6 +41,7 @@ public abstract class QuestTask {
         case DETECT_ITEM: return c.deserialize(e, DetectItemTask.class);
         case COLLECT_ITEM: return c.deserialize(e, CollectItemTask.class);
         case CRAFT_ITEM: return c.deserialize(e, CraftItemTask.class);
+        case LOCATION: return c.deserialize(e, LocationTask.class);
       }
       throw new JsonParseException("QuestTask has unknown type '" + t + "'");
     }
