@@ -10,16 +10,20 @@ import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import java.util.UUID;
+
 public class StoryPlayer extends StoryNpc {
 
   //TODO: Test
 
   public static final String NAME = "--Player";
 
+  UUID skin;
+
   @Override
   public boolean load() {
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Loading StoryPlayer " + name + " (id:" + id + ")..."));
-    base = CustomPlayer.create(location.getLocation(), name);
+    base = CustomPlayer.create(location.getLocation(), name, skin);
     behaviour.applyPathfinderGoals(base, 2);
 
     setup();

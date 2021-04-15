@@ -2,6 +2,8 @@ package de.r13g.jrkniedersachsen.plugin.module;
 
 import com.google.gson.Gson;
 import de.r13g.jrkniedersachsen.plugin.Plugin;
+import de.r13g.jrkniedersachsen.plugin.customnpc.CustomPlayerPacketReader;
+import de.r13g.jrkniedersachsen.plugin.customnpc.event.PlayerJoinQuitListener;
 import de.r13g.jrkniedersachsen.plugin.module.story.Story;
 import de.r13g.jrkniedersachsen.plugin.module.story.npc.StoryNpc;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
@@ -11,6 +13,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -92,6 +95,12 @@ public class StoryModule implements Module, Listener {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Some stories could not be loaded", ChatColor.YELLOW));
 
     Bukkit.getPluginManager().registerEvents(this, plugin);
+    Bukkit.getPluginManager().registerEvents(new PlayerJoinQuitListener(), plugin);
+
+    for (Player p : Bukkit.getOnlinePlayers()) {
+      CustomPlayerPacketReader r = new CustomPlayerPacketReader();
+      r.inject(p);
+    }
 
     ready = true;
     return true;
@@ -101,6 +110,9 @@ public class StoryModule implements Module, Listener {
   public boolean unload() {
     ready = false;
 
+    for (Player p : Bukkit.getOnlinePlayers()) {
+      CustomPlayerPacketReader.uninject(p);
+    }
 
     HandlerList.unregisterAll(this);
 

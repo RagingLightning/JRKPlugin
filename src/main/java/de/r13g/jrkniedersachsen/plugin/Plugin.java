@@ -192,16 +192,11 @@ public class Plugin extends JavaPlugin implements Listener {
     saveConfig();
   }
 
-  @EventHandler
-  public void onPlayerJoin(PlayerJoinEvent ev) {
-    CustomPlayer.addJoinPacket(ev.getPlayer());
-  }
-
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (command.getName().equalsIgnoreCase("test")) {
       Location l = ((Player) sender).getLocation();
-      CustomPlayerPather custom = CustomPlayer.create(l, "TEST");
+      CustomPlayerPather custom = CustomPlayer.create(l, "TEST", null);
       return true;
     }
     if (command.getName().equalsIgnoreCase("jrk")) {

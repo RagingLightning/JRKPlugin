@@ -1,6 +1,9 @@
 package de.r13g.jrkniedersachsen.plugin.customnpc;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
@@ -13,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,17 +40,23 @@ public class CustomPlayer extends EntityPlayer {
   private float pH = 0;
   private double pX, pY, pZ;
 
-  public CustomPlayer(MinecraftServer s, WorldServer w, GameProfile p, PlayerInteractManager m) {
+  private CustomPlayer(MinecraftServer s, WorldServer w, GameProfile p, PlayerInteractManager m) {
     super(s, w, p, m);
   }
 
-  public static CustomPlayerPather create(Location location, String customName) {
+  public static CustomPlayerPather create(Location location, String customName, UUID skin) {
     MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
     WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
     GameProfile gameProfile = new GameProfile(UUID.randomUUID(), customName); // name max length 16 chars
     PlayerInteractManager interactManager = new PlayerInteractManager(world);
 
     CustomPlayer npc = new CustomPlayer(server, world, gameProfile, interactManager);
+
+    if (skin != null) {
+      String[] skinData = getSkin(skin);
+      if (skinData != null)
+        gameProfile.getProperties().put("textures", new Property("textures", skinData[0], skinData[1]));
+    }
 
     npc.setLocation(location.getX(), location.getY(), location.getZ(), 0, 0);
     npc.pather = new CustomPlayerPather(npc);
@@ -109,6 +120,24 @@ public class CustomPlayer extends EntityPlayer {
     removeNpcPacket(this);
     pather.killEntity();
     registeredNpcs.remove(this);
+  }
+
+  public CustomPlayerPather getPather() {
+    return pather;
+  }
+
+  private static String[] getSkin(UUID skinPlayer) {
+    String skin = skinPlayer.toString().replaceAll("-", "");
+    try {
+      URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + skin);
+      JsonObject o = JsonParser.parseReader(new InputStreamReader(url.openStream())).getAsJsonObject();
+      JsonObject p = o.get("properties").getAsJsonArray().get(0).getAsJsonObject();
+      String tex = p.get("value").getAsString();
+      String sig = p.get("signature").getAsString();
+      return new String[]{tex, sig};
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   public static void addNpcPacket(CustomPlayer npc) {
