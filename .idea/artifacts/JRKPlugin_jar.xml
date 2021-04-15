@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/../JRKPluginServer/plugins</output-path>
     <root id="archive" name="JRKPlugin.jar">
       <element id="module-output" name="JRKPluginDev" />
+      <element id="library" level="project" name="LocaleLib-1.8" />
     </root>
   </artifact>
 </component>

@@ -39,7 +39,7 @@ public class StoryNpcLineSet {
         if (line.isJson)
           Util.tellRaw(p, line.message.replaceAll("@p", p.getName()).replaceAll("@s", npc.name));
         else
-          p.sendMessage("<" + npc.name + "> " + line.message.replaceAll("@p", p.getDisplayName()));
+          p.sendMessage(line.message.replaceAll("@p", p.getDisplayName()).replaceAll("@s", npc.name));
         try {
           Thread.sleep(line.msDelayAfter);
         } catch (InterruptedException e) {
