@@ -117,7 +117,7 @@ public class TempBanModule implements Module {
         OfflinePlayer p = Plugin.INSTANCE.getServer().getPlayerExact(args[1]);
         if (p == null) {
           p = Plugin.INSTANCE.getServer().getOfflinePlayer(args[1]);
-          if(!Plugin.INSTANCE.getServer().getWhitelistedPlayers().contains(p))
+          if (!Plugin.INSTANCE.getServer().getWhitelistedPlayers().contains(p))
             sender.sendMessage("NOTE: " + args[1] + " ist nicht auf der Whitelist, ist der Name korrekt?");
         }
 
@@ -127,7 +127,7 @@ public class TempBanModule implements Module {
                   config.getInt(CFGKEY_Players + "." + p.getUniqueId()) : 0;
           Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<DEBG> Player " + p.getName() + " hat Warn-Level " + warnLevel));
           duration = config.getStringList(CFGKEY_Warn_Levels).get(warnLevel);
-          config.set(CFGKEY_Players + "." + p.getUniqueId(), Math.min(warnLevel + 1, config.getStringList(CFGKEY_Warn_Levels).size()-1));
+          config.set(CFGKEY_Players + "." + p.getUniqueId(), Math.min(warnLevel + 1, config.getStringList(CFGKEY_Warn_Levels).size() - 1));
         }
         Instant until = calcBanUntil(duration);
 
@@ -145,7 +145,8 @@ public class TempBanModule implements Module {
         } else {
           sender.sendMessage(Util.logLine(NAME, p.getName() + " wird bis " + until.toString() + "gebannt"));
           Plugin.INSTANCE.getServer().getBanList(BanList.Type.NAME).addBan(p.getName(), reason.toString().trim(), Date.from(until), "ADMIN");
-          if (p instanceof Player) ((Player) p).kickPlayer("Temp-Bann bis " + until.toString().split("\\.")[0] + " Grund: " + reason.toString().trim());
+          if (p instanceof Player)
+            ((Player) p).kickPlayer("Temp-Bann bis " + until.toString().split("\\.")[0] + " Grund: " + reason.toString().trim());
         }
       }
       try {
@@ -161,20 +162,20 @@ public class TempBanModule implements Module {
         OfflinePlayer p = Plugin.INSTANCE.getServer().getPlayerExact(args[2]);
         if (p == null) {
           p = Plugin.INSTANCE.getServer().getOfflinePlayer(args[2]);
-          if(!Plugin.INSTANCE.getServer().getWhitelistedPlayers().contains(p))
+          if (!Plugin.INSTANCE.getServer().getWhitelistedPlayers().contains(p))
             sender.sendMessage("NOTE: " + args[2] + " ist nicht auf der Whitelist, ist der Name korrekt?");
         }
         int level = config.contains(CFGKEY_Players + "." + p.getUniqueId()) ? config.getInt(CFGKEY_Players + "." + p.getUniqueId()) : 0;
         sender.sendMessage(Util.logLine(NAME, p.getName() + " ist im Warn-Level " + level));
       } else if (args[1].equals("set") && args.length == 4) {
-        if (Integer.parseInt(args[3]) >= config.getStringList(CFGKEY_Warn_Levels).size()){
+        if (Integer.parseInt(args[3]) >= config.getStringList(CFGKEY_Warn_Levels).size()) {
           sender.sendMessage("So viele Verwarnungsstufen gibt es nicht!");
           return true;
         }
         OfflinePlayer p = Plugin.INSTANCE.getServer().getPlayerExact(args[2]);
         if (p == null) {
           p = Plugin.INSTANCE.getServer().getOfflinePlayer(args[2]);
-          if(!Plugin.INSTANCE.getServer().getWhitelistedPlayers().contains(p))
+          if (!Plugin.INSTANCE.getServer().getWhitelistedPlayers().contains(p))
             sender.sendMessage("NOTE: " + args[2] + " ist nicht auf der Whitelist, ist der Name korrekt?");
         }
         config.set(CFGKEY_Players + "." + p.getUniqueId(), Integer.parseInt(args[3]));
@@ -204,15 +205,15 @@ public class TempBanModule implements Module {
     }
     Instant t = Instant.now();
     if (units.containsKey("D"))
-      t = t.plusSeconds(units.get("D")*24*60*60);
+      t = t.plusSeconds(units.get("D") * 24 * 60 * 60);
     Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME,
             "<DEBG> End after n Days: " + t.toString()));
     if (units.containsKey("H"))
-      t = t.plusSeconds(units.get("H")*60*60);
+      t = t.plusSeconds(units.get("H") * 60 * 60);
     Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME,
             "<DEBG> End after n Hours: " + t.toString()));
     if (units.containsKey("M"))
-      t = t.plusSeconds(units.get("M")*60);
+      t = t.plusSeconds(units.get("M") * 60);
     Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME,
             "<DEBG> End after n Mins: " + t.toString()));
     if (units.containsKey("S"))

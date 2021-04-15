@@ -27,7 +27,10 @@ import org.bukkit.permissions.Permissible;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import static org.bukkit.block.BlockFace.*;
 
@@ -95,7 +98,7 @@ public class LockModule implements Module, Listener {
         int y = Integer.parseInt(v.split("\\[Y]")[1].split("\\[Z]")[0]);
         int z = Integer.parseInt(v.split("\\[Z]")[1]);
         String p = config.getString(CFGKEY_PlayerLocks + "." + k + "." + v);
-        Block b = plugin.getServer().getWorld(w).getBlockAt(x,y,z);
+        Block b = plugin.getServer().getWorld(w).getBlockAt(x, y, z);
         makeLock(b, k, p);
       }
     }
@@ -124,11 +127,11 @@ public class LockModule implements Module, Listener {
   @Override
   public List<String[]> getCommands() {
     List<String[]> commands = new ArrayList<>();
-    commands.add(new String[]{"/"+NAME.toLowerCase(),"pw","<password>"});
-    commands.add(new String[]{"/"+NAME.toLowerCase(),"add","<password>"});
-    commands.add(new String[]{"/"+NAME.toLowerCase(),"remove"});
-    commands.add(new String[]{"/"+NAME.toLowerCase(),"get"});
-    commands.add(new String[]{"/"+NAME.toLowerCase(),"list"});
+    commands.add(new String[]{"/" + NAME.toLowerCase(), "pw", "<password>"});
+    commands.add(new String[]{"/" + NAME.toLowerCase(), "add", "<password>"});
+    commands.add(new String[]{"/" + NAME.toLowerCase(), "remove"});
+    commands.add(new String[]{"/" + NAME.toLowerCase(), "get"});
+    commands.add(new String[]{"/" + NAME.toLowerCase(), "list"});
     return commands;
   }
 
@@ -233,13 +236,17 @@ public class LockModule implements Module, Listener {
   @EventHandler
   public void onPlayerInteract(PlayerInteractEvent ev) {
     // Block has no lock
-    if (ev.getClickedBlock() == null || !ev.getClickedBlock().hasMetadata(MDAT_LockPassword) || !ev.getClickedBlock().hasMetadata(MDAT_LockOwner)) return;
+    if (ev.getClickedBlock() == null || !ev.getClickedBlock().hasMetadata(MDAT_LockPassword) || !ev.getClickedBlock().hasMetadata(MDAT_LockOwner))
+      return;
     // Player is lock owner and CFGKEY_ownerNoPw is set
-    if (config.getBoolean(CFGKEY_OwnerNoPw) && ev.getClickedBlock().getMetadata(MDAT_LockOwner).get(0).asString().equals(ev.getPlayer().getUniqueId().toString())) return;
+    if (config.getBoolean(CFGKEY_OwnerNoPw) && ev.getClickedBlock().getMetadata(MDAT_LockOwner).get(0).asString().equals(ev.getPlayer().getUniqueId().toString()))
+      return;
     // Player has correctly named item in hand
-    if (ev.hasItem() && ev.getItem().getItemMeta().hasDisplayName() && ev.getClickedBlock().getMetadata(MDAT_LockPassword).get(0).asString().equals(ev.getItem().getItemMeta().getDisplayName())) return;
+    if (ev.hasItem() && ev.getItem().getItemMeta().hasDisplayName() && ev.getClickedBlock().getMetadata(MDAT_LockPassword).get(0).asString().equals(ev.getItem().getItemMeta().getDisplayName()))
+      return;
     // Player has correct password in Buffer
-    if (passwordCache.containsKey(ev.getPlayer().getUniqueId()) && ev.getClickedBlock().getMetadata(MDAT_LockPassword).get(0).asString().equals(passwordCache.get(ev.getPlayer().getUniqueId()))) return;
+    if (passwordCache.containsKey(ev.getPlayer().getUniqueId()) && ev.getClickedBlock().getMetadata(MDAT_LockPassword).get(0).asString().equals(passwordCache.get(ev.getPlayer().getUniqueId())))
+      return;
     // Player can bypass all locks and is in creative mode
     if (ev.getPlayer().hasPermission(PERM_BypassLock) && ev.getPlayer().getGameMode() == GameMode.CREATIVE) return;
     ev.getPlayer().sendMessage(ChatColor.ITALIC + config.getString(CFGKEY_BlockHasLockMessage));
@@ -262,17 +269,33 @@ public class LockModule implements Module, Listener {
       Block b;
       if (((Chest) ev.getBlock().getState().getBlockData()).getType() == Chest.Type.LEFT) {
         switch (((Chest) ev.getBlock().getState().getBlockData()).getFacing()) {
-          case NORTH: b = ev.getBlock().getRelative(EAST); break;
-          case EAST: b = ev.getBlock().getRelative(SOUTH); break;
-          case SOUTH: b = ev.getBlock().getRelative(WEST); break;
-          default: b = ev.getBlock().getRelative(NORTH); break;
+          case NORTH:
+            b = ev.getBlock().getRelative(EAST);
+            break;
+          case EAST:
+            b = ev.getBlock().getRelative(SOUTH);
+            break;
+          case SOUTH:
+            b = ev.getBlock().getRelative(WEST);
+            break;
+          default:
+            b = ev.getBlock().getRelative(NORTH);
+            break;
         }
       } else {
         switch (((Chest) ev.getBlock().getState().getBlockData()).getFacing()) {
-          case NORTH: b = ev.getBlock().getRelative(WEST); break;
-          case EAST: b = ev.getBlock().getRelative(NORTH); break;
-          case SOUTH: b = ev.getBlock().getRelative(EAST); break;
-          default: b = ev.getBlock().getRelative(SOUTH); break;
+          case NORTH:
+            b = ev.getBlock().getRelative(WEST);
+            break;
+          case EAST:
+            b = ev.getBlock().getRelative(NORTH);
+            break;
+          case SOUTH:
+            b = ev.getBlock().getRelative(EAST);
+            break;
+          default:
+            b = ev.getBlock().getRelative(SOUTH);
+            break;
         }
       }
       if (b.hasMetadata(MDAT_LockPassword)) ev.setCancelled(true);
@@ -304,17 +327,37 @@ public class LockModule implements Module, Listener {
       Block b1;
       if (((Chest) b.getState().getBlockData()).getType() == Chest.Type.LEFT) {
         switch (((Chest) b.getState().getBlockData()).getFacing()) {
-          case NORTH: b1 = b.getRelative(EAST); loc = b1.getLocation(); break;
-          case EAST: b1 = b.getRelative(SOUTH); break;
-          case SOUTH: b1 = b.getRelative(WEST); break;
-          default: b1 = b.getRelative(NORTH); loc = b1.getLocation(); break;
+          case NORTH:
+            b1 = b.getRelative(EAST);
+            loc = b1.getLocation();
+            break;
+          case EAST:
+            b1 = b.getRelative(SOUTH);
+            break;
+          case SOUTH:
+            b1 = b.getRelative(WEST);
+            break;
+          default:
+            b1 = b.getRelative(NORTH);
+            loc = b1.getLocation();
+            break;
         }
       } else {
         switch (((Chest) b.getState().getBlockData()).getFacing()) {
-          case NORTH: b1 = b.getRelative(WEST); break;
-          case EAST: b1 = b.getRelative(NORTH); loc = b1.getLocation(); break;
-          case SOUTH: b1 = b.getRelative(EAST); loc = b1.getLocation(); break;
-          default: b1 = b.getRelative(SOUTH); break;
+          case NORTH:
+            b1 = b.getRelative(WEST);
+            break;
+          case EAST:
+            b1 = b.getRelative(NORTH);
+            loc = b1.getLocation();
+            break;
+          case SOUTH:
+            b1 = b.getRelative(EAST);
+            loc = b1.getLocation();
+            break;
+          default:
+            b1 = b.getRelative(SOUTH);
+            break;
         }
       }
       b1.setMetadata(MDAT_LockPassword, new FixedMetadataValue(Plugin.INSTANCE, password));
@@ -361,17 +404,37 @@ public class LockModule implements Module, Listener {
       Block b1;
       if (((Chest) b.getState().getBlockData()).getType() == Chest.Type.LEFT) {
         switch (((Chest) b.getState().getBlockData()).getFacing()) {
-          case NORTH: b1 = b.getRelative(EAST); loc = b1.getLocation(); break;
-          case EAST: b1 = b.getRelative(SOUTH); break;
-          case SOUTH: b1 = b.getRelative(WEST); break;
-          default: b1 = b.getRelative(NORTH); loc = b1.getLocation(); break;
+          case NORTH:
+            b1 = b.getRelative(EAST);
+            loc = b1.getLocation();
+            break;
+          case EAST:
+            b1 = b.getRelative(SOUTH);
+            break;
+          case SOUTH:
+            b1 = b.getRelative(WEST);
+            break;
+          default:
+            b1 = b.getRelative(NORTH);
+            loc = b1.getLocation();
+            break;
         }
       } else {
         switch (((Chest) b.getState().getBlockData()).getFacing()) {
-          case NORTH: b1 = b.getRelative(WEST); break;
-          case EAST: b1 = b.getRelative(NORTH); loc = b1.getLocation(); break;
-          case SOUTH: b1 = b.getRelative(EAST); loc = b1.getLocation(); break;
-          default: b1 = b.getRelative(SOUTH); break;
+          case NORTH:
+            b1 = b.getRelative(WEST);
+            break;
+          case EAST:
+            b1 = b.getRelative(NORTH);
+            loc = b1.getLocation();
+            break;
+          case SOUTH:
+            b1 = b.getRelative(EAST);
+            loc = b1.getLocation();
+            break;
+          default:
+            b1 = b.getRelative(SOUTH);
+            break;
         }
       }
       if (loc != b.getLocation()) removeLock(b1, true);

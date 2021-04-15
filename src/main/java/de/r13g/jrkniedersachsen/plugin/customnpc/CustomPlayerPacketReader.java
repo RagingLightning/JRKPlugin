@@ -89,7 +89,7 @@ public class CustomPlayerPacketReader {
       }
     }
 
-}
+  }
 
   private Object getValue(Object instance, String name) {
     Object r = null;

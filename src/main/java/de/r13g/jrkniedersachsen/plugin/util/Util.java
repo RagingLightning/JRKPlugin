@@ -25,16 +25,15 @@ public class Util {
   }
 
   public static void tellRaw(Player p, String json) {
-    Packet packet = new PacketPlayOutChat(ChatSerializer.a(json), ChatMessageType.CHAT, new UUID(0,0));
+    Packet packet = new PacketPlayOutChat(ChatSerializer.a(json), ChatMessageType.CHAT, new UUID(0, 0));
     ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
   }
 
   public static String configToFormatString(String configValue) {
-    return configValue.replaceAll("\\$(\\d)","%$1\\$s");
+    return configValue.replaceAll("\\$(\\d)", "%$1\\$s");
   }
 
-  public static Object getPrivateField(String fieldName, Class clazz, Object object)
-  {
+  public static Object getPrivateField(String fieldName, Class clazz, Object object) {
     Field field;
     Object o = null;
 
@@ -44,9 +43,9 @@ public class Util {
       field.setAccessible(true);
 
       o = field.get(object);
-    } catch(NoSuchFieldException e) {
+    } catch (NoSuchFieldException e) {
       e.printStackTrace();
-    } catch(IllegalAccessException e) {
+    } catch (IllegalAccessException e) {
       e.printStackTrace();
     }
     return o;

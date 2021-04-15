@@ -1,7 +1,6 @@
 package de.r13g.jrkniedersachsen.plugin.module;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,8 +32,8 @@ public class InvSeeModule implements Module {
   @Override
   public List<String[]> getCommands() {
     List<String[]> commands = new ArrayList<>();
-    commands.add(new String[]{"/invsee","chest","<player>"});
-    commands.add(new String[]{"/invsee","player","<player>"});
+    commands.add(new String[]{"/invsee", "chest", "<player>"});
+    commands.add(new String[]{"/invsee", "player", "<player>"});
     return commands;
   }
 

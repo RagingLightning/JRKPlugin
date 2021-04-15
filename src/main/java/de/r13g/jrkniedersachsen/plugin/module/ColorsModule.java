@@ -28,7 +28,7 @@ public class ColorsModule implements Module, Listener {
 
   public static final String NAME = "Colors";
 
-  public static final String PERM_ColorsAdmin  = "jrk.colors.admin";
+  public static final String PERM_ColorsAdmin = "jrk.colors.admin";
 
   private final List<String> colors = new ArrayList<>();
 
@@ -78,7 +78,7 @@ public class ColorsModule implements Module, Listener {
       Plugin.INSTANCE.getServer().getConsoleSender().sendMessage(Util.logLine(NAME, "<WARN> unable to save config", ChatColor.YELLOW));
     }
     HandlerList.unregisterAll(this);
-    for (String k : teams.keySet()){
+    for (String k : teams.keySet()) {
       teams.get(k).unregister();
     }
     return true;
@@ -92,10 +92,10 @@ public class ColorsModule implements Module, Listener {
   @Override
   public List<String[]> getCommands() {
     List<String[]> commands = new ArrayList<>();
-    commands.add(new String[]{"/colors","teams","<team>","<color>"});
-    commands.add(new String[]{"/colors","players","<player>","<team>"});
-    commands.add(new String[]{"/colors","players","<player>","default"});
-    commands.add(new String[]{"/colors","default","<team>"});
+    commands.add(new String[]{"/colors", "teams", "<team>", "<color>"});
+    commands.add(new String[]{"/colors", "players", "<player>", "<team>"});
+    commands.add(new String[]{"/colors", "players", "<player>", "default"});
+    commands.add(new String[]{"/colors", "default", "<team>"});
     return commands;
   }
 
@@ -116,7 +116,7 @@ public class ColorsModule implements Module, Listener {
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-    if (args.length > 0){
+    if (args.length > 0) {
       if (args[0].equals("teams")) {
         if (args.length == 1) { //colors teams -- List all teams with color
           sender.sendMessage(Util.logLine(NAME, "Liste der verfügbaren Teams: "));
@@ -125,7 +125,8 @@ public class ColorsModule implements Module, Listener {
           }
         } else if (args.length == 2) { //colors teams <team> -- List all players in team Team
           if (!teams.containsKey(args[1])) {
-            sender.sendMessage(Util.logLine(NAME, "Das Team " + args[1] + " existiert nicht!",ChatColor.YELLOW)); return true;
+            sender.sendMessage(Util.logLine(NAME, "Das Team " + args[1] + " existiert nicht!", ChatColor.YELLOW));
+            return true;
           }
           sender.sendMessage(Util.logLine(NAME, "Spieler in Team " + teams.get(args[1]).getColor() + args[1] + ChatColor.RESET + ":"));
           for (String s : getPlayerOverwiew(args[1])) {
@@ -133,7 +134,8 @@ public class ColorsModule implements Module, Listener {
           }
         } else if (args.length == 3) { //colors teams <team> <color> -- Set team color
           if (colors.contains(args[2])) {
-            sender.sendMessage(Util.logLine(NAME, args[2] + " ist keine valide Farbe!",ChatColor.YELLOW)); return true;
+            sender.sendMessage(Util.logLine(NAME, args[2] + " ist keine valide Farbe!", ChatColor.YELLOW));
+            return true;
           }
           if (!teams.containsKey(args[1])) {
             Team t = Plugin.INSTANCE.getServer().getScoreboardManager().getMainScoreboard().registerNewTeam(args[1]);
@@ -142,7 +144,7 @@ public class ColorsModule implements Module, Listener {
             sender.sendMessage(Util.logLine(NAME, "Neues Team " + ChatColor.valueOf(args[2]) + args[1] + ChatColor.RESET + " erstellt"));
           }
           teams.get(args[1]).setColor(ChatColor.valueOf(args[2]));
-          for (String name : teams.get(args[1]).getEntries()){
+          for (String name : teams.get(args[1]).getEntries()) {
             Player p = Plugin.INSTANCE.getServer().getPlayerExact(name);
             if (p != null) applyPlayerColors(p);
           }
@@ -171,7 +173,9 @@ public class ColorsModule implements Module, Listener {
             String id = p.getUniqueId().toString();
             ConfigurationSection cOld = config.getConfigurationSection("players");
             ConfigurationSection cNew = config.createSection("players");
-            cOld.getValues(false).forEach((k,v) -> {if (!k.equals(id)) cNew.set(k, v);});
+            cOld.getValues(false).forEach((k, v) -> {
+              if (!k.equals(id)) cNew.set(k, v);
+            });
             sender.sendMessage(Util.logLine(NAME, args[1] + " ist jetzt keinem Team mehr zugewiesen"));
             if (p instanceof Player) {
               applyPlayerColors((Player) p);
@@ -180,7 +184,8 @@ public class ColorsModule implements Module, Listener {
             }
           }
           if (!teams.containsKey(args[2])) {
-            sender.sendMessage(Util.logLine(NAME, "Das Team " + args[2] + " existiert nicht!", ChatColor.YELLOW)); return true;
+            sender.sendMessage(Util.logLine(NAME, "Das Team " + args[2] + " existiert nicht!", ChatColor.YELLOW));
+            return true;
           }
           OfflinePlayer p = Plugin.INSTANCE.getServer().getPlayerExact(args[1]);
           if (p == null)
@@ -201,7 +206,8 @@ public class ColorsModule implements Module, Listener {
           sender.sendMessage(Util.logLine(NAME, "Das Standardteam ist " + teams.get(team).getColor() + team));
         } else if (args.length == 2) { //colors default <team>
           if (!teams.containsKey(args[1])) {
-            sender.sendMessage(Util.logLine(NAME, "Das Team " + args[1] + " existiert nicht!", ChatColor.YELLOW)); return true;
+            sender.sendMessage(Util.logLine(NAME, "Das Team " + args[1] + " existiert nicht!", ChatColor.YELLOW));
+            return true;
           }
           config.set("default", args[1]);
           sender.sendMessage(Util.logLine(NAME, "Das Team " + teams.get(args[1]).getColor() + args[1] + ChatColor.RESET + " ist jetzt das Standardteam"));
@@ -233,7 +239,7 @@ public class ColorsModule implements Module, Listener {
         teams.put(key, team);
       }
     } else {
-      for (String key : teams.keySet()){
+      for (String key : teams.keySet()) {
         teams.get(key).setColor(ChatColor.valueOf(config.getString("teams." + key)));
       }
     }
@@ -250,7 +256,7 @@ public class ColorsModule implements Module, Listener {
   private List<String> getPlayerOverwiew(String team) {
     List<String> overview = new ArrayList<>();
     for (String id : config.getConfigurationSection("players").getKeys(false)) {
-      if (config.getString("players." + id).equals(team)){
+      if (config.getString("players." + id).equals(team)) {
         Player p = Plugin.INSTANCE.getServer().getPlayer(UUID.fromString(id));
         String name = "id:" + id;
         if (p != null)

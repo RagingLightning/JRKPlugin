@@ -11,13 +11,10 @@ import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -123,10 +120,11 @@ public class Story {
     final boolean[] success = {true};
     List<Story> toBeUnregistered = new ArrayList<>();
     registeredStories.forEach((k, v) -> {
-              if (!v.load()) {
-                success[0] = false;
-                toBeUnregistered.add(v);
-              }});
+      if (!v.load()) {
+        success[0] = false;
+        toBeUnregistered.add(v);
+      }
+    });
     if (!success[0]) {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unregistering errored stories..."));
       toBeUnregistered.forEach(Story::unload);
@@ -185,7 +183,7 @@ public class Story {
 
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Loading Story Quests..."));
       registeredQuests.forEach((k, v) -> {
-        if(willSurvive[0] && v.load()) {
+        if (willSurvive[0] && v.load()) {
           Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Quest " + v.name + " loaded successfully"));
         } else {
           willSurvive[0] = false;

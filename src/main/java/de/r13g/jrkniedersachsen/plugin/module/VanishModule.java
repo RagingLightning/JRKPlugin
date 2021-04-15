@@ -76,7 +76,7 @@ public class VanishModule implements Module, Listener {
   @Override
   public List<String[]> getCommands() {
     List<String[]> commands = new ArrayList<>();
-    commands.add(new String[]{"/" + NAME.toLowerCase(),"<player>"});
+    commands.add(new String[]{"/" + NAME.toLowerCase(), "<player>"});
     return null;
   }
 
@@ -119,14 +119,14 @@ public class VanishModule implements Module, Listener {
       ev.getPlayer().sendMessage(Util.logLine(NAME, "Du bist unsichtbar"));
       for (Player p : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
         if (!vanished.contains(p.getUniqueId().toString()))
-          p.hidePlayer(Plugin.INSTANCE,ev.getPlayer());
+          p.hidePlayer(Plugin.INSTANCE, ev.getPlayer());
         if (p.isOp())
           p.sendMessage(Util.logLine(NAME, ev.getPlayer().getDisplayName() + " ist dem Spiel beigetreten, ist aber vanished."));
       }
     } else {
       for (Player p : Plugin.INSTANCE.getServer().getOnlinePlayers()) {
         if (vanished.contains(p.getUniqueId().toString()))
-          ev.getPlayer().hidePlayer(Plugin.INSTANCE,p);
+          ev.getPlayer().hidePlayer(Plugin.INSTANCE, p);
       }
     }
   }

@@ -2,12 +2,17 @@ package de.r13g.jrkniedersachsen.plugin.module.story.quest.task;
 
 import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestTask;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleLocation;
+import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class LocationTask extends QuestTask implements Listener {
+
+  private static final String notification = "[{\"text\":\"Du hast \",\"italic\":true,\"color\":\"gray\"}," +
+          "{\"text\":\"@name\",\"italic\":true,\"color\":\"white\"}," +
+          "{\"text\":\" erreicht\",\"italic\":true,\"color\":\"gray\"}]";
 
   SimpleLocation location;
   float radius;
@@ -24,6 +29,8 @@ public class LocationTask extends QuestTask implements Listener {
 
   @Override
   public void notifyPlayer(Player p) {
-
+    if (location.name != null) {
+      Util.tellRaw(p, notification.replaceAll("@name", location.name));
+    }
   }
 }

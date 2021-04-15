@@ -5,11 +5,12 @@ import org.bukkit.Location;
 
 public class SimpleLocation {
 
-  public String world;
+  public String name, world;
   public double x, y, z;
 
-  SimpleLocation() {
-
+  public SimpleLocation(Location loc, String name) {
+    this(loc);
+    this.name = name;
   }
 
   public SimpleLocation(Location loc) {

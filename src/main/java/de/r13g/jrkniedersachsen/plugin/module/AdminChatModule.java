@@ -102,7 +102,9 @@ public class AdminChatModule implements Module, Listener {
 
   @Override
   public List<String> getHelpText(Permissible p) {
-    return new ArrayList<String>(){{add("Falsche Syntax, bitte ggf. an den Admin wenden");}};
+    return new ArrayList<String>() {{
+      add("Falsche Syntax, bitte ggf. an den Admin wenden");
+    }};
   }
 
   @EventHandler
@@ -113,7 +115,8 @@ public class AdminChatModule implements Module, Listener {
       inAdminChat.forEach(u -> {
         Player r = Plugin.INSTANCE.getServer().getPlayer(u);
         if (r == null) inAdminChat.remove(u);
-        else r.sendMessage("<" + ChatColor.DARK_RED + "ADMIN" + ChatColor.GRAY + "/" + ChatColor.RESET + ev.getPlayer().getName() + "> " + ev.getMessage());
+        else
+          r.sendMessage("<" + ChatColor.DARK_RED + "ADMIN" + ChatColor.GRAY + "/" + ChatColor.RESET + ev.getPlayer().getName() + "> " + ev.getMessage());
         received.add(u);
       });
       Plugin.INSTANCE.getServer().getOnlinePlayers().forEach(p -> {

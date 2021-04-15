@@ -35,7 +35,8 @@ public class PermissionsModule implements Module, Listener {
 
   boolean ready = false;
 
-  public PermissionsModule() {}
+  public PermissionsModule() {
+  }
 
   @Override
   public boolean load(Plugin plugin, File moduleDataFolder) {
@@ -101,7 +102,7 @@ public class PermissionsModule implements Module, Listener {
   public void loadPlayerPermissions(UUID u) {
     PermissionAttachment a = Plugin.INSTANCE.getServer().getPlayer(u).addAttachment(Plugin.INSTANCE);
     for (String s : playerCfg.getStringList(u.toString())) {
-      a.setPermission(s.substring(1),s.startsWith("+"));
+      a.setPermission(s.substring(1), s.startsWith("+"));
     }
     attachments.put(u, a);
   }
@@ -111,7 +112,7 @@ public class PermissionsModule implements Module, Listener {
     List<String> list = new ArrayList<>();
     for (String s : a.getPermissions().keySet()) {
       if (s.equals("")) continue;
-      list.add((a.getPermissions().get(s)?"+":"-") + s);
+      list.add((a.getPermissions().get(s) ? "+" : "-") + s);
     }
     playerCfg.set(u.toString(), list);
   }
@@ -130,7 +131,7 @@ public class PermissionsModule implements Module, Listener {
   public List<Player> listPlayersWithPermission(String permission) {
     List<Player> players = new ArrayList<>();
     boolean value = true;
-    if (permission.startsWith("-")){
+    if (permission.startsWith("-")) {
       permission = permission.substring(1);
       value = false;
     } else if (permission.startsWith("+"))
@@ -144,8 +145,8 @@ public class PermissionsModule implements Module, Listener {
 
   public List<String> listPermissionsOfPlayer(Player p) {
     List<String> perms = new ArrayList<>();
-    for (Map.Entry<String, Boolean> e: attachments.get(p.getUniqueId()).getPermissions().entrySet()) {
-      perms.add(e.getKey() + ": " + (e.getValue()?"+":"-"));
+    for (Map.Entry<String, Boolean> e : attachments.get(p.getUniqueId()).getPermissions().entrySet()) {
+      perms.add(e.getKey() + ": " + (e.getValue() ? "+" : "-"));
     }
     return perms;
   }

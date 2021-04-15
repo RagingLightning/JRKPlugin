@@ -89,7 +89,7 @@ public class StoryModule implements Module, Listener {
     }
 
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Story registration finished, loading stories..."));
-    if(Story.loadAll())
+    if (Story.loadAll())
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "All stories successfully loaded"));
     else
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Some stories could not be loaded", ChatColor.YELLOW));
@@ -147,7 +147,7 @@ public class StoryModule implements Module, Listener {
       ev.setCancelled(true);
       long most = ev.getRightClicked().getMetadata(MDAT_StoryNpcMost).get(0).asLong();
       long least = ev.getRightClicked().getMetadata(MDAT_StoryNpcLeast).get(0).asLong();
-      UUID storyId = new UUID(most,0);
+      UUID storyId = new UUID(most, 0);
       UUID npcId = new UUID(most, least);
       StoryNpc npc = Story.get(storyId).getNpc(npcId);
       if (npc == null) {

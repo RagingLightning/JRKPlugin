@@ -53,6 +53,7 @@ public class StoryQuest {
 
   /**
    * unload this checkpoint
+   *
    * @return success
    */
   boolean unload() {

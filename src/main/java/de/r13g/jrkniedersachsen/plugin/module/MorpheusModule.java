@@ -45,7 +45,8 @@ public class MorpheusModule implements Module, Listener {
 
   private boolean ready = false;
 
-  public MorpheusModule() { }
+  public MorpheusModule() {
+  }
 
   @Override
   public boolean load(Plugin plugin, File moduleDataFolder) {
@@ -75,8 +76,8 @@ public class MorpheusModule implements Module, Listener {
     Plugin.INSTANCE.getServer().getScheduler().runTaskLater(Plugin.INSTANCE, () -> {
       double percentage = sleepingPercentage(ev.getPlayer().getWorld());
       checkAndDoNightSkip(percentage, ev.getPlayer().getWorld());
-      String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
-              ev.getPlayer().getName(), ""+(int)Math.floor(percentage)+"%");
+      String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)", "%$1\\$s"),
+              ev.getPlayer().getName(), "" + (int) Math.floor(percentage) + "%");
       ev.getPlayer().getWorld().getPlayers().forEach(p -> p.sendMessage(ChatColor.GOLD + message));
       //Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
     }, 10);
@@ -100,8 +101,8 @@ public class MorpheusModule implements Module, Listener {
       Plugin.INSTANCE.getServer().getScheduler().runTaskLater(Plugin.INSTANCE, () -> {
         double percentage = sleepingPercentage(ev.getPlayer().getWorld());
         checkAndDoNightSkip(percentage, ev.getPlayer().getWorld());
-        String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_LeaveBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
-                ev.getPlayer().getName(), ""+(int)Math.floor(percentage)+"%");
+        String message = String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_LeaveBedMessage).replaceAll("\\$(\\d)", "%$1\\$s"),
+                ev.getPlayer().getName(), "" + (int) Math.floor(percentage) + "%");
         ev.getPlayer().getWorld().getPlayers().forEach(p -> p.sendMessage(ChatColor.GOLD + message));
         //Plugin.INSTANCE.getServer().broadcastMessage(ChatColor.GOLD + message);
       }, 10);
@@ -117,7 +118,7 @@ public class MorpheusModule implements Module, Listener {
 
   @EventHandler
   public void onPlayerQuit(PlayerQuitEvent ev) {
-    checkAndDoNightSkip(sleepingPercentage(ev.getPlayer().getWorld()),ev.getPlayer().getWorld());
+    checkAndDoNightSkip(sleepingPercentage(ev.getPlayer().getWorld()), ev.getPlayer().getWorld());
   }
 
   private void checkAndDoNightSkip(double pct, World w) {
@@ -133,7 +134,7 @@ public class MorpheusModule implements Module, Listener {
           w.setClearWeatherDuration(weatherTicks);
         }
         wakeUpTask = null;
-      },4*20);
+      }, 4 * 20);
     } else if (wakeUpTask != null) {
       wakeUpTask.cancel();
       wakeUpTask = null;
@@ -148,18 +149,18 @@ public class MorpheusModule implements Module, Listener {
         if (p.isSleeping()) sleeping += 1;
       }
     }
-    return (sleeping/total) * 100;
+    return (sleeping / total) * 100;
   }
 
   @Override
   public List<String[]> getCommands() {
     List<String[]> commands = new ArrayList<>();
-    commands.add(new String[]{"/morpheus","bypass","true","<player>"});
-    commands.add(new String[]{"/morpheus","bypass","false","<player>"});
-    commands.add(new String[]{"/morpheus","enterBedMessage","<$1:name,$2:pct>"});
-    commands.add(new String[]{"/morpheus","leaveBedMessage","<$1:name,$2:pct>"});
-    commands.add(new String[]{"/morpheus","percentage","50.0"});
-    commands.add(new String[]{"/morpheus","sleepSuccessMessage","<$1:name,$2:pct>"});
+    commands.add(new String[]{"/morpheus", "bypass", "true", "<player>"});
+    commands.add(new String[]{"/morpheus", "bypass", "false", "<player>"});
+    commands.add(new String[]{"/morpheus", "enterBedMessage", "<$1:name,$2:pct>"});
+    commands.add(new String[]{"/morpheus", "leaveBedMessage", "<$1:name,$2:pct>"});
+    commands.add(new String[]{"/morpheus", "percentage", "50.0"});
+    commands.add(new String[]{"/morpheus", "sleepSuccessMessage", "<$1:name,$2:pct>"});
     return commands;
   }
 
@@ -175,10 +176,10 @@ public class MorpheusModule implements Module, Listener {
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-    if (args.length==0) return false;
+    if (args.length == 0) return false;
     switch (args[0]) {
       case "bypass":
-        if (Plugin.INSTANCE.moduleStatus(PermissionsModule.NAME)==1) {
+        if (Plugin.INSTANCE.moduleStatus(PermissionsModule.NAME) == 1) {
           PermissionsModule pm = (PermissionsModule) Plugin.INSTANCE.getModule(PermissionsModule.NAME);
           if (!(sender instanceof Player) || sender.hasPermission(PERM_MorpheusAdmin)) {
             Player p;
@@ -215,7 +216,7 @@ public class MorpheusModule implements Module, Listener {
               sender.sendMessage(Util.logLine(NAME, "Keine valide Prozantangebe (0-100)", ChatColor.YELLOW));
               return true;
             }
-            Plugin.INSTANCE.getConfig().set(CFGKEY_Percentage,d);
+            Plugin.INSTANCE.getConfig().set(CFGKEY_Percentage, d);
             return true;
           }
         }
@@ -232,7 +233,7 @@ public class MorpheusModule implements Module, Listener {
             }
             Plugin.INSTANCE.getConfig().set(CFGKEY_EnterBedMessage, s.toString().trim());
             sender.sendMessage(Util.logLine(NAME, "Neue Nachricht übernommen, Vorschau:"));
-            sender.sendMessage(ChatColor.GOLD + String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
+            sender.sendMessage(ChatColor.GOLD + String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_EnterBedMessage).replaceAll("\\$(\\d)", "%$1\\$s"),
                     sender.getName(), "33.0%"));
           }
         } else {
@@ -251,7 +252,7 @@ public class MorpheusModule implements Module, Listener {
             }
             Plugin.INSTANCE.getConfig().set(CFGKEY_LeaveBedMessage, s.toString().trim());
             sender.sendMessage("Neue Nachricht übernommen, Vorschau:");
-            sender.sendMessage(ChatColor.GOLD + String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_LeaveBedMessage).replaceAll("\\$(\\d)","%$1\\$s"),
+            sender.sendMessage(ChatColor.GOLD + String.format(Plugin.INSTANCE.getConfig().getString(CFGKEY_LeaveBedMessage).replaceAll("\\$(\\d)", "%$1\\$s"),
                     sender.getName(), "33.0%"));
           }
         } else {
