@@ -1,6 +1,8 @@
 package de.r13g.jrkniedersachsen.plugin.module.story.util;
 
 import com.google.gson.*;
+import de.r13g.jrkniedersachsen.plugin.module.story.npc.behaviour.SimplePathBehaviour;
+import de.r13g.jrkniedersachsen.plugin.module.story.npc.behaviour.SimpleStayBehaviour;
 import de.r13g.jrkniedersachsen.plugin.module.story.npc.behaviour.SimpleWanderBehaviour;
 import net.minecraft.server.v1_16_R3.EntityCreature;
 
@@ -17,8 +19,7 @@ public abstract class SimpleBehaviour {
   public enum Type {
     STAY,
     WANDER,
-    PATH_LOOP,
-    PATH_BACK
+    PATH
   }
 
   public static class Adapter implements JsonDeserializer<SimpleBehaviour> {
@@ -28,8 +29,9 @@ public abstract class SimpleBehaviour {
       JsonObject o = e.getAsJsonObject();
       String t = o.get("type").getAsString();
       switch (Type.valueOf(t)) {
-        case WANDER:
-          return c.deserialize(e, SimpleWanderBehaviour.class);
+        case STAY: return c.deserialize(e, SimpleStayBehaviour.class);
+        case WANDER: return c.deserialize(e, SimpleWanderBehaviour.class);
+        case PATH: return c.deserialize(e, SimplePathBehaviour.class);
       }
       throw new JsonParseException("SimpleBehaviour has unknown type '" + t + "'");
     }
