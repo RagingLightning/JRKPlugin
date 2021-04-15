@@ -6,7 +6,7 @@ import org.bukkit.Location;
 public class SimpleLocation {
 
   public String world;
-  public double x,y,z;
+  public double x, y, z;
 
   SimpleLocation() {
 
@@ -20,7 +20,7 @@ public class SimpleLocation {
   }
 
   public Location getLocation() {
-    return new Location(Bukkit.getWorld(world), x , y, z);
+    return new Location(Bukkit.getWorld(world), x, y, z);
   }
 
 

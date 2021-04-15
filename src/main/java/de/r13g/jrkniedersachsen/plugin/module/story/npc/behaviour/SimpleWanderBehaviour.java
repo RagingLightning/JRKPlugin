@@ -23,6 +23,6 @@ public class SimpleWanderBehaviour extends SimpleBehaviour {
   @Override
   public void applyPathfinderGoals(EntityCreature entity, int startIndex) {
     entity.goalSelector.a(startIndex, new PathfinderGoalStayInArea(entity, center.x, center.y, center.z, speed, radius));
-    entity.goalSelector.a(startIndex+1, new PathfinderGoalRandomStrollLand(entity, speed));
+    entity.goalSelector.a(startIndex + 1, new PathfinderGoalRandomStrollLand(entity, speed));
   }
 }

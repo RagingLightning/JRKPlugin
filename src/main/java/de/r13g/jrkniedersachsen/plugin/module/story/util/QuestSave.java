@@ -1,6 +1,8 @@
 package de.r13g.jrkniedersachsen.plugin.module.story.util;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class QuestSave {
 
@@ -8,7 +10,7 @@ public class QuestSave {
 
   public QuestSave(Set<Integer> taskKeySet) {
     tasks = new HashMap<>();
-    taskKeySet.forEach( i -> tasks.put(i, new TaskSave()));
+    taskKeySet.forEach(i -> tasks.put(i, new TaskSave()));
   }
 
 }

@@ -9,7 +9,7 @@ public class ExperienceToLevelReward extends QuestReward {
 
   @Override
   public boolean reward(Player p) {
-    p.giveExpLevels(level-p.getLevel());
+    p.giveExpLevels(level - p.getLevel());
     return true;
   }
 }

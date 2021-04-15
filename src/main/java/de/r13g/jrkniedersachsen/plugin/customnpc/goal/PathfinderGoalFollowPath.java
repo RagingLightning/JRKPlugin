@@ -51,7 +51,7 @@ public class PathfinderGoalFollowPath extends PathfinderGoal {
   }
 
   public boolean b() { //runs every tick after e (repeats e)
-    return this.a.h(currentNode.location.x, currentNode.location.y, currentNode.location.z) > (double) (this.radius *this.radius)/4;
+    return this.a.h(currentNode.location.x, currentNode.location.y, currentNode.location.z) > (double) (this.radius * this.radius) / 4;
   }
 
   public void c() { //runs once when a is true

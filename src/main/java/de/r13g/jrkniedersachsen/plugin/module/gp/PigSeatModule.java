@@ -55,10 +55,10 @@ public class PigSeatModule implements Module {
       for (World w : plugin.getServer().getWorlds()) {
         for (Pig p : w.getEntitiesByClass(Pig.class)) {
           if (!p.getScoreboardTags().contains("seat")) continue;
-          p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,30*60*20,0,true, false, false));
+          p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30 * 60 * 20, 0, true, false, false));
         }
       }
-    },0L,15*60*20);
+    }, 0L, 15 * 60 * 20);
 
     ready = true;
     return true;
@@ -87,7 +87,7 @@ public class PigSeatModule implements Module {
   @Override
   public List<String[]> getCommands() {
     List<String[]> commands = new ArrayList<>();
-    commands.add(new String[]{"/jrk",NAME.toLowerCase()});
+    commands.add(new String[]{"/jrk", NAME.toLowerCase()});
     return commands;
   }
 
@@ -109,7 +109,7 @@ public class PigSeatModule implements Module {
     Stairs data = (Stairs) b.getState().getBlockData();
     if (data.getHalf() != Bisected.Half.BOTTOM) return true;
 
-    Collection<Entity> pigs = b.getWorld().getNearbyEntities(b.getLocation().add(0.5,-1+0.61,0.5),0.5,0.5,0.5, e -> e.getScoreboardTags().contains("seat"));
+    Collection<Entity> pigs = b.getWorld().getNearbyEntities(b.getLocation().add(0.5, -1 + 0.61, 0.5), 0.5, 0.5, 0.5, e -> e.getScoreboardTags().contains("seat"));
     if (pigs.size() > 0) { //Remove Seat
       for (Entity p : pigs) p.remove();
     } else { //Add Seat

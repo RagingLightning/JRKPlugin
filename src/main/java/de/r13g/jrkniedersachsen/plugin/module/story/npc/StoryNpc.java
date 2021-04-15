@@ -30,7 +30,7 @@ public abstract class StoryNpc {
 
   public static final String NAME = "--Npc";
 
-  private static StoryNpcLine defaultLine = new StoryNpcLine( "Ich habe dir gerade nichts zu erzählen...", false, 0L);
+  private static StoryNpcLine defaultLine = new StoryNpcLine("Ich habe dir gerade nichts zu erzählen...", false, 0L);
 
   public transient Story story;
 
@@ -74,7 +74,7 @@ public abstract class StoryNpc {
 
   public boolean spawn() {
     base.setLocation(location.x, location.y, location.z, 0, 0);
-    ((CraftWorld)location.getLocation().getWorld()).addEntity(base, CreatureSpawnEvent.SpawnReason.CUSTOM);
+    ((CraftWorld) location.getLocation().getWorld()).addEntity(base, CreatureSpawnEvent.SpawnReason.CUSTOM);
     return Bukkit.getEntity(base.getUniqueID()) != null;
   }
 
@@ -124,7 +124,7 @@ public abstract class StoryNpc {
     } else {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "telling line set for player checkpoint"));
     }
-    if(set.tell(this, p))
+    if (set.tell(this, p))
       for (UUID questId : set.unlocks.keySet()) {
         int taskId = set.unlocks.get(questId);
         progress.finishTask(story.getQuest(questId), taskId);
@@ -152,9 +152,12 @@ public abstract class StoryNpc {
       JsonObject o = e.getAsJsonObject();
       String t = o.get("type").getAsString();
       switch (Type.valueOf(t)) {
-        case VILLAGER: return c.deserialize(e, StoryVillager.class);
-        case WANDERING_TRADER: return c.deserialize(e, StoryTrader.class);
-        case PLAYER: return c.deserialize(e, StoryPlayer.class);
+        case VILLAGER:
+          return c.deserialize(e, StoryVillager.class);
+        case WANDERING_TRADER:
+          return c.deserialize(e, StoryTrader.class);
+        case PLAYER:
+          return c.deserialize(e, StoryPlayer.class);
       }
       throw new JsonParseException("StoryNpc has unknown type '" + t + "'");
     }

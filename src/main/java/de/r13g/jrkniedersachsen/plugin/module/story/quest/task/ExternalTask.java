@@ -5,5 +5,6 @@ import org.bukkit.entity.Player;
 
 public class ExternalTask extends QuestTask {
   @Override
-  public void notifyPlayer(Player p) {}
+  public void notifyPlayer(Player p) {
+  }
 }

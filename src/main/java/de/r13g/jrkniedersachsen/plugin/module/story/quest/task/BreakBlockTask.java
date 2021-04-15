@@ -1,9 +1,7 @@
 package de.r13g.jrkniedersachsen.plugin.module.story.quest.task;
 
 import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestTask;
-import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleItem;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,10 +22,10 @@ public class BreakBlockTask extends QuestTask implements Listener {
         Map<String, Object> data = quest.story.progress.get(p).getTaskData(this);
         if (!data.containsKey("alreadyBroken"))
           data.put("alreadyBroken", 0);
-          data.put("alreadyBroken", (Integer) data.get("alreadyBroken") + 1);
-          if((Integer) data.get("alreadyBroken") >= count) {
-            quest.story.progress.get(p).finishTask(quest, id);
-          }
+        data.put("alreadyBroken", (Integer) data.get("alreadyBroken") + 1);
+        if ((Integer) data.get("alreadyBroken") >= count) {
+          quest.story.progress.get(p).finishTask(quest, id);
+        }
       }
     }
   }

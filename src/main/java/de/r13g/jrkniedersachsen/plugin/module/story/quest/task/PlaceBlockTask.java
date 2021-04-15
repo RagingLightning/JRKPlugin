@@ -22,10 +22,10 @@ public class PlaceBlockTask extends QuestTask implements Listener {
         Map<String, Object> data = quest.story.progress.get(p).getTaskData(this);
         if (!data.containsKey("alreadyBroken"))
           data.put("alreadyBroken", 0);
-          data.put("alreadyBroken", (Integer) data.get("alreadyBroken") + 1);
-          if((Integer) data.get("alreadyBroken") >= count) {
-            quest.story.progress.get(p).finishTask(quest, id);
-          }
+        data.put("alreadyBroken", (Integer) data.get("alreadyBroken") + 1);
+        if ((Integer) data.get("alreadyBroken") >= count) {
+          quest.story.progress.get(p).finishTask(quest, id);
+        }
       }
     }
   }

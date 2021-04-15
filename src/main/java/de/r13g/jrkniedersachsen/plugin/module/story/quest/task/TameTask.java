@@ -1,7 +1,6 @@
 package de.r13g.jrkniedersachsen.plugin.module.story.quest.task;
 
 import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestTask;
-import net.minecraft.server.v1_16_R3.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -29,12 +29,18 @@ public abstract class QuestReward {
       JsonObject o = e.getAsJsonObject();
       String t = o.get("type").getAsString();
       switch (Type.valueOf(t)) {
-        case DIALOGUE: return c.deserialize(e, DialogueReward.class);
-        case ITEM: return c.deserialize(e, ItemReward.class);
-        case EXPERIENCE_POINTS: return c.deserialize(e, ExperiencePointReward.class);
-        case EXPERIENCE_LEVELS: return c.deserialize(e, ExperienceLevelReward.class);
-        case EXPERIENCE_TO_LEVEL: return c.deserialize(e, ExperienceToLevelReward.class);
-        case COMMAND: return c.deserialize(e, CommandReward.class);
+        case DIALOGUE:
+          return c.deserialize(e, DialogueReward.class);
+        case ITEM:
+          return c.deserialize(e, ItemReward.class);
+        case EXPERIENCE_POINTS:
+          return c.deserialize(e, ExperiencePointReward.class);
+        case EXPERIENCE_LEVELS:
+          return c.deserialize(e, ExperienceLevelReward.class);
+        case EXPERIENCE_TO_LEVEL:
+          return c.deserialize(e, ExperienceToLevelReward.class);
+        case COMMAND:
+          return c.deserialize(e, CommandReward.class);
       }
       throw new JsonParseException("QuestReward has unknown type '" + t + "'");
     }

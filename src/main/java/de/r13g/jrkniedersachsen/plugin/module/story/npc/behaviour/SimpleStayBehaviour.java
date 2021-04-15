@@ -4,7 +4,6 @@ import de.r13g.jrkniedersachsen.plugin.customnpc.goal.PathfinderGoalStayInArea;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleBehaviour;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleLocation;
 import net.minecraft.server.v1_16_R3.EntityCreature;
-import net.minecraft.server.v1_16_R3.PathfinderGoalRandomStrollLand;
 import org.bukkit.Location;
 
 public class SimpleStayBehaviour extends SimpleBehaviour {

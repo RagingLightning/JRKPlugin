@@ -1,6 +1,5 @@
 package de.r13g.jrkniedersachsen.plugin.module.story.quest.task;
 
-import com.mysql.jdbc.NotImplemented;
 import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestTask;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleItem;
 import org.bukkit.OfflinePlayer;
@@ -8,8 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.inventory.ItemStack;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Map;

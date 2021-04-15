@@ -17,7 +17,7 @@ public class KillTask extends QuestTask implements Listener {
 
   @EventHandler
   public void onEntityKill(PlayerStatisticIncrementEvent ev) {
-    if(ev.getStatistic().getKey() != Statistic.KILL_ENTITY.getKey()) return;
+    if (ev.getStatistic().getKey() != Statistic.KILL_ENTITY.getKey()) return;
 
     Player p = ev.getPlayer();
     if (quest.story.progress.get(p).currentQuests.containsKey(quest.id)) {

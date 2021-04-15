@@ -3,14 +3,11 @@ package de.r13g.jrkniedersachsen.plugin.module.story.npc;
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.customnpc.CustomPlayer;
 import de.r13g.jrkniedersachsen.plugin.customnpc.CustomPlayerPather;
-import de.r13g.jrkniedersachsen.plugin.customnpc.CustomTrader;
 import de.r13g.jrkniedersachsen.plugin.module.StoryModule;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 public class StoryPlayer extends StoryNpc {

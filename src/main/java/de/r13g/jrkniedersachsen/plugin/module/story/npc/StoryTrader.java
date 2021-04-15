@@ -1,7 +1,6 @@
 package de.r13g.jrkniedersachsen.plugin.module.story.npc;
 
 import de.r13g.jrkniedersachsen.plugin.customnpc.CustomTrader;
-import de.r13g.jrkniedersachsen.plugin.customnpc.CustomVillager;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

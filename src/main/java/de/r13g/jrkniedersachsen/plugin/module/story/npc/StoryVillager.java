@@ -12,9 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftAbstractVillager;
 import org.bukkit.entity.AbstractVillager;
-import org.bukkit.entity.TraderLlama;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 
 import java.util.ArrayList;
@@ -107,21 +105,51 @@ public class StoryVillager extends StoryNpc {
    */
   private void determineProfession() {
     switch (profession) {
-      case "NONE": prof = VillagerProfession.NONE; break;
-      case "ARMORER": prof = VillagerProfession.ARMORER; break;
-      case "BUTCHER": prof = VillagerProfession.BUTCHER; break;
-      case "CARTOGRAPHER": prof = VillagerProfession.CARTOGRAPHER; break;
-      case "CLERIC": prof = VillagerProfession.CLERIC; break;
-      case "FARMER": prof = VillagerProfession.FARMER; break;
-      case "FISHERMAN": prof = VillagerProfession.FISHERMAN; break;
-      case "FLETCHER": prof = VillagerProfession.FLETCHER; break;
-      case "LEATHERWORKER": prof = VillagerProfession.LEATHERWORKER; break;
-      case "LIBRARIAN": prof = VillagerProfession.LIBRARIAN; break;
-      case "MASON": prof = VillagerProfession.MASON; break;
-      case "NITWIT": prof = VillagerProfession.NITWIT; break;
-      case "SHEPHERD": prof = VillagerProfession.SHEPHERD; break;
-      case "TOOLSMITH": prof = VillagerProfession.TOOLSMITH; break;
-      case "WEAPONSMITH": prof = VillagerProfession.WEAPONSMITH; break;
+      case "NONE":
+        prof = VillagerProfession.NONE;
+        break;
+      case "ARMORER":
+        prof = VillagerProfession.ARMORER;
+        break;
+      case "BUTCHER":
+        prof = VillagerProfession.BUTCHER;
+        break;
+      case "CARTOGRAPHER":
+        prof = VillagerProfession.CARTOGRAPHER;
+        break;
+      case "CLERIC":
+        prof = VillagerProfession.CLERIC;
+        break;
+      case "FARMER":
+        prof = VillagerProfession.FARMER;
+        break;
+      case "FISHERMAN":
+        prof = VillagerProfession.FISHERMAN;
+        break;
+      case "FLETCHER":
+        prof = VillagerProfession.FLETCHER;
+        break;
+      case "LEATHERWORKER":
+        prof = VillagerProfession.LEATHERWORKER;
+        break;
+      case "LIBRARIAN":
+        prof = VillagerProfession.LIBRARIAN;
+        break;
+      case "MASON":
+        prof = VillagerProfession.MASON;
+        break;
+      case "NITWIT":
+        prof = VillagerProfession.NITWIT;
+        break;
+      case "SHEPHERD":
+        prof = VillagerProfession.SHEPHERD;
+        break;
+      case "TOOLSMITH":
+        prof = VillagerProfession.TOOLSMITH;
+        break;
+      case "WEAPONSMITH":
+        prof = VillagerProfession.WEAPONSMITH;
+        break;
     }
   }
 }

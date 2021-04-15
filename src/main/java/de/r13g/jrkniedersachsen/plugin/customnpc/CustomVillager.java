@@ -38,8 +38,8 @@ public class CustomVillager extends EntityVillager {
     this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityIllagerIllusioner.class, 12.0F, 0.5D, 0.5D));
     this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityZoglin.class, 10.0F, 0.5D, 0.5D));
     this.goalSelector.a(1, new PathfinderGoalLookAtTradingPlayer(this));
-    this.goalSelector.a(SimpleBehaviour.maxNeededGoalSlots+2, new PathfinderGoalInteract(this, EntityHuman.class, 3.0F, 1.0F));
-    this.goalSelector.a(SimpleBehaviour.maxNeededGoalSlots+3, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
+    this.goalSelector.a(SimpleBehaviour.maxNeededGoalSlots + 2, new PathfinderGoalInteract(this, EntityHuman.class, 3.0F, 1.0F));
+    this.goalSelector.a(SimpleBehaviour.maxNeededGoalSlots + 3, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
   }
 
   @Override

@@ -6,8 +6,6 @@ import de.r13g.jrkniedersachsen.plugin.module.story.npc.behaviour.SimpleStayBeha
 import de.r13g.jrkniedersachsen.plugin.module.story.npc.behaviour.SimpleWanderBehaviour;
 import net.minecraft.server.v1_16_R3.EntityCreature;
 
-import java.lang.reflect.Type;
-
 public abstract class SimpleBehaviour {
 
   public static final int maxNeededGoalSlots = 2;
@@ -29,9 +27,12 @@ public abstract class SimpleBehaviour {
       JsonObject o = e.getAsJsonObject();
       String t = o.get("type").getAsString();
       switch (Type.valueOf(t)) {
-        case STAY: return c.deserialize(e, SimpleStayBehaviour.class);
-        case WANDER: return c.deserialize(e, SimpleWanderBehaviour.class);
-        case PATH: return c.deserialize(e, SimplePathBehaviour.class);
+        case STAY:
+          return c.deserialize(e, SimpleStayBehaviour.class);
+        case WANDER:
+          return c.deserialize(e, SimpleWanderBehaviour.class);
+        case PATH:
+          return c.deserialize(e, SimplePathBehaviour.class);
       }
       throw new JsonParseException("SimpleBehaviour has unknown type '" + t + "'");
     }

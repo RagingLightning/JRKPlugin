@@ -1,6 +1,7 @@
 package de.r13g.jrkniedersachsen.plugin.customnpc.goal;
 
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.server.v1_16_R3.PathfinderGoal;
 
 import java.util.EnumSet;
 
@@ -33,7 +34,7 @@ public class PathfinderGoalStayInArea extends PathfinderGoal {
   }
 
   public boolean b() { //runs every tick after e (repeats e)
-    return this.a.h(c, d, e) > (double) (this.g*this.g)/4;
+    return this.a.h(c, d, e) > (double) (this.g * this.g) / 4;
   }
 
   public void c() { //runs once when a is true
