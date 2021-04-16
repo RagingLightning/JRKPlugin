@@ -11,11 +11,12 @@ public class StoryQuest {
 
   public transient Story story;
 
-  public transient UUID id = null;
-  protected String name = null;
-  protected String desc = null;
-  protected List<UUID> children = null;
-  protected transient UUID parent = null;
+  public transient UUID id;
+  protected String name;
+  protected String desc;
+  protected List<UUID> children;
+  protected boolean announceStart;
+  protected transient UUID parent;
 
   Map<Integer, QuestTask> tasks;
   List<QuestReward> rewards;

@@ -3,7 +3,6 @@ package de.r13g.jrkniedersachsen.plugin.module.story.quest.task;
 import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestTask;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
 import me.pikamug.localelib.LocaleManager;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,11 +13,17 @@ import java.util.Map;
 
 public class BreakBlockTask extends QuestTask implements Listener {
 
-  private static final String notification = "[{\"text\":\"Task vollendet; @countx\",\"italic\":true,\"color\":\"gray\"}," +
+  private static final String notificationStart = "[{\"text\":\"Baue @countx\",\"italic\":true,\"color\":\"gray\"}," +
           "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
           "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\"}," +
           "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}," +
-          " \"text\":\" abgebaut\",\"italic\":true,\"color\":gray}]";
+          "{\"text\":\" ab\",\"italic\":true,\"color\":gray}]";
+
+  private static final String notificationEnd = "[{\"text\":\"Task vollendet; @countx\",\"italic\":true,\"color\":\"gray\"}," +
+          "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
+          "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\"}," +
+          "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}," +
+          "{\"text\":\" abgebaut\",\"italic\":true,\"color\":gray}]";
 
   String block;
   int count;
@@ -40,12 +45,18 @@ public class BreakBlockTask extends QuestTask implements Listener {
   }
 
   @Override
-  public void notifyPlayer(Player p) {
-    if (Bukkit.getPluginManager().isPluginEnabled("LocaleLib")) {
-      Util.tellRaw(p, notification
-              .replaceAll("@key", new LocaleManager().queryMaterial(Material.valueOf(block)))
-              .replaceAll("@count", String.valueOf(count))
-      );
-    }
+  public void announceStart(Player p) {
+    Util.tellRaw(p, notificationStart
+            .replaceAll("@key", new LocaleManager().queryMaterial(Material.valueOf(block)))
+            .replaceAll("@count", String.valueOf(count))
+    );
+  }
+
+  @Override
+  public void announceEnd(Player p) {
+    Util.tellRaw(p, notificationEnd
+            .replaceAll("@key", new LocaleManager().queryMaterial(Material.valueOf(block)))
+            .replaceAll("@count", String.valueOf(count))
+    );
   }
 }

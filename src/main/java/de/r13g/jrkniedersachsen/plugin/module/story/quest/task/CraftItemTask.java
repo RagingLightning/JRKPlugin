@@ -5,7 +5,6 @@ import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestTask;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleItem;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
 import me.pikamug.localelib.LocaleManager;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +15,13 @@ import java.util.Map;
 
 public class CraftItemTask extends QuestTask implements Listener {
 
-  private static final String notification = "[{\"text\":\"Task vollendet; @countx\",\"italic\":true,\"color\":\"gray\"}," +
+  private static final String notificationStart = "[{\"text\":\"Stelle @countx\",\"italic\":true,\"color\":\"gray\"}," +
+          "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
+          "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\",\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"@json\"}}," +
+          "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}," +
+          " \"text\":\" her\",\"italic\":true,\"color\":gray}]";
+
+  private static final String notificationEnd = "[{\"text\":\"Task vollendet; @countx\",\"italic\":true,\"color\":\"gray\"}," +
           "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
           "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\",\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"@json\"}}," +
           "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}," +
@@ -42,14 +47,22 @@ public class CraftItemTask extends QuestTask implements Listener {
   }
 
   @Override
-  public void notifyPlayer(Player p) {
-    if (Bukkit.getPluginManager().isPluginEnabled("LocaleLib")) {
-      String itemJson = new Gson().toJson(item.getItemStack()).replaceAll("\"", "\\\"");
-      Util.tellRaw(p, notification
-              .replaceAll("@key", new LocaleManager().queryMaterial(item.getItemStack().getType()))
-              .replaceAll("@count", String.valueOf(item.count))
-              .replaceAll("@json", itemJson)
-      );
-    }
+  public void announceStart(Player p) {
+    String itemJson = new Gson().toJson(item.getItemStack()).replaceAll("\"", "\\\"");
+    Util.tellRaw(p, notificationStart
+            .replaceAll("@key", new LocaleManager().queryMaterial(item.getItemStack().getType()))
+            .replaceAll("@count", String.valueOf(item.count))
+            .replaceAll("@json", itemJson)
+    );
+  }
+
+  @Override
+  public void announceEnd(Player p) {
+    String itemJson = new Gson().toJson(item.getItemStack()).replaceAll("\"", "\\\"");
+    Util.tellRaw(p, notificationEnd
+            .replaceAll("@key", new LocaleManager().queryMaterial(item.getItemStack().getType()))
+            .replaceAll("@count", String.valueOf(item.count))
+            .replaceAll("@json", itemJson)
+    );
   }
 }

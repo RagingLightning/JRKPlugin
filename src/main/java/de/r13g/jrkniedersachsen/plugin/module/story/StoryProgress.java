@@ -98,6 +98,8 @@ public class StoryProgress {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Finishing task " + taskId + " from quest " + quest.name + " (id:" + quest.id + ")..."));
       QuestSave save = currentQuests.get(quest.id);
       save.tasks.get(taskId).finished = true;
+      if (player instanceof Player && quest.tasks.get(taskId).announceEnd)
+        quest.tasks.get(taskId).announceEnd((Player) player);
       boolean allTasks = true;
       for (int t : quest.tasks.keySet()) {
         if (!save.tasks.get(t).finished) {
@@ -115,6 +117,12 @@ public class StoryProgress {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Finishing quest " + quest.name + "..."));
       quest.getChildren().forEach(c -> {
         Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unlocking child quest " + c.name + "..."));
+        if (player instanceof Player && c.announceStart) {
+          ((Player) player).sendMessage("Neue Quest ''" + c.name + "':");
+          c.tasks.values().forEach(t -> {
+            if (t.announceStart) t.announceStart((Player) player);
+          });
+        }
         currentQuests.put(c.id, new QuestSave(c.tasks.keySet()));
       });
       currentQuests.remove(quest.id);

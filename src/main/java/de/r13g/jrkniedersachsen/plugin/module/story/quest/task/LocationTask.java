@@ -10,7 +10,10 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 public class LocationTask extends QuestTask implements Listener {
 
-  private static final String notification = "[{\"text\":\"Du hast \",\"italic\":true,\"color\":\"gray\"}," +
+  private static final String notificationStart = "[{\"text\":\"Begib dich in \",\"italic\":true,\"color\":\"gray\"}," +
+          "{\"text\":\"@name\",\"italic\":true,\"color\":\"white\"}]";
+
+  private static final String notificationEnd = "[{\"text\":\"Du hast \",\"italic\":true,\"color\":\"gray\"}," +
           "{\"text\":\"@name\",\"italic\":true,\"color\":\"white\"}," +
           "{\"text\":\" erreicht\",\"italic\":true,\"color\":\"gray\"}]";
 
@@ -28,9 +31,16 @@ public class LocationTask extends QuestTask implements Listener {
   }
 
   @Override
-  public void notifyPlayer(Player p) {
+  public void announceStart(Player p) {
     if (location.name != null) {
-      Util.tellRaw(p, notification.replaceAll("@name", location.name));
+      Util.tellRaw(p, notificationStart.replaceAll("@name", location.name));
+    }
+  }
+
+  @Override
+  public void announceEnd(Player p) {
+    if (location.name != null) {
+      Util.tellRaw(p, notificationEnd.replaceAll("@name", location.name));
     }
   }
 }

@@ -15,15 +15,23 @@ import org.bukkit.inventory.ItemStack;
 
 public class CollectItemTask extends QuestTask implements Listener {
 
-  private static final String notificationCustom = "[{\"text\":\"Task vollendet; @countx\",\"italic\": true,\"color\":\"gray\"}," +
+  private static final String notificationStartCustom = "[{\"text\":\"Sammle @countx\",\"italic\": true,\"color\":\"gray\"}," +
+          "{\"text\":\"[@name]\",\"color\":\"white\",\"hoverEvent\":" +
+          "{\"action\":\"show_item\",\"value\":\"@json\"}}]";
+  private static final String notificationStartDefault = "[{\"text\":\"Sammle @countx\",\"italic\":true,\"color\":\"gray\"}," +
+          "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
+          "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\",\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"@json\"}}," +
+          "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}]";
+
+  private static final String notificationEndCustom = "[{\"text\":\"Task vollendet; @countx\",\"italic\": true,\"color\":\"gray\"}," +
           "{\"text\":\"[@name]\",\"color\":\"white\",\"hoverEvent\":" +
           "{\"action\":\"show_item\",\"value\":\"@json\"}}," +
           "{\"text\":\" eingesammelt\",\"italic\":true,\"color\":gray}]";
-  private static final String notificationDefault = "[{\"text\":\"Task vollendet; @countx\",\"italic\":true,\"color\":\"gray\"}," +
+  private static final String notificationEndDefault = "[{\"text\":\"Task vollendet; @countx\",\"italic\":true,\"color\":\"gray\"}," +
           "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
           "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\",\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"@json\"}}," +
           "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}," +
-          " \"text\":\" eingesammelt\",\"italic\":true,\"color\":gray}]";
+          "{\"text\":\" eingesammelt\",\"italic\":true,\"color\":gray}]";
 
   SimpleItem item;
 
@@ -47,17 +55,36 @@ public class CollectItemTask extends QuestTask implements Listener {
   }
 
   @Override
-  public void notifyPlayer(Player p) {
+  public void announceStart(Player p) {
     String itemJson = new Gson().toJson(item.getItemStack()).replaceAll("\"", "\\\"");
 
     if (item.displayName != null) {
-      Util.tellRaw(p, notificationCustom
+      Util.tellRaw(p, notificationStartCustom
               .replaceAll("@name", item.displayName)
               .replaceAll("@count", String.valueOf(item.count))
               .replaceAll("@json", itemJson)
       );
-    } else if (Bukkit.getPluginManager().isPluginEnabled("LocaleLib")) {
-      Util.tellRaw(p, notificationDefault
+    } else {
+      Util.tellRaw(p, notificationStartDefault
+              .replaceAll("@key", new LocaleManager().queryMaterial(item.getItemStack().getType()))
+              .replaceAll("@count", String.valueOf(item.count))
+              .replaceAll("@json", itemJson)
+      );
+    }
+  }
+
+  @Override
+  public void announceEnd(Player p) {
+    String itemJson = new Gson().toJson(item.getItemStack()).replaceAll("\"", "\\\"");
+
+    if (item.displayName != null) {
+      Util.tellRaw(p, notificationEndCustom
+              .replaceAll("@name", item.displayName)
+              .replaceAll("@count", String.valueOf(item.count))
+              .replaceAll("@json", itemJson)
+      );
+    } else {
+      Util.tellRaw(p, notificationEndDefault
               .replaceAll("@key", new LocaleManager().queryMaterial(item.getItemStack().getType()))
               .replaceAll("@count", String.valueOf(item.count))
               .replaceAll("@json", itemJson)

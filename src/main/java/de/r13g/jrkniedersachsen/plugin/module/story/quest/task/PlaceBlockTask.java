@@ -14,7 +14,12 @@ import java.util.Map;
 
 public class PlaceBlockTask extends QuestTask implements Listener {
 
-  private static final String notification = "[{\"text\":\"Task vollendet; @countx\",\"italic\":true,\"color\":\"gray\"}," +
+  private static final String notificationStart = "[{\"text\":\"Platziere @countx\",\"italic\":true,\"color\":\"gray\"}," +
+          "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
+          "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\"}," +
+          "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}]";
+
+  private static final String notificationEnd = "[{\"text\":\"Task vollendet; @countx\",\"italic\":true,\"color\":\"gray\"}," +
           "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
           "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\"}," +
           "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}," +
@@ -40,12 +45,18 @@ public class PlaceBlockTask extends QuestTask implements Listener {
   }
 
   @Override
-  public void notifyPlayer(Player p) {
-    if (Bukkit.getPluginManager().isPluginEnabled("LocaleLib")) {
-      Util.tellRaw(p, notification
-              .replaceAll("@key", new LocaleManager().queryMaterial(Material.valueOf(block)))
-              .replaceAll("@count", String.valueOf(count))
-      );
-    }
+  public void announceStart(Player p) {
+    Util.tellRaw(p, notificationStart
+            .replaceAll("@key", new LocaleManager().queryMaterial(Material.valueOf(block)))
+            .replaceAll("@count", String.valueOf(count))
+    );
+  }
+
+  @Override
+  public void announceEnd(Player p) {
+    Util.tellRaw(p, notificationEnd
+            .replaceAll("@key", new LocaleManager().queryMaterial(Material.valueOf(block)))
+            .replaceAll("@count", String.valueOf(count))
+    );
   }
 }

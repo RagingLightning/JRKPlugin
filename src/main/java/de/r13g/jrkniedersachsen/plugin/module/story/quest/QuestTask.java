@@ -11,8 +11,11 @@ public abstract class QuestTask {
   public transient int id;
 
   public Type type;
+  public boolean announceStart, announceEnd;
 
-  public abstract void notifyPlayer(Player p);
+  public abstract void announceStart(Player p);
+
+  public abstract void announceEnd(Player p);
 
   public enum Type {
     EXTERNAL,
