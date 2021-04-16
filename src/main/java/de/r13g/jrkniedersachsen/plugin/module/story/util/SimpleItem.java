@@ -34,8 +34,8 @@ public abstract class SimpleItem {
   public static SimpleItem fromItemStack(ItemStack stack) {
     if (stack == null) return null;
     if (stack.getType() == Material.PLAYER_HEAD)
-      return new SimpleHead(stack);
-    return new SimpleNonHead(stack);
+      return new SimpleHeadItem(stack);
+    return new SimpleDefaultItem(stack);
   }
 
   @Override
@@ -51,9 +51,15 @@ public abstract class SimpleItem {
       String m = o.get("material").getAsString();
       switch (Material.valueOf(m)) {
         case PLAYER_HEAD:
-          return c.deserialize(e, SimpleHead.class);
+          return c.deserialize(e, SimpleHeadItem.class);
+        case FILLED_MAP:
+          return c.deserialize(e, SimpleFilledMapItem.class);
+        case POTION:
+        case SPLASH_POTION:
+        case LINGERING_POTION:
+          return c.deserialize(e, SimplePotionItem.class);
         default:
-          return c.deserialize(e, SimpleNonHead.class);
+          return c.deserialize(e, SimpleDefaultItem.class);
       }
     }
   }

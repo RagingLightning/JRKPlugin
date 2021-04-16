@@ -38,7 +38,7 @@ public class BreakBlockTask extends QuestTask implements Listener {
           data.put("alreadyBroken", 0);
         data.put("alreadyBroken", (Integer) data.get("alreadyBroken") + 1);
         if ((Integer) data.get("alreadyBroken") >= count) {
-          quest.story.progress.get(p).finishTask(quest, id);
+          quest.story.progress.get(p).finishTask(this);
         }
       }
     }

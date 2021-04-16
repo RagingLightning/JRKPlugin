@@ -76,6 +76,10 @@ public class StoryModule implements Module, Listener {
       UUID storyId = UUID.fromString(storyConfigFolder.getName());
       try {
         Story story = new Gson().fromJson(new InputStreamReader(new FileInputStream(new File(storyConfigFolder, "story.json")), StandardCharsets.UTF_8), Story.class);
+        if (!story.active) {
+          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Didn't register story " + story.name + " (id:" + storyId + "), it was disabled"));
+          continue;
+        }
         story.storyRoot = storyConfigFolder;
         if (Story.register(storyId, story))
           Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Successfully registered story " + story.name + " (id:" + storyId + ")"));

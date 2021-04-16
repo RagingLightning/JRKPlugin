@@ -4,9 +4,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class SimpleNonHead extends SimpleItem {
+public class SimpleDefaultItem extends SimpleItem {
 
-  public SimpleNonHead(ItemStack stack) {
+  public SimpleDefaultItem(ItemStack stack) {
     this.material = stack.getType().toString();
     this.count = stack.getAmount();
     this.displayName = stack.getItemMeta().getDisplayName();
@@ -15,7 +15,7 @@ public class SimpleNonHead extends SimpleItem {
 
   @Override
   public boolean stack(SimpleItem other, boolean test) {
-    if (!(other instanceof SimpleNonHead)) return false;
+    if (!(other instanceof SimpleDefaultItem)) return false;
     if (!other.material.equals(this.material)) return false;
     if (this.displayName == null) {
       if (other.displayName != null) return false;

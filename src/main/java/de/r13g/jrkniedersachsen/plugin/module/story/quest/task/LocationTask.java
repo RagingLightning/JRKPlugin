@@ -25,7 +25,7 @@ public class LocationTask extends QuestTask implements Listener {
     Player p = ev.getPlayer();
     if (quest.story.progress.get(p).currentQuests.containsKey(quest.id)) {
       if (ev.getTo().distanceSquared(location.getLocation()) <= radius * radius) {
-        quest.story.progress.get(p).finishTask(quest, id);
+        quest.story.progress.get(p).finishTask(this);
       }
     }
   }

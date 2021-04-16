@@ -40,7 +40,7 @@ public class CraftItemTask extends QuestTask implements Listener {
           data.put("alreadyCrafted", 0);
         data.put("alreadyCrafted", (Integer) data.get("alreadyCrafted") + i.count);
         if (((Integer) data.get("alreadyCrafted")) >= item.count) {
-          quest.story.progress.get(p).finishTask(quest, id);
+          quest.story.progress.get(p).finishTask(this);
         }
       }
     }

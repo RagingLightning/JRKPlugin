@@ -46,7 +46,7 @@ public class CollectItemTask extends QuestTask implements Listener {
           int diff = item.stackDifference(i);
           if (diff >= 0) {
             s.setAmount(diff);
-            quest.story.progress.get(p).finishTask(quest, id);
+            quest.story.progress.get(p).finishTask(this);
             break;
           }
         }

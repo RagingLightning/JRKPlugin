@@ -41,7 +41,7 @@ public class KillTask extends QuestTask implements Listener {
           data.put("alreadyKilled", 0);
         data.put("alreadyKilled", (Integer) data.get("alreadyKilled") + 1);
         if ((Integer) data.get("alreadyKilled") >= count)
-          quest.story.progress.get(p).finishTask(quest, id);
+          quest.story.progress.get(p).finishTask(this);
       }
     }
   }

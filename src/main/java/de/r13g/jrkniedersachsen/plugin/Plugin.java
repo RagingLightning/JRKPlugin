@@ -26,8 +26,10 @@ import java.util.List;
 public class Plugin extends JavaPlugin implements Listener {
 
   public static final String PERM_JrkAdminCommand = "jrk.admin";
-
   public static final String PERM_GPCommand = "jrk.gp";
+
+  // STOPSHIP: 16.04.2021 Put Server World Name
+  public static final String worldName = "world";
 
   public static Plugin INSTANCE;
 

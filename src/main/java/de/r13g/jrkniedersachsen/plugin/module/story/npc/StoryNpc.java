@@ -127,7 +127,7 @@ public abstract class StoryNpc {
     if (set.tell(this, p))
       for (UUID questId : set.unlocks.keySet()) {
         int taskId = set.unlocks.get(questId);
-        progress.finishTask(story.getQuest(questId), taskId);
+        progress.finishTask(story.getQuest(questId).getTask(taskId));
       }
     else
       throw new AssertionError("StoryNpcLineSet::tell returned false");

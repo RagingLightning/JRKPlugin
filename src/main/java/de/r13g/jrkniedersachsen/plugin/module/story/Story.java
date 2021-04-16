@@ -218,18 +218,18 @@ public class Story {
           return false;
         }
       }
-    }
 
-    Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Loading Story NPCs..."));
-    registeredNpcs.forEach((k, v) -> {
-      if (willSurvive[0] && v.load()) {
-        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " loaded sucessfully..."));
-      } else {
-        willSurvive[0] = false;
-        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " failed to load..."));
-      }
-    });
-    if (!willSurvive[0]) return false;
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Loading Story NPCs..."));
+      registeredNpcs.forEach((k, v) -> {
+        if (willSurvive[0] && v.load()) {
+          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " loaded sucessfully..."));
+        } else {
+          willSurvive[0] = false;
+          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " failed to load..."));
+        }
+      });
+      if (!willSurvive[0]) return false;
+    }
 
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Story " + name + " (id:" + id + ") loaded successfully, reloading player saves..."));
 
@@ -252,27 +252,30 @@ public class Story {
    * @return success
    */
   public boolean unload() {
-    try {
-      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading player saves..."));
-      progress.unload();
-    } catch (NullPointerException e) {
-      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload player saves, were they not yet loaded?"));
-      e.printStackTrace();
-    }
-    try {
-      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading all NPCs..."));
-      registeredNpcs.forEach((k, v) -> v.unload());
-    } catch (NullPointerException e) {
-      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload NPCs, were they not yet loaded?"));
-      e.printStackTrace();
-    }
-    try {
-      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading all Quests..."));
-      registeredQuests.forEach((k, v) -> v.unload());
-    } catch (NullPointerException e) {
-      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload quests, were they not yet loaded?"));
-      e.printStackTrace();
-    }
+    if (progress != null)
+      try {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading player saves..."));
+        progress.unload();
+      } catch (NullPointerException e) {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload player saves, were they not yet loaded?"));
+        e.printStackTrace();
+      }
+    if (registeredNpcs != null && registeredNpcs.size() > 0)
+      try {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading all NPCs..."));
+        registeredNpcs.forEach((k, v) -> v.unload());
+      } catch (NullPointerException e) {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload NPCs, were they not yet loaded?"));
+        e.printStackTrace();
+      }
+    if (registeredQuests != null && registeredQuests.size() > 0)
+      try {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading all Quests..."));
+        registeredQuests.forEach((k, v) -> v.unload());
+      } catch (NullPointerException e) {
+        Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload quests, were they not yet loaded?"));
+        e.printStackTrace();
+      }
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Successfully unloaded story " + name + " (id:" + id + ")"));
     return true;
   }

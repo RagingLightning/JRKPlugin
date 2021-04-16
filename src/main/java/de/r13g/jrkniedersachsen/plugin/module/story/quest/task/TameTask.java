@@ -36,7 +36,7 @@ public class TameTask extends QuestTask implements Listener {
           data.put("alreadyTamed", 0);
         data.put("alreadyTamed", (Integer) data.get("alreadyTamed") + 1);
         if ((Integer) data.get("alreadyTamed") >= count)
-          quest.story.progress.get(p).finishTask(quest, id);
+          quest.story.progress.get(p).finishTask(this);
       }
     }
   }

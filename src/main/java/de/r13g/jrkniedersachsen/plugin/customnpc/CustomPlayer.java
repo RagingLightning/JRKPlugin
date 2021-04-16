@@ -45,18 +45,29 @@ public class CustomPlayer extends EntityPlayer {
   }
 
   public static CustomPlayerPather create(Location location, String customName, UUID skin) {
+    if (skin != null) {
+      String[] skinData = getSkin(skin);
+      if (skinData != null)
+        return create(location, customName, skinData[0], skinData[1]);
+    }
+    return create(location, customName, null, null);
+  }
+
+  public static CustomPlayerPather create(Location location, String customName, String skinTex, String skinSig) {
+    if (customName.length() > 16) throw new IllegalArgumentException("Npc customName can't be longer than 16 characters");
     MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
     WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
-    GameProfile gameProfile = new GameProfile(UUID.randomUUID(), customName); // name max length 16 chars
+    GameProfile gameProfile = new GameProfile(UUID.randomUUID(), customName);
     PlayerInteractManager interactManager = new PlayerInteractManager(world);
 
     CustomPlayer npc = new CustomPlayer(server, world, gameProfile, interactManager);
 
-    if (skin != null) {
-      String[] skinData = getSkin(skin);
-      if (skinData != null)
-        gameProfile.getProperties().put("textures", new Property("textures", skinData[0], skinData[1]));
-    }
+    if (skinTex != null)
+      if (skinSig != null)
+        gameProfile.getProperties().put("textures", new Property("textures", skinTex, skinSig));
+      else
+        gameProfile.getProperties().put("textures", new Property("textures", skinTex));
+
 
     npc.setLocation(location.getX(), location.getY(), location.getZ(), 0, 0);
     npc.pather = new CustomPlayerPather(npc);

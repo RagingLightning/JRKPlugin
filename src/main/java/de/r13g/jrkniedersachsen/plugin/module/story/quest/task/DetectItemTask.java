@@ -44,7 +44,7 @@ public class DetectItemTask extends QuestTask implements Listener {
         if (s == null) continue;
         SimpleItem i = SimpleItem.fromItemStack(s);
         if (item.stack(i, true) && item.stackDifference(i) >= 0) {
-          quest.story.progress.get(p).finishTask(quest, id);
+          quest.story.progress.get(p).finishTask(this);
           break;
         }
       }

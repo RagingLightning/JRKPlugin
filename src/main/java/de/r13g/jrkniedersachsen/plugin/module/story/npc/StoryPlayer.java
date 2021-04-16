@@ -18,12 +18,16 @@ public class StoryPlayer extends StoryNpc {
 
   public static final String NAME = "--Player";
 
-  UUID skin;
+  UUID skinPlayer;
+  String skinTexture;
 
   @Override
   public boolean load() {
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Loading StoryPlayer " + name + " (id:" + id + ")..."));
-    base = CustomPlayer.create(location.getLocation(), name, skin);
+    if (skinPlayer != null)
+      base = CustomPlayer.create(location.getLocation(), name, skinPlayer);
+    else
+      base = CustomPlayer.create(location.getLocation(), name, skinTexture, null);
     behaviour.applyPathfinderGoals(base, 2);
 
     setup();

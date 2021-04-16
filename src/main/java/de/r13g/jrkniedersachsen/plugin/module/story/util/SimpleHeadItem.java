@@ -7,11 +7,11 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.UUID;
 
-public class SimpleHead extends SimpleItem {
+public class SimpleHeadItem extends SimpleItem {
 
   public String owner;
 
-  public SimpleHead(ItemStack stack) {
+  public SimpleHeadItem(ItemStack stack) {
     this.material = stack.getType().toString();
     this.count = stack.getAmount();
     this.displayName = stack.getItemMeta().getDisplayName();
@@ -24,7 +24,7 @@ public class SimpleHead extends SimpleItem {
 
   @Override
   public boolean stack(SimpleItem other, boolean test) {
-    if (!(other instanceof SimpleHead)) return false;
+    if (!(other instanceof SimpleHeadItem)) return false;
     if (!other.material.equals(this.material)) return false;
     if (this.displayName == null) {
       if (other.displayName != null) return false;
@@ -39,10 +39,10 @@ public class SimpleHead extends SimpleItem {
       if (!this.lore.equals(other.lore)) return false;
     }
     if (this.owner == null) {
-      if (((SimpleHead) other).owner != null) return false;
+      if (((SimpleHeadItem) other).owner != null) return false;
     } else {
-      if (((SimpleHead) other).owner == null) return false;
-      if (!this.owner.equals(((SimpleHead) other).owner)) return false;
+      if (((SimpleHeadItem) other).owner == null) return false;
+      if (!this.owner.equals(((SimpleHeadItem) other).owner)) return false;
     }
     if (!test)
       count += other.count;

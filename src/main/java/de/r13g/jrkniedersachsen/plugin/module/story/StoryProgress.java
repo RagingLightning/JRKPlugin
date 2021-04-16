@@ -94,14 +94,15 @@ public class StoryProgress {
       return currentQuests.get(task.quest.id).tasks.get(task.id).data;
     }
 
-    public void finishTask(StoryQuest quest, int taskId) {
-      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Finishing task " + taskId + " from quest " + quest.name + " (id:" + quest.id + ")..."));
-      QuestSave save = currentQuests.get(quest.id);
-      save.tasks.get(taskId).finished = true;
-      if (player instanceof Player && quest.tasks.get(taskId).announceEnd)
-        quest.tasks.get(taskId).announceEnd((Player) player);
+    public void finishTask(QuestTask task) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME,
+              "Finishing task " + task.id + " from quest " + task.quest.name + " (id:" + task.quest.id + ")..."));
+      QuestSave save = currentQuests.get(task.quest.id);
+      save.tasks.get(task.id).finished = true;
+      if (player instanceof Player && !(task.type == QuestTask.Type.EXTERNAL) && task.announceEnd)
+        task.announceEnd((Player) player);
       boolean allTasks = true;
-      for (int t : quest.tasks.keySet()) {
+      for (int t : task.quest.tasks.keySet()) {
         if (!save.tasks.get(t).finished) {
           allTasks = false;
           break;
@@ -109,7 +110,7 @@ public class StoryProgress {
       }
       if (allTasks) {
         Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "All Quest tasks for quest are finished"));
-        finishQuest(quest);
+        finishQuest(task.quest);
       }
     }
 
@@ -120,7 +121,7 @@ public class StoryProgress {
         if (player instanceof Player && c.announceStart) {
           ((Player) player).sendMessage("Neue Quest ''" + c.name + "':");
           c.tasks.values().forEach(t -> {
-            if (t.announceStart) t.announceStart((Player) player);
+            if (!(t.type == QuestTask.Type.EXTERNAL) &&t.announceStart) t.announceStart((Player) player);
           });
         }
         currentQuests.put(c.id, new QuestSave(c.tasks.keySet()));

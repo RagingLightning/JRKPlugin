@@ -51,7 +51,7 @@ public class NpcTradeEndListener implements Listener {
           if (s.stack(i, true) && i.count >= s.count) {
             StoryNpcOffer offer = successItems.get(s);
             if (offer.unlocks != null)
-              offer.unlocks.forEach((k, v) -> story.progress.get(player).finishTask(story.getQuest(k), v));
+              offer.unlocks.forEach((k, v) -> story.progress.get(player).finishTask(story.getQuest(k).getTask(v)));
             break;
           }
         }
