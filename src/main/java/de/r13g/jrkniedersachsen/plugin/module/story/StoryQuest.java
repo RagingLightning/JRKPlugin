@@ -39,17 +39,24 @@ public class StoryQuest {
    * @return success
    */
   boolean load() {
-    if (tasks != null) {
-      tasks.forEach((k, v) -> v.quest = this);
-      tasks.forEach((k, v) -> v.id = k);
+    try {
+      if (tasks != null) {
+        tasks.forEach((k, v) -> {
+          v.quest = this;
+          v.id = k;
+        });
+      }
+      if (rewards != null) {
+        rewards.forEach(v -> v.quest = this);
+      }
+      activePlayers = new ArrayList<>();
+      if (children == null) return true;
+      children.forEach(id -> story.getQuest(id).parent = this.id);
+      return true;
+    } catch (NullPointerException e) {
+      e.printStackTrace();
+      return false;
     }
-    if (rewards != null) {
-      rewards.forEach(v -> v.quest = this);
-    }
-    activePlayers = new ArrayList<>();
-    if (children == null) return true;
-    children.forEach(id -> story.getQuest(id).parent = this.id);
-    return true;
   }
 
   /**

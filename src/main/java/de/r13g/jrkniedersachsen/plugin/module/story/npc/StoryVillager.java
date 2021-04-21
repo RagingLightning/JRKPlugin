@@ -2,7 +2,7 @@ package de.r13g.jrkniedersachsen.plugin.module.story.npc;
 
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.customnpc.CustomVillager;
-import de.r13g.jrkniedersachsen.plugin.module.story.StoryProgress;
+import de.r13g.jrkniedersachsen.plugin.module.story.PlayerProgressEntry;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.NpcTradeEndListener;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleItem;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
@@ -57,7 +57,7 @@ public class StoryVillager extends StoryNpc {
   @Override
   public void onPlayerInteractEntity(PlayerInteractEntityEvent ev) {
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Processing PlayerInteract as StoryVillager"));
-    StoryProgress.PlayerEntry progress = story.progress.get(ev.getPlayer());
+    PlayerProgressEntry progress = story.progress.get(ev.getPlayer());
     Map<SimpleItem, StoryNpcOffer> successItems = updateTrades(progress);
     if (successItems != null && successItems.size() > 0) {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Villager has trades, opening trade inventory..."));
@@ -75,7 +75,7 @@ public class StoryVillager extends StoryNpc {
    *
    * @return map from bought item to fulfilled offer
    */
-  public Map<SimpleItem, StoryNpcOffer> updateTrades(StoryProgress.PlayerEntry progress) {
+  public Map<SimpleItem, StoryNpcOffer> updateTrades(PlayerProgressEntry progress) {
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Updating trades..."));
     Map<SimpleItem, StoryNpcOffer> successItems = new HashMap<>();
     List<MerchantRecipe> trades = new ArrayList<>();

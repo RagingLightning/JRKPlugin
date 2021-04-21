@@ -5,8 +5,11 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.r13g.jrkniedersachsen.plugin.Plugin;
+import de.r13g.jrkniedersachsen.plugin.module.story.npc.StoryPlayer;
+import de.r13g.jrkniedersachsen.plugin.util.Util;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
@@ -140,13 +143,15 @@ public class CustomPlayer extends EntityPlayer {
   private static String[] getSkin(UUID skinPlayer) {
     String skin = skinPlayer.toString().replaceAll("-", "");
     try {
-      URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + skin);
-      JsonObject o = JsonParser.parseReader(new InputStreamReader(url.openStream())).getAsJsonObject();
+      URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + skin + "?unsigned=false");
+      JsonObject o = new JsonParser().parse(new InputStreamReader(url.openStream())).getAsJsonObject();
       JsonObject p = o.get("properties").getAsJsonArray().get(0).getAsJsonObject();
       String tex = p.get("value").getAsString();
       String sig = p.get("signature").getAsString();
       return new String[]{tex, sig};
     } catch (Exception e) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(StoryPlayer.NAME, "Unable to apply NPC skin:", ChatColor.YELLOW));
+      e.printStackTrace();
       return null;
     }
   }

@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -187,7 +188,7 @@ public class Story {
           Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Quest " + v.name + " loaded successfully"));
         } else {
           willSurvive[0] = false;
-          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Quest " + v.name + " failed to load"));
+          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Quest " + v.name + " (id:" + v.id + ") failed to load", ChatColor.RED));
         }
       });
       if (!willSurvive[0]) return false;
@@ -206,7 +207,7 @@ public class Story {
           StoryNpc npc = gson.fromJson(new InputStreamReader(new FileInputStream(npcConfig), StandardCharsets.UTF_8), StoryNpc.class);
           npc.story = this;
           if (registerNpc(npcId, npc)) {
-            Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + npc.name + " (id:" + npcId + ") registered " +
+            Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + npc.name + " registered " +
                     "successfully"));
           } else {
             Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME,
@@ -225,7 +226,7 @@ public class Story {
           Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " loaded sucessfully..."));
         } else {
           willSurvive[0] = false;
-          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " failed to load..."));
+          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " (id:" + v.id + ") failed to load" , ChatColor.RED));
         }
       });
       if (!willSurvive[0]) return false;
@@ -292,10 +293,9 @@ public class Story {
     return null;
   }
 
-  public StoryQuest getQuest(UUID questId) {
-    if (registeredQuests.containsKey(questId))
-      return registeredQuests.get(questId);
-    return null;
+  public StoryQuest getQuest(@Nonnull UUID questId) {
+    assert registeredQuests.containsKey(questId);
+    return registeredQuests.get(questId);
   }
 
   public List<StoryQuest> getAllQuests(List<UUID> questIds) {

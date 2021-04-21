@@ -50,6 +50,8 @@ public class CustomPlayerPacketReader {
   public static void uninject(Player player) {
     Channel channel = channels.get(player.getUniqueId());
 
+    if (channel.pipeline() == null)
+      return;
     if (channel.pipeline().get("PacketInjector") == null)
       return;
 
@@ -95,7 +97,7 @@ public class CustomPlayerPacketReader {
     Object r = null;
 
     try {
-      Field f = instance.getClass().getDeclaredField("name");
+      Field f = instance.getClass().getDeclaredField(name);
       f.setAccessible(true);
       r = f.get(instance);
       f.setAccessible(false);

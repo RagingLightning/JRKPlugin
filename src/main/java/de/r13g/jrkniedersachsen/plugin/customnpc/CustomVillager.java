@@ -1,13 +1,22 @@
 package de.r13g.jrkniedersachsen.plugin.customnpc;
 
+import com.google.common.collect.ImmutableList;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleBehaviour;
+import de.r13g.jrkniedersachsen.plugin.util.Util;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class CustomVillager extends EntityVillager {
 
@@ -44,7 +53,23 @@ public class CustomVillager extends EntityVillager {
 
   @Override
   protected BehaviorController<?> a(Dynamic<?> dynamic) {
-    return this.cK().a(dynamic);
+
+//    Collection a = (Collection) Util.getPrivateField("a", this.cK().getClass(), this.cK());
+//    Collection b = (Collection) Util.getPrivateField("b", this.cK().getClass(), this.cK());
+//    Codec c = (Codec) Util.getPrivateField("c", this.cK().getClass(), this.cK());
+
+    try {
+      Method mB = BehaviorController.class.getDeclaredMethod("b", Collection.class, Collection.class);
+      mB.setAccessible(true);
+      Codec c = (Codec) mB.invoke(null, new ArrayList<>(), new ArrayList<>());
+
+      return new BehaviorController(new ArrayList<>(), new ArrayList<>(), ImmutableList.of(), () -> {
+        return c;
+      });
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   @Override
@@ -58,4 +83,15 @@ public class CustomVillager extends EntityVillager {
   @Override
   protected void eW() {
   } //called to initialize trades, not in use, replaced by setTrades(List)
+
+  @Override
+  protected void mobTick() {
+    ((Map) Util.getPrivateField("e", BehaviorController.class, this.getBehaviorController())).clear();
+    super.mobTick();
+  }
+
+  @Override
+  public void a(MemoryModuleType<GlobalPos> memorymoduletype) {
+    return;
+  }
 }

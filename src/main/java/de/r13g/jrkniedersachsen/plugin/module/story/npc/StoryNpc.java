@@ -3,8 +3,8 @@ package de.r13g.jrkniedersachsen.plugin.module.story.npc;
 import com.google.gson.*;
 import de.r13g.jrkniedersachsen.plugin.Plugin;
 import de.r13g.jrkniedersachsen.plugin.module.StoryModule;
+import de.r13g.jrkniedersachsen.plugin.module.story.PlayerProgressEntry;
 import de.r13g.jrkniedersachsen.plugin.module.story.Story;
-import de.r13g.jrkniedersachsen.plugin.module.story.StoryProgress;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleBehaviour;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleItem;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleLocation;
@@ -100,7 +100,7 @@ public abstract class StoryNpc {
     }
   }
 
-  public StoryNpcLineSet getLineSet(StoryProgress.PlayerEntry progress) {
+  public StoryNpcLineSet getLineSet(PlayerProgressEntry progress) {
     for (StoryNpcLineSet set : lineSets) {
       for (UUID cpId : progress.finishedQuests) {
         if (set.dependsOn.equals(cpId))
@@ -116,7 +116,7 @@ public abstract class StoryNpc {
    * @param progress
    * @param p
    */
-  public void tellLineSet(StoryProgress.PlayerEntry progress, Player p) {
+  public void tellLineSet(PlayerProgressEntry progress, Player p) {
     StoryNpcLineSet set = getLineSet(progress);
     if (set == null) {
       set = new StoryNpcLineSet(defaultLine);
@@ -124,12 +124,23 @@ public abstract class StoryNpc {
     } else {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "telling line set for player checkpoint"));
     }
-    if (set.tell(this, p))
+    try {
+      set.tell(this, p, this.getClass().getMethod("lineSetCallback", Player.class, boolean.class));
+    } catch (NoSuchMethodException ignored) {
+      throw new AssertionError("Method StoryNpc::lineSetCallback doesn't exist");
+    }
+  }
+
+  public void lineSetCallback(Player p, boolean success) {
+    if (success) {
+      PlayerProgressEntry progress = story.progress.get(p);
+      StoryNpcLineSet set = getLineSet(progress);
+      if (set == null || set.unlocks == null) return;
       for (UUID questId : set.unlocks.keySet()) {
         int taskId = set.unlocks.get(questId);
         progress.finishTask(story.getQuest(questId).getTask(taskId));
       }
-    else
+    } else
       throw new AssertionError("StoryNpcLineSet::tell returned false");
   }
 
