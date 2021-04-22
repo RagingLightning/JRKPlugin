@@ -141,7 +141,7 @@ public class CustomPlayer extends EntityPlayer {
   }
 
   private static String[] getSkin(UUID skinPlayer) {
-    String skin = skinPlayer.toString().replaceAll("-", "");
+    String skin = skinPlayer.toString().replace("-", "");
     try {
       URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + skin + "?unsigned=false");
       JsonObject o = new JsonParser().parse(new InputStreamReader(url.openStream())).getAsJsonObject();

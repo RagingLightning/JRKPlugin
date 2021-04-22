@@ -24,6 +24,7 @@ public class LocationTask extends QuestTask implements Listener {
   public void onPlayerMove(PlayerMoveEvent ev) {
     Player p = ev.getPlayer();
     if (quest.story.progress.get(p).currentQuests.containsKey(quest.id)) {
+      if (quest.story.progress.get(p).currentQuests.get(quest.id).tasks.get(id).finished) return;
       if (ev.getTo().distanceSquared(location.getLocation()) <= radius * radius) {
         quest.story.progress.get(p).finishTask(this);
       }
@@ -33,14 +34,14 @@ public class LocationTask extends QuestTask implements Listener {
   @Override
   public void announceStart(Player p) {
     if (location.name != null) {
-      Util.tellRaw(p, notificationStart.replaceAll("@name", location.name));
+      Util.tellRaw(p, notificationStart.replace("@name", location.name));
     }
   }
 
   @Override
   public void announceEnd(Player p) {
     if (location.name != null) {
-      Util.tellRaw(p, notificationEnd.replaceAll("@name", location.name));
+      Util.tellRaw(p, notificationEnd.replace("@name", location.name));
     }
   }
 }

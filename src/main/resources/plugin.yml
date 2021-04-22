@@ -38,6 +38,9 @@ commands:
   adminchat:
     usage: /adminchat
     permission: jrk.adminchat
+  story:
+    usage: /story
+    permission: jrk.story.admin
 permissions:
   jrk.gp:
     description: Gibt dem Spieler die Rechte, GP Commands zu nutzen
@@ -67,12 +70,15 @@ permissions:
       jrk.morpheus.admin: true
       jrk.colors.admin: true
       jrk.lock.admin: true
+      jrk.story.admin: true
   jrk.morpheus.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen am Morpheus-Modul vorzunehmen.
   jrk.morpheus.bypass:
     description: Der Spieler wird bei der Schlaf-Vote-Funktion ignoriert.
   jrk.colors.admin:
     description: Gibt dem Spieler die Rechte, Einstellungen am Colors-Modul vorzunehmen.
+  jrk.story.admin:
+    description: Gibt dem Spieler die Rechte, Einstellungen am Story-Modul vorzunehmen.
   jrk.adminchat.read:
     description: Gibt dem Spieler die Rechte, Admin-Only Nachrichen zu lesen, ohne selbst im Admin-Only Chat zu sein
   jrk.adminchat:

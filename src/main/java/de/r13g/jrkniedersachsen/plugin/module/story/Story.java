@@ -33,8 +33,8 @@ public class Story {
           .create();
 
   public static Map<UUID, Story> registeredStories = new HashMap<>();
-  private transient Map<UUID, StoryQuest> registeredQuests = new HashMap<>();
-  private transient Map<UUID, StoryNpc> registeredNpcs = new HashMap<>();
+  private transient Map<UUID, StoryQuest> registeredQuests;
+  private transient Map<UUID, StoryNpc> registeredNpcs;
 
   public transient StoryProgress progress;
 
@@ -161,10 +161,13 @@ public class Story {
     if (!questDir.exists()) {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Story has no quests folder, " +
               "asssuming there are none."));
+    } else if (registeredQuests != null) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Story has registered quests, " +
+              "not reregistering."));
     } else {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Registering story quests..."));
       for (File questConfig : questDir.listFiles()) {
-        UUID questId = UUID.fromString(questConfig.getName().replaceAll("\\.json", ""));
+        UUID questId = UUID.fromString(questConfig.getName().replace(".json", ""));
         try {
           StoryQuest quest = gson.fromJson(new InputStreamReader(new FileInputStream(questConfig), StandardCharsets.UTF_8), StoryQuest.class);
           quest.story = this;
@@ -192,17 +195,19 @@ public class Story {
         }
       });
       if (!willSurvive[0]) return false;
-
     }
 
     File npcDir = new File(storyRoot, "npcs");
     if (!npcDir.exists()) {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Story has no NPC folder, " +
               "asssuming there are none."));
+    } else if (registeredNpcs != null) {
+      Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Story has registered npcs, " +
+              "not reregistering."));
     } else {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Registering Story NPCs..."));
       for (File npcConfig : npcDir.listFiles()) {
-        UUID npcId = UUID.fromString(npcConfig.getName().replaceAll("\\.json", ""));
+        UUID npcId = UUID.fromString(npcConfig.getName().replace(".json", ""));
         try {
           StoryNpc npc = gson.fromJson(new InputStreamReader(new FileInputStream(npcConfig), StandardCharsets.UTF_8), StoryNpc.class);
           npc.story = this;
@@ -226,7 +231,7 @@ public class Story {
           Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " loaded sucessfully..."));
         } else {
           willSurvive[0] = false;
-          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " (id:" + v.id + ") failed to load" , ChatColor.RED));
+          Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "NPC " + v.name + " (id:" + v.id + ") failed to load", ChatColor.RED));
         }
       });
       if (!willSurvive[0]) return false;
@@ -261,6 +266,8 @@ public class Story {
         Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload player saves, were they not yet loaded?"));
         e.printStackTrace();
       }
+    progress = null;
+
     if (registeredNpcs != null && registeredNpcs.size() > 0)
       try {
         Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading all NPCs..."));
@@ -269,6 +276,8 @@ public class Story {
         Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unable to unload NPCs, were they not yet loaded?"));
         e.printStackTrace();
       }
+    registeredNpcs = null;
+
     if (registeredQuests != null && registeredQuests.size() > 0)
       try {
         Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Unloading all Quests..."));
@@ -278,6 +287,8 @@ public class Story {
         e.printStackTrace();
       }
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, "Successfully unloaded story " + name + " (id:" + id + ")"));
+    registeredQuests = null;
+
     return true;
   }
 
@@ -294,7 +305,7 @@ public class Story {
   }
 
   public StoryQuest getQuest(@Nonnull UUID questId) {
-    assert registeredQuests.containsKey(questId);
+    assert registeredQuests.containsKey(questId) : "Quest " + questId + " doesn't exist in story " + this.id;
     return registeredQuests.get(questId);
   }
 
@@ -333,9 +344,8 @@ public class Story {
   }
 
   public StoryNpc getNpc(UUID npcId) {
-    if (registeredNpcs.containsKey(npcId))
-      return registeredNpcs.get(npcId);
-    return null;
+    assert registeredNpcs.containsKey(npcId) : "NPC " + npcId + " doesn't exist in story " + this.id;
+    return registeredNpcs.get(npcId);
   }
 
   public List<StoryNpc> getAllNpcs(List<UUID> npcIds) {

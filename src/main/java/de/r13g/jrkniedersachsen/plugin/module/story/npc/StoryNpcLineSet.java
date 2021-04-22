@@ -44,9 +44,9 @@ public class StoryNpcLineSet {
       boolean success = true;
       for (StoryNpcLine line : lines) {
         if (line.isJson)
-          Util.tellRaw(p, line.message.replaceAll("@p", p.getName()).replaceAll("@s", npc.name));
+          Util.tellRaw(p, line.message.replace("@p", p.getName()).replace("@s", npc.name));
         else
-          p.sendMessage(line.message.replaceAll("@p", p.getDisplayName()).replaceAll("@s", npc.name));
+          p.sendMessage(line.message.replace("@p", p.getDisplayName()).replace("@s", npc.name));
         try {
           Thread.sleep(line.msDelayAfter);
         } catch (InterruptedException e) {

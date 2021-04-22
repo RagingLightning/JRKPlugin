@@ -9,9 +9,7 @@ import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
-import org.bukkit.event.entity.EntityPotionEffectEvent;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +28,9 @@ public class CustomVillager extends EntityVillager {
     if (trades != null)
       trades.forEach(r -> {
         ItemStack in1 = CraftItemStack.asNMSCopy(r.getIngredients().get(0));
-        ItemStack in2 = CraftItemStack.asNMSCopy(r.getIngredients().get(1));
+        ItemStack in2 = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(org.bukkit.Material.AIR));
+        if (r.getIngredients().size() == 2)
+          in2 = CraftItemStack.asNMSCopy(r.getIngredients().get(1));
         ItemStack res = CraftItemStack.asNMSCopy(r.getResult());
         this.trades.add(new MerchantRecipe(in1, in2, res, r.getUses(), r.getMaxUses(), r.getVillagerExperience(), r.getPriceMultiplier()));
       });
@@ -47,6 +47,7 @@ public class CustomVillager extends EntityVillager {
     this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityIllagerIllusioner.class, 12.0F, 0.5D, 0.5D));
     this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityZoglin.class, 10.0F, 0.5D, 0.5D));
     this.goalSelector.a(1, new PathfinderGoalLookAtTradingPlayer(this));
+    this.goalSelector.a(1, new PathfinderGoalDoorOpen(this, true));
     this.goalSelector.a(SimpleBehaviour.maxNeededGoalSlots + 2, new PathfinderGoalInteract(this, EntityHuman.class, 3.0F, 1.0F));
     this.goalSelector.a(SimpleBehaviour.maxNeededGoalSlots + 3, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
   }

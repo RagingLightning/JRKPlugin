@@ -25,6 +25,7 @@ import org.bukkit.permissions.Permissible;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -132,16 +133,38 @@ public class StoryModule implements Module, Listener {
 
   @Override
   public List<String[]> getCommands() {
-    return null;
+    List<String[]> commands = new ArrayList<>();
+    commands.add(new String[]{"/story", "reload", "<storyId>"});
+    return commands;
   }
 
   @Override
   public List<String> getHelpText(Permissible p) {
-    return null;
+    return new ArrayList<>();
   }
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    if (args.length == 0)
+      return false;
+    else {
+      if (args[0].equalsIgnoreCase("reload")) {
+        if (args.length == 1) {
+          Story.unloadAll();
+          if (Story.loadAll()) {
+            sender.sendMessage(Util.logLine(NAME, "Alle Stories wurden neu geladen"));
+          } else {
+            sender.sendMessage(Util.logLine(NAME, "Beim neu laden der Stories ist ein Fehler aufgetreten", ChatColor.YELLOW));
+          }
+        } else {
+          Story s = Story.get(UUID.fromString(args[1]));
+          if (s != null) {
+            s.unload();
+            s.load();
+          }
+        }
+      }
+    }
     return false;
   }
 

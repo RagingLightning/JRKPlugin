@@ -15,7 +15,7 @@ public class CommandReward extends QuestReward {
 
   @Override
   public boolean reward(Player p) {
-    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("@p", p.getName()));
+    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("@p", p.getName()));
     return true;
   }
 }

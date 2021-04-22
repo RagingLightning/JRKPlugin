@@ -2,9 +2,8 @@ package de.r13g.jrkniedersachsen.plugin.module.story.quest.reward;
 
 import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestReward;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimpleItem;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class ItemReward extends QuestReward {
 
@@ -17,9 +16,8 @@ public class ItemReward extends QuestReward {
 
   @Override
   public boolean reward(Player p) {
-    Item i = (Item) p.getWorld().spawnEntity(p.getLocation(), EntityType.DROPPED_ITEM);
-    i.setItemStack(item.getItemStack());
-    i.setOwner(p.getUniqueId());
+    ItemStack stack = item.getItemStack();
+    p.getWorld().dropItem(p.getLocation(), stack).setOwner(p.getUniqueId());
     return true;
   }
 }

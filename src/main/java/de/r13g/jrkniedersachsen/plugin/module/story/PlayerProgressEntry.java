@@ -50,10 +50,10 @@ public class PlayerProgressEntry {
       w.write(json);
       w.close();
       Bukkit.getConsoleSender().sendMessage(Util.logLine(StoryProgress.NAME,
-              "Successfully saved player save for story id:" + file.getName().replaceAll("\\.json", "")));
+              "Successfully saved player save for story id:" + file.getName().replace(".json", "")));
     } catch (IOException e) {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(StoryProgress.NAME,
-              "<WARN> Unable to save player save for story id:" + file.getName().replaceAll("\\.json", "")));
+              "<WARN> Unable to save player save for story id:" + file.getName().replace(".json", "")));
     }
   }
 
@@ -96,7 +96,7 @@ public class PlayerProgressEntry {
       }
       c.activePlayers.add(player.getUniqueId());
       if (player instanceof Player && c.announceStart) {
-        ((Player) player).sendMessage("Neue Quest ''" + c.name + "':");
+        ((Player) player).sendMessage("Neue Quest: " + c.name + "");
         c.tasks.values().forEach(t -> {
           if (!(t.type == QuestTask.Type.EXTERNAL) && t.announceStart) t.announceStart((Player) player);
         });
@@ -108,7 +108,7 @@ public class PlayerProgressEntry {
     finishedQuests.add(quest.id);
     quest.activePlayers.remove(player.getUniqueId());
 
-    if (quest.activePlayers.isEmpty()) {
+    if (quest.activePlayers.isEmpty() && quest.tasks != null) {
       quest.tasks.forEach((tk, tv) -> {
         if (tv instanceof Listener) {
           Bukkit.getConsoleSender().sendMessage(Util.logLine(StoryProgress.NAME, "Unregistering Listeners for quest " + quest.name + " task " + tk));

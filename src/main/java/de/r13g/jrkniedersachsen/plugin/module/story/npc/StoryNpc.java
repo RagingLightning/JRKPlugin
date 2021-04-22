@@ -102,7 +102,7 @@ public abstract class StoryNpc {
 
   public StoryNpcLineSet getLineSet(PlayerProgressEntry progress) {
     for (StoryNpcLineSet set : lineSets) {
-      for (UUID cpId : progress.finishedQuests) {
+      for (UUID cpId : progress.currentQuests.keySet()) {
         if (set.dependsOn.equals(cpId))
           return set;
       }

@@ -73,6 +73,7 @@ public class StoryQuest {
   }
 
   StoryQuest getParent() {
+    if (parent == null) return null;
     return story.getQuest(parent);
   }
 

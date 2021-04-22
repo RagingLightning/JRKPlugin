@@ -13,6 +13,7 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftAbstractVillager;
 import org.bukkit.entity.AbstractVillager;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 
 import java.util.ArrayList;
@@ -87,8 +88,12 @@ public class StoryVillager extends StoryNpc {
       Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME, log));
       if (progress.finishedQuests.contains(offer.dependsOn)) {
         MerchantRecipe r = new MerchantRecipe(offer.getItemStack(2), offer.uses);
-        r.addIngredient(offer.getItemStack(0));
-        r.addIngredient(offer.getItemStack(1));
+        ItemStack s = offer.getItemStack(0);
+        if (s != null)
+          r.addIngredient(s);
+        s = offer.getItemStack(1);
+        if (s != null)
+          r.addIngredient(s);
         r.setVillagerExperience(0);
         r.setExperienceReward(false);
         trades.add(r);

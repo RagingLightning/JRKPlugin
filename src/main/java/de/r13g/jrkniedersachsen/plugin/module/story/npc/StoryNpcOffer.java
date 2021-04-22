@@ -14,7 +14,9 @@ public class StoryNpcOffer {
   public Map<UUID, Integer> unlocks = null;
 
   public ItemStack getItemStack(int index) {
-    return items[index].getItemStack();
+    if (items[index] != null)
+      return items[index].getItemStack();
+    return null;
   }
 
 }

@@ -12,10 +12,7 @@ public class SimpleHeadItem extends SimpleItem {
   public String owner;
 
   public SimpleHeadItem(ItemStack stack) {
-    this.material = stack.getType().toString();
-    this.count = stack.getAmount();
-    this.displayName = stack.getItemMeta().getDisplayName();
-    this.lore = stack.getItemMeta().getLore();
+    super(stack);
     if (((SkullMeta) stack.getItemMeta()).getOwningPlayer() == null)
       this.owner = new UUID(0, 0).toString();
     else
@@ -25,25 +22,10 @@ public class SimpleHeadItem extends SimpleItem {
   @Override
   public boolean stack(SimpleItem other, boolean test) {
     if (!(other instanceof SimpleHeadItem)) return false;
-    if (!other.material.equals(this.material)) return false;
-    if (this.displayName == null) {
-      if (other.displayName != null) return false;
-    } else {
-      if (other.displayName == null) return false;
-      if (!this.displayName.equals(other.displayName)) return false;
-    }
-    if (this.lore == null) {
-      if (other.lore != null) return false;
-    } else {
-      if (other.lore == null) return false;
-      if (!this.lore.equals(other.lore)) return false;
-    }
-    if (this.owner == null) {
-      if (((SimpleHeadItem) other).owner != null) return false;
-    } else {
-      if (((SimpleHeadItem) other).owner == null) return false;
-      if (!this.owner.equals(((SimpleHeadItem) other).owner)) return false;
-    }
+    if (!super.stack(other, test))
+      return false;
+    if (this.owner != ((SimpleHeadItem) other).owner)
+      return false;
     if (!test)
       count += other.count;
     return true;
@@ -68,5 +50,10 @@ public class SimpleHeadItem extends SimpleItem {
       m.setLore(lore);
     s.setItemMeta(m);
     return s;
+  }
+
+  @Override
+  public String getItemJson() {
+    return null;
   }
 }

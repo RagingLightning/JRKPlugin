@@ -3,6 +3,7 @@ package de.r13g.jrkniedersachsen.plugin.customnpc.goal;
 import de.r13g.jrkniedersachsen.plugin.module.story.util.SimplePathNode;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -33,16 +34,10 @@ public class PathfinderGoalFollowPath extends PathfinderGoal {
     this.a(EnumSet.of(Type.MOVE)); //Set type of Pathfinder
   }
 
-  @Override //gets called every tick, decides, whether to run c() based on return value
-  public boolean a() {
+  public boolean a() { //gets called every tick, decides, whether to run c() based on return value
     if (t >= currentNode.stayTicks) {
-      if (i == nodes.size() || i < 0) {
-        if (loop) i = -1;
-        else di = -di;
-      }
       i += di;
       currentNode = nodes.get(i);
-      t = 0;
     } else
       t++;
     if (this.a.h(currentNode.location.x, currentNode.location.y, currentNode.location.z) <= (double) (this.radius * this.radius))
@@ -55,9 +50,14 @@ public class PathfinderGoalFollowPath extends PathfinderGoal {
   }
 
   public void c() { //runs once when a is true
+    t = 0;
   }
 
   public void d() { //gets called once when b is false
+    if (i < 0) di = 1;
+    if (i == nodes.size()-1)
+      if (loop) i = -1;
+      else di = -1;
   }
 
   public void e() { //gets called every tick if a or b are true

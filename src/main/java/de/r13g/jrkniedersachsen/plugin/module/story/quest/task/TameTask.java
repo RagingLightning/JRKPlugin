@@ -21,7 +21,7 @@ public class TameTask extends QuestTask implements Listener {
           "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
           "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\"}," +
           "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}," +
-          "{\"text\":\" gezähmt\",\"italic\":true,\"color\":gray}]";
+          "{\"text\":\" gezähmt\",\"italic\":true,\"color\":\"gray\"}]";
 
   String entityType;
   int count;
@@ -30,12 +30,13 @@ public class TameTask extends QuestTask implements Listener {
   public void onEntityTame(EntityTameEvent ev) {
     Player p = (Player) ev.getOwner();
     if (quest.story.progress.get(p).currentQuests.containsKey(quest.id)) {
+      if (quest.story.progress.get(p).currentQuests.get(quest.id).tasks.get(id).finished) return;
       if (ev.getEntity().getType() == EntityType.valueOf(entityType)) {
         Map<String, Object> data = quest.story.progress.get(p).getTaskData(this);
         if (!data.containsKey("alreadyTamed"))
           data.put("alreadyTamed", 0);
-        data.put("alreadyTamed", (Integer) data.get("alreadyTamed") + 1);
-        if ((Integer) data.get("alreadyTamed") >= count)
+        data.put("alreadyTamed", (double) data.get("alreadyTamed") + 1);
+        if ((double) data.get("alreadyTamed") >= count)
           quest.story.progress.get(p).finishTask(this);
       }
     }
@@ -43,31 +44,19 @@ public class TameTask extends QuestTask implements Listener {
 
   @Override
   public void announceStart(Player p) {
-    String key;
-    if (type.name().equals("PIG_ZOMBIE")) {
-      key = "entity.minecraft.zombie_pigman";
-    } else {
-      key = "entity.minecraft." + type.toString().toLowerCase();
-    }
 
     Util.tellRaw(p, notificationStart
-            .replaceAll("@key", key)
-            .replaceAll("@count", String.valueOf(count))
+            .replace("@key", "entity.minecraft." + entityType.toLowerCase())
+            .replace("@count", String.valueOf(count))
     );
   }
 
   @Override
   public void announceEnd(Player p) {
-    String key;
-    if (type.name().equals("PIG_ZOMBIE")) {
-      key = "entity.minecraft.zombie_pigman";
-    } else {
-      key = "entity.minecraft." + type.toString().toLowerCase();
-    }
 
     Util.tellRaw(p, notificationEnd
-            .replaceAll("@key", key)
-            .replaceAll("@count", String.valueOf(count))
+            .replace("@key", "entity.minecraft." + entityType.toLowerCase())
+            .replace("@count", String.valueOf(count))
     );
   }
 }

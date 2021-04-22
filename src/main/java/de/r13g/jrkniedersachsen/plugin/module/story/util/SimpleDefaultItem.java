@@ -1,34 +1,23 @@
 package de.r13g.jrkniedersachsen.plugin.module.story.util;
 
+import com.google.gson.Gson;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
+
 public class SimpleDefaultItem extends SimpleItem {
 
+  ItemJsonCarrier carrier;
+
   public SimpleDefaultItem(ItemStack stack) {
-    this.material = stack.getType().toString();
-    this.count = stack.getAmount();
-    this.displayName = stack.getItemMeta().getDisplayName();
-    this.lore = stack.getItemMeta().getLore();
+    super(stack);
   }
 
   @Override
   public boolean stack(SimpleItem other, boolean test) {
-    if (!(other instanceof SimpleDefaultItem)) return false;
-    if (!other.material.equals(this.material)) return false;
-    if (this.displayName == null) {
-      if (other.displayName != null) return false;
-    } else {
-      if (other.displayName == null) return false;
-      if (!this.displayName.equals(other.displayName)) return false;
-    }
-    if (this.lore == null) {
-      if (other.lore != null) return false;
-    } else {
-      if (other.lore == null) return false;
-      if (!this.lore.equals(other.lore)) return false;
-    }
+    if (!super.stack(other, test)) return false;
     if (!test)
       count += other.count;
     return true;
@@ -44,5 +33,42 @@ public class SimpleDefaultItem extends SimpleItem {
       m.setLore(lore);
     s.setItemMeta(m);
     return s;
+  }
+
+  @Override
+  public String getItemJson() {
+    if (mcMaterial == null) return "";
+    if (carrier == null) {
+      carrier = new ItemJsonCarrier(mcMaterial, displayName, lore);
+    }
+    return new Gson().toJson(carrier);
+  }
+
+  private class ItemJsonCarrier {
+
+    ItemJsonCarrier(String id, String name, List<String> lore) {
+      this.id = id;
+      this.tag = new Tag();
+      this.tag.display = new Display(name, lore);
+    }
+
+    String id;
+    Tag tag;
+
+    private class Tag {
+      Display display;
+    }
+
+    private class Display {
+
+      Display(String name, List<String> lore) {
+        this.Name = name;
+        this.Lore = lore;
+      }
+
+      String Name;
+      List<String> Lore;
+    }
+
   }
 }

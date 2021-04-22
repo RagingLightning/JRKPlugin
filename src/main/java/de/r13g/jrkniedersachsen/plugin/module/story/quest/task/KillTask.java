@@ -2,8 +2,6 @@ package de.r13g.jrkniedersachsen.plugin.module.story.quest.task;
 
 import de.r13g.jrkniedersachsen.plugin.module.story.quest.QuestTask;
 import de.r13g.jrkniedersachsen.plugin.util.Util;
-import me.pikamug.localelib.LocaleManager;
-import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -24,7 +22,7 @@ public class KillTask extends QuestTask implements Listener {
           "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
           "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\"}," +
           "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}," +
-          "{\"text\":\" getötet\",\"italic\":true,\"color\":gray}]";
+          "{\"text\":\" getötet\",\"italic\":true,\"color\":\"gray\"}]";
 
   String entityType;
   int count;
@@ -35,12 +33,13 @@ public class KillTask extends QuestTask implements Listener {
 
     Player p = ev.getPlayer();
     if (quest.story.progress.get(p).currentQuests.containsKey(quest.id)) {
+      if (quest.story.progress.get(p).currentQuests.get(quest.id).tasks.get(id).finished) return;
       if (ev.getEntityType() == EntityType.valueOf(entityType)) {
         Map<String, Object> data = quest.story.progress.get(p).getTaskData(this);
         if (!data.containsKey("alreadyKilled"))
           data.put("alreadyKilled", 0);
-        data.put("alreadyKilled", (Integer) data.get("alreadyKilled") + 1);
-        if ((Integer) data.get("alreadyKilled") >= count)
+        data.put("alreadyKilled", (double) data.get("alreadyKilled") + 1);
+        if ((double) data.get("alreadyKilled") >= count)
           quest.story.progress.get(p).finishTask(this);
       }
     }
@@ -48,31 +47,19 @@ public class KillTask extends QuestTask implements Listener {
 
   @Override
   public void announceStart(Player p) {
-    String key;
-    if (type.name().equals("PIG_ZOMBIE")) {
-      key = "entity.minecraft.zombie_pigman";
-    } else {
-      key = "entity.minecraft." + type.toString().toLowerCase();
-    }
 
     Util.tellRaw(p, notificationStart
-            .replaceAll("@key", key)
-            .replaceAll("@count", String.valueOf(count))
+            .replace("@key", "entity.minecraft." + entityType.toLowerCase())
+            .replace("@count", String.valueOf(count))
     );
   }
 
   @Override
   public void announceEnd(Player p) {
-    String key;
-    if (type.name().equals("PIG_ZOMBIE")) {
-      key = "entity.minecraft.zombie_pigman";
-    } else {
-      key = "entity.minecraft." + type.toString().toLowerCase();
-    }
 
     Util.tellRaw(p, notificationEnd
-            .replaceAll("@key", key)
-            .replaceAll("@count", String.valueOf(count))
+            .replace("@key", "entity.minecraft." + entityType.toLowerCase())
+            .replace("@count", String.valueOf(count))
     );
   }
 }

@@ -17,13 +17,13 @@ public class BreakBlockTask extends QuestTask implements Listener {
           "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
           "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\"}," +
           "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}," +
-          "{\"text\":\" ab\",\"italic\":true,\"color\":gray}]";
+          "{\"text\":\" ab\",\"italic\":true,\"color\":\"gray\"}]";
 
   private static final String notificationEnd = "[{\"text\":\"Task vollendet; @countx\",\"italic\":true,\"color\":\"gray\"}," +
           "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
           "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\"}," +
           "{\"text\":\"]\",\"italic\":true,\"color\":\"white\"}," +
-          "{\"text\":\" abgebaut\",\"italic\":true,\"color\":gray}]";
+          "{\"text\":\" abgebaut\",\"italic\":true,\"color\":\"gray\"}]";
 
   String block;
   int count;
@@ -32,12 +32,13 @@ public class BreakBlockTask extends QuestTask implements Listener {
   public void onBlockBreak(BlockBreakEvent ev) {
     Player p = ev.getPlayer();
     if (quest.story.progress.get(p).currentQuests.containsKey(quest.id)) {
+      if (quest.story.progress.get(p).currentQuests.get(quest.id).tasks.get(id).finished) return;
       if (Material.valueOf(block) == ev.getBlock().getType()) {
         Map<String, Object> data = quest.story.progress.get(p).getTaskData(this);
         if (!data.containsKey("alreadyBroken"))
           data.put("alreadyBroken", 0);
-        data.put("alreadyBroken", (Integer) data.get("alreadyBroken") + 1);
-        if ((Integer) data.get("alreadyBroken") >= count) {
+        data.put("alreadyBroken", (double) data.get("alreadyBroken") + 1);
+        if ((double) data.get("alreadyBroken") >= count) {
           quest.story.progress.get(p).finishTask(this);
         }
       }
@@ -47,16 +48,16 @@ public class BreakBlockTask extends QuestTask implements Listener {
   @Override
   public void announceStart(Player p) {
     Util.tellRaw(p, notificationStart
-            .replaceAll("@key", new LocaleManager().queryMaterial(Material.valueOf(block)))
-            .replaceAll("@count", String.valueOf(count))
+            .replace("@key", new LocaleManager().queryMaterial(Material.valueOf(block)))
+            .replace("@count", String.valueOf(count))
     );
   }
 
   @Override
   public void announceEnd(Player p) {
     Util.tellRaw(p, notificationEnd
-            .replaceAll("@key", new LocaleManager().queryMaterial(Material.valueOf(block)))
-            .replaceAll("@count", String.valueOf(count))
+            .replace("@key", new LocaleManager().queryMaterial(Material.valueOf(block)))
+            .replace("@count", String.valueOf(count))
     );
   }
 }
