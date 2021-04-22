@@ -1,9 +1,7 @@
 {
-  "NOTE": "only in StoryNpc's lineSets tag",
-  "dependsOn": "<StoryQuest id>",
-  "unlocks": {
-    "<Map of n StoryQuest id - QuestTask id>"
-  },
+  "NOTE": "only in Npc's lineSets tag",
+  "dependsOn": "<StoryQuest id, current>",
+  "unlocks": "<Map of n StoryQuest id - QuestTask id>",
   "lines": [
     {
       "message": "hey du",

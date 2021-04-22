@@ -14,8 +14,6 @@ import java.util.UUID;
 
 public class StoryPlayer extends StoryNpc {
 
-  //TODO: Test
-
   public static final String NAME = "--Player";
 
   UUID skinPlayer;

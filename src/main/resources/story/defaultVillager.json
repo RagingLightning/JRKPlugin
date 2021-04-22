@@ -1,6 +1,4 @@
 {
-  "id": "xxxxxxxx-xxxx-xxxx-0000-000000000000",
-  "baseId": "<InGame Entity UUID>",
   "name": "Beispiel-Villager",
   "type": "VILLAGER",
   "invulnerable": true,
@@ -18,11 +16,7 @@
   "feet": null,
   "mainHand": null,
   "offHand": null,
-  "lineSets": [
-    "<Array of n NpcLineSet>"
-  ],
-  "profession": "cartographer",
-  "offers": [
-    "<Array of n NpcOffer>"
-  ]
+  "lineSets": "<Array of n LineSet>",
+  "profession": "CLERIC",
+  "offers": "<Array of n Offer>"
 }

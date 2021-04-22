@@ -1,0 +1,7 @@
+{
+  "name": "Beispiel-Checkpoint",
+  "desc": "als Vorlage",
+  "children": "<Array of n Quest id>",
+  "tasks": "<Array of n QuestTask> / null -> Default checkpoint",
+  "rewards": "<Array of n QuestReward>"
+}

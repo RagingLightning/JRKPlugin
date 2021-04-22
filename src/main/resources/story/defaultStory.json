@@ -1,5 +1,4 @@
-Folder name is id; last 16 digits must be 0
-{
+{ "NOTE": "Folder name is id; last 16 digits must be 0",
   "name": "Beispielgeschichte als Vorlage",
   "desc": "Keine Funktion, nur als Vorlage",
   "active": true

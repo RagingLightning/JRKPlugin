@@ -1,0 +1,52 @@
+["REFERENCE",
+{ "NOTE": "SimpleItem",
+  "material": "DIAMOND",
+  "mcMaterial": "minecraft:diamond - to display",
+  "count": 3,
+  "displayName": "Blutdiamant",
+  "lore": [
+    "Dieser Diamant schimmert rötlich",
+    "Hat er magische Kräfte?",
+    "Wertvoll ist er auf jeden Fall"
+  ]
+},
+{ "NOTE": "SimpleHead ex SimpleItem",
+  "material": "PLAYER_HEAD",
+  "mcMaterial": "minecraft:player_head",
+  "owner": "ownerUUID"
+},
+{ "NOTE": "SimplePotion ex SimpleItem",
+  "material": "(SPLASH_/LINGERING_)POTION",
+  "mcMaterial": "minecraft:potion",
+  "effect": "SPEED",
+  "amplifier": 10,
+  "duration": 10
+},
+{ "NOTE": "SimpleFilledMap ex SimpleItem",
+  "material": "FILLED_MAP",
+  "mcMaterial": "minecraft:filled_map",
+  "mapId": 0
+},
+{ "NOTE": "SimpleLocation",
+  "name": "blabla",
+  "world": "world",
+  "x": 0,
+  "y": 0,
+  "z": 0
+},
+{
+  "NOTE": "SimpleBehaviour",
+  "type": "WANDER",
+  "center": "<SimpleLocation>",
+  "radius": 20,
+  "speed": 1
+},
+{
+  "NOTE": "SimpleBehaviour",
+  "type": "PATH",
+  "loop": true,
+  "nodes": "<Array of n SimpleLocation + radius>",
+  "stayTicks": 20,
+  "speed": 1
+}
+]

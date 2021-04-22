@@ -1,0 +1,7 @@
+{
+  "NOTE": "only in Villager's offers field",
+  "items": "<Array of 3 SimpleItems (in,in,out)>",
+  "uses": 1,
+  "dependsOn": "<StoryQuest id, finished>",
+  "unlocks": "<Array of n StoryQuest id>"
+}

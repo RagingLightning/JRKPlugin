@@ -15,8 +15,6 @@ import java.util.Map;
 
 public class CraftItemTask extends QuestTask implements Listener {
 
-  //TODO: Fix not working
-
   private static final String notificationStart = "[{\"text\":\"Stelle @countx\",\"italic\":true,\"color\":\"gray\"}," +
           "{\"text\":\"[\",\"italic\":true,\"color\":\"white\"}," +
           "{\"translate\":\"@key\",\"italic\":true,\"color\":\"white\",\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"@json\"}}," +

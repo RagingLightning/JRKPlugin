@@ -1,8 +1,7 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "baseId": "00000000-0000-0000-0000-000000000000",
   "name": "Beispiel-Npc",
-  "type": "ZOMBIE",
+  "type": "PLAYER",
+  "skinPlayer": "<Minecraft-Player UUID>",
   "invulnerable": true,
   "location":
   {
@@ -17,7 +16,6 @@
   "feet": null,
   "mainHand": null,
   "offHand": null,
-  "lines": [
-    "00000000-0000-0000-0000-000000000000"
-  ]
+  "lineSets": "<Array of n NpcLineSet>",
+  "behaviour": "<SimpleBehaviour>"
 }

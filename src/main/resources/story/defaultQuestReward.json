@@ -1,0 +1,22 @@
+["ONE OF",
+{
+  "type": "ITEM",
+  "item": "<SimpleItem>"
+},
+{
+  "type": "EXPERIENCE_POINTS",
+  "amount": 10
+},
+{
+  "type": "EXPERIENCE_LEVELS",
+  "amount": 1
+},
+{
+  "type": "EXPERIENCE_TO_LEVEL",
+  "level": 30
+},
+{
+  "type": "COMMAND",
+  "command": "say Hallo @p"
+}
+]

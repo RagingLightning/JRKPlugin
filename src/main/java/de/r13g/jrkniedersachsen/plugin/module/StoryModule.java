@@ -69,8 +69,8 @@ public class StoryModule implements Module, Listener {
 
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Creating default configuration templates..."));
     createDrafts(new File(moduleDataFolder, "templates"),
-            new String[]{"defaultSimpleX.draft", "defaultStory.draft", "defaultQuest.draft", "defaultQuestReward.draft", "defaultQuestTask.draft",
-                    "defaultOffer.draft", "defaultNpcLineSet.draft", "defaultVillager.draft"});
+            new String[]{"defaultSimpleX.json", "defaultStory.json", "defaultQuest.json", "defaultQuestReward.json", "defaultQuestTask.json",
+                    "defaultOffer.json", "defaultNpcLineSet.json", "defaultVillager.json"});
 
     Bukkit.getConsoleSender().sendMessage(Util.logLine(NAME + "/L", "Registering stories..."));
     for (File storyConfigFolder : storyDir.listFiles()) {

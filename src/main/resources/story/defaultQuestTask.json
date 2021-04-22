@@ -1,0 +1,42 @@
+["ONE OF",
+{
+  "type": "EXTERNAL"
+},
+{
+  "type": "COLLECT_ITEM",
+  "item": "<SimpleItem>"
+},
+{
+  "type": "DETECT_ITEM",
+  "item": "<SimpleItem>"
+},
+{
+  "type": "CRAFT_ITEM",
+  "item": "<SimpleItem>"
+},
+{
+  "type": "LOCATION",
+  "location": "<SimpleLocation>",
+  "radius": 5.0
+},
+{
+  "type": "BREAK_BLOCK",
+  "block": "DIRT",
+  "count": 10
+},
+{
+  "type": "PLACE_BLOCK",
+  "block": "DIRT",
+  "count": 10
+},
+{
+  "type": "TAME",
+  "enitiyType": "PIG",
+  "count": 10
+},
+{
+  "type": "KILL",
+  "enitiyType": "PIG",
+  "count": 10
+}
+]
