@@ -35,8 +35,8 @@ public class TameTask extends QuestTask implements Listener {
         Map<String, Object> data = quest.story.progress.get(p).getTaskData(this);
         if (!data.containsKey("alreadyTamed"))
           data.put("alreadyTamed", 0);
-        data.put("alreadyTamed", (double) data.get("alreadyTamed") + 1);
-        if ((double) data.get("alreadyTamed") >= count)
+        data.put("alreadyTamed", Double.parseDouble(data.get("alreadyTamed").toString()) + 1);
+        if (Double.parseDouble(data.get("alreadyTamed").toString()) >= count)
           quest.story.progress.get(p).finishTask(this);
       }
     }

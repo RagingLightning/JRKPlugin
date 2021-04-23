@@ -42,8 +42,8 @@ public class CraftItemTask extends QuestTask implements Listener {
         Map<String, Object> data = quest.story.progress.get(p).getTaskData(this);
         if (!data.containsKey("alreadyCrafted"))
           data.put("alreadyCrafted", 0);
-        data.put("alreadyCrafted", (Integer) data.get("alreadyCrafted") + i.count);
-        if (((Integer) data.get("alreadyCrafted")) >= item.count) {
+        data.put("alreadyCrafted", Double.parseDouble(data.get("alreadyCrafted").toString()) + i.count);
+        if (Double.parseDouble(data.get("alreadyCrafted").toString()) >= item.count) {
           Bukkit.getConsoleSender().sendMessage("FINISHED");
           quest.story.progress.get(p).finishTask(this);
         }

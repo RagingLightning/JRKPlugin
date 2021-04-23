@@ -38,8 +38,8 @@ public class KillTask extends QuestTask implements Listener {
         Map<String, Object> data = quest.story.progress.get(p).getTaskData(this);
         if (!data.containsKey("alreadyKilled"))
           data.put("alreadyKilled", 0);
-        data.put("alreadyKilled", (double) data.get("alreadyKilled") + 1);
-        if ((double) data.get("alreadyKilled") >= count)
+        data.put("alreadyKilled", Double.parseDouble(data.get("alreadyKilled").toString()) + 1);
+        if (Double.parseDouble(data.get("alreadyKilled").toString()) >= count)
           quest.story.progress.get(p).finishTask(this);
       }
     }
